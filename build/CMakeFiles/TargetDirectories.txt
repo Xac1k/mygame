@@ -1,0 +1,4 @@
+/home/xac1k/Desktop/Project Practicum/mygame/build/CMakeFiles/myapp.dir
+/home/xac1k/Desktop/Project Practicum/mygame/build/CMakeFiles/lib_utils.dir
+/home/xac1k/Desktop/Project Practicum/mygame/build/CMakeFiles/edit_cache.dir
+/home/xac1k/Desktop/Project Practicum/mygame/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/myapp.dir/main.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/main.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/main.cpp",
+  "output": "CMakeFiles/myapp.dir/main.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Infrastructure/entityManager.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Infrastructure/entityManager.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/Infrastructure/entityManager.cpp",
+  "output": "CMakeFiles/lib_utils.dir/Infrastructure/entityManager.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Infrastructure/sfml.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Infrastructure/sfml.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/Infrastructure/sfml.cpp",
+  "output": "CMakeFiles/lib_utils.dir/Infrastructure/sfml.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Interfaces/busEvent.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Interfaces/busEvent.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/Interfaces/busEvent.cpp",
+  "output": "CMakeFiles/lib_utils.dir/Interfaces/busEvent.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Store/data/saver.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Store/data/saver.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/Store/data/saver.cpp",
+  "output": "CMakeFiles/lib_utils.dir/Store/data/saver.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+  "output": "CMakeFiles/lib_utils.dir/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/test/test.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/test/test.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/test/test.cpp",
+  "output": "CMakeFiles/lib_utils.dir/test/test.cpp.o"
+}
+]
