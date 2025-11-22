@@ -8,6 +8,7 @@
 #include <string>
 #include <filesystem>
 #include "../Common/Vect.hpp"
+#include <Common/buildPath.hpp>
 
 class TextureLoader {
 private:

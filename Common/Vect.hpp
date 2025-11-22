@@ -7,7 +7,8 @@ public:
     float x;
     float y;
     
-    Vect2D(float xI = 0, float yI = 0): x(xI), y(yI) {};
+
+    constexpr Vect2D(float xI = 0, float yI = 0) : x(xI), y(yI) {};
 
     float length() const {
         return std::sqrt(x*x + y*y);

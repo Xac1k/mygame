@@ -58,6 +58,7 @@
         "charconv": "cpp",
         "chrono": "cpp",
         "format": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "filesystem": "cpp"
     }
 }

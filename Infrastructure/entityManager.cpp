@@ -1,17 +1,5 @@
 #include "entityManager.h"
 
-std::string buildPath(std::string path, int levelsUp = 0) {
-    std::filesystem::path currentPath = std::filesystem::current_path();
-    std::filesystem::path targetPath = currentPath;
-    
-    for (int i = 0; i < levelsUp; i++) {
-        targetPath = targetPath.parent_path();
-    }
-    
-    targetPath /= path;
-    return targetPath.string();
-}
-
 bool TextureLoader::isLoaded(const std::string& filename) {
     return buff.find(filename) != buff.cend();
 }
@@ -22,7 +10,7 @@ void TextureLoader::loadFromFile(const std::string& filename) {
 
     texture.setSmooth(false);
     texture.setRepeated(false);
-    std::string fullpath = buildPath(filename, 1);
+    std::string fullpath = buildFullPath(filename, 1);
 
     if (!texture.loadFromFile(fullpath)) { std::cout << "Невозможно открыть спрайт" << std::endl; }
     buff.insert(std::make_pair(fullpath, texture));
@@ -33,7 +21,7 @@ sf::Sprite& TextureLoader::getSprite(const std::string& filename, Vect2D pos, Ve
 
     sprite = sf::Sprite();
 
-    std::string fullpath = buildPath(filename, 1);
+    std::string fullpath = buildFullPath(filename, 1);
     sprite.setTexture(buff[fullpath]);
 
     sf::Vector2u textureSize = buff[fullpath].getSize();

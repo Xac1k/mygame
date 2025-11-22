@@ -9,7 +9,11 @@ void InventoryDrawSystem(
     sf::RenderWindow &window, TextureLoader &textureLoader, 
     EntitiesManager& manager
 ) {
-    auto entityID = manager.with<InventoryComponent>().get()[0];
+    auto entityIDs = manager.with<InventoryComponent>().get();
+    if(entityIDs.size() < 1) return;
+
+    int entityID = entityIDs[0];
+
     auto inventory = manager.getComponent<InventoryComponent>(entityID).get();
     auto inventoryState = manager.getComponent<StateComponent>(entityID).get();
 
@@ -19,8 +23,17 @@ void InventoryDrawSystem(
     auto dndComponent = manager.getComponent<DragAndDropComponent>(entityID).get();
 
     Vect2D cellSize = Vect2D(size->size.x / inventory->size.x,  size->size.y / inventory->size.y);
+    if(inventoryState->state == (int)InventoryState::wrapped) {
+        cellSize = Vect2D(size->size.x / inventory->size.x,  size->size.y);
+    }
 
-    if(inventoryState->state == (int)InventoryState::selected) {
+    if(
+        inventory->isSelected && 
+        (
+            inventoryState->state == (int)InventoryState::wrapped ||
+            inventoryState->state == (int)InventoryState::selected
+        )
+    ) {
         //получить координаты и размеры выделения
         Vect2D select = inventory->selection;
 
@@ -58,6 +71,7 @@ void InventoryDrawSystem(
         }
         x = 0;
         y++;
+        if(inventoryState->state == (int)InventoryState::wrapped) break;
     }
 
     //Рисовка выделенного объекта на верхнем слое
@@ -73,6 +87,18 @@ void InventoryDrawSystem(
             "Store/view/Items/item" + std::to_string((int)item) + ".png",
             posItem,
             sizeItem
+        );
+        window.draw(sprite);
+    }
+
+    if(inventoryState->state == (int)InventoryState::selected && inventory->isSetContextMenu) {
+        Items item = inventory->inventory[inventory->selection.y][inventory->selection.x];
+        Vect2D posContextMenu = inventory->selection * cellSize + pos->point + Vect2D(cellSize.x, 0);
+        Vect2D sizeContextMenu = Vect2D(96, 32);
+        sf::Sprite sprite = textureLoader.getSprite(
+            "Store/view/Inventory/UseButton.png",
+            posContextMenu,
+            sizeContextMenu
         );
         window.draw(sprite);
     }

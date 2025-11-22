@@ -9,6 +9,7 @@ struct  PositionComponent
     Vect2D point;
 
     PositionComponent(float x, float y): point({x, y}) {};
+    PositionComponent(Vect2D pointI): point(pointI) {};
     PositionComponent(): point({0, 0}) {};
     ~PositionComponent() = default;
 };
@@ -17,6 +18,7 @@ struct SizeComponent {
     Vect2D size;
 
     SizeComponent(float x, float y): size({x, y}) {};
+    SizeComponent(Vect2D sizeI): size(sizeI) {};
     SizeComponent(): size({0, 0}) {};
     ~SizeComponent() = default;
 };
@@ -76,6 +78,8 @@ struct InventoryComponent {
     std::vector<std::vector<Items>> inventory;
     Vect2D size; //кол-во столбцов и строк
     Vect2D selection; //выделенная клетка
+    bool isSetContextMenu = false; //отображается или нет контекстное меню предмета
+    bool isSelected = false;
 
     InventoryComponent(Vect2D size, Vect2D selection): size(size), selection(selection) {
         for (int y = 0; y < size.y; y++) {

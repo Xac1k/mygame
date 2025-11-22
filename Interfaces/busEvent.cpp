@@ -47,6 +47,27 @@ void BusEvent::update(sf::Event event) {
         case sf::Keyboard::Key::D:
             currEvent = Event::D;
             break;
+        case sf::Keyboard::Key::I:
+            currEvent = Event::I;
+            break;
+        case sf::Keyboard::Key::Num0:
+            currEvent = Event::Num0;
+            break;
+        case sf::Keyboard::Key::Num1:
+            currEvent = Event::Num1;
+            break;
+        case sf::Keyboard::Key::Num2:
+            currEvent = Event::Num2;
+            break;
+        case sf::Keyboard::Key::Num3:
+            currEvent = Event::Num3;
+            break;
+        case sf::Keyboard::Key::Num4:
+            currEvent = Event::Num4;
+            break;
+        case sf::Keyboard::Key::Num5:
+            currEvent = Event::Num5;
+            break;
         default:
             currEvent = Event::None;
             break;

@@ -9,13 +9,18 @@
 #include "./Entities/components/backgound.hpp"
 #include "./Entities/components/inventory.hpp"
 #include <Systems/InventoryDrawSystem.hpp>
+#include <Sounds/soundManager.hpp>
+#include <Systems/InventoryContextMenuSystem.hpp>
 
-void init(EntitiesManager& manager, TextureLoader& textureLoader) {
+void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
     inventory(manager, textureLoader);
     // startButton(manager, textureLoader);
     // continueButton(manager, textureLoader);
     // settingButton(manager, textureLoader);
     background(manager, textureLoader);
+
+    audioManager.loadMusic("Стартовое меню", "Sounds/asset/the_wind.mp3");
+    audioManager.playMusic("Стартовое меню", true);
 }
 
 int main() {
@@ -28,9 +33,10 @@ int main() {
     TextureLoader textureLoader;
 
     EntitiesManager manager;
+    AudioSystem audioManager;
     sf::Clock clock;
 
-    init(manager, textureLoader);
+    init(manager, textureLoader, audioManager);
     while(window.isOpen())
     {
         float df = clock.restart().asSeconds();
@@ -41,6 +47,7 @@ int main() {
             }
             busEvent.update(event);
             ButtonUpdate(manager, busEvent);
+            InventoryContextMenuUpdate(manager, busEvent);
             InventoryDndUpdate(manager, busEvent);
         }
         AnimationUpdate(manager, df);
