@@ -38,6 +38,7 @@ void InventoryContextMenuUpdate(EntitiesManager& manager, BusEvent& event) {
 
     case BusEvent::Event::MouseDownLeft :
         if(collisionRect(event.mousePos, pos->point, size->size) && inventory->isSetContextMenu) {
+            //TODO: Сделать обработку нажатия на определённую кнопку
             event.currEvent = BusEvent::Event::None;
             inventory->isSetContextMenu = false;
         }

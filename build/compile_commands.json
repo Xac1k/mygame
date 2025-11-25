@@ -25,6 +25,24 @@
 },
 {
   "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Map/Creating/Circle/mapGeneratorTest.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Map/Creating/Circle/mapGeneratorTest.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/Map/Creating/Circle/mapGeneratorTest.cpp",
+  "output": "CMakeFiles/lib_utils.dir/Map/Creating/Circle/mapGeneratorTest.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Map/Creating/Direct/mapGeneratorTest.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Map/Creating/Direct/mapGeneratorTest.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/Map/Creating/Direct/mapGeneratorTest.cpp",
+  "output": "CMakeFiles/lib_utils.dir/Map/Creating/Direct/mapGeneratorTest.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
+  "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Map/Preprocessing/mapTest.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Map/Preprocessing/mapTest.cpp\"",
+  "file": "/home/xac1k/Desktop/Project Practicum/mygame/Map/Preprocessing/mapTest.cpp",
+  "output": "CMakeFiles/lib_utils.dir/Map/Preprocessing/mapTest.cpp.o"
+},
+{
+  "directory": "/home/xac1k/Desktop/Project Practicum/mygame/build",
   "command": "/usr/bin/g++ -I\"/home/xac1k/Desktop/Project Practicum/mygame\" -I\"/home/xac1k/Desktop/Project Practicum/mygame/lib\" -g -std=gnu++17 -o CMakeFiles/lib_utils.dir/Store/data/saver.cpp.o -c \"/home/xac1k/Desktop/Project Practicum/mygame/Store/data/saver.cpp\"",
   "file": "/home/xac1k/Desktop/Project Practicum/mygame/Store/data/saver.cpp",
   "output": "CMakeFiles/lib_utils.dir/Store/data/saver.cpp.o"

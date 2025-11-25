@@ -91,12 +91,31 @@ void InventoryDrawSystem(
         window.draw(sprite);
     }
 
+    //Рисовка контекстного меню
     if(inventoryState->state == (int)InventoryState::selected && inventory->isSetContextMenu) {
         Items item = inventory->inventory[inventory->selection.y][inventory->selection.x];
-        Vect2D posContextMenu = inventory->selection * cellSize + pos->point + Vect2D(cellSize.x, 0);
-        Vect2D sizeContextMenu = Vect2D(96, 32);
-        sf::Sprite sprite = textureLoader.getSprite(
+        Vect2D posContextUseBtn = inventory->selection * cellSize + pos->point + Vect2D(cellSize.x, 0);
+        Vect2D sizeContextUseBtn = Vect2D(96, 32);
+        sf::Sprite spriteUseBtn = textureLoader.getSprite(
             "Store/view/Inventory/UseButton.png",
+            posContextUseBtn,
+            sizeContextUseBtn
+        );
+        window.draw(spriteUseBtn);
+
+        Vect2D posContextDelBtn = inventory->selection * cellSize + pos->point + Vect2D(cellSize.x, 32);
+        Vect2D sizeContextDelBtn = Vect2D(96, 32);
+        sf::Sprite spriteDelBtn = textureLoader.getSprite(
+            "Store/view/Inventory/DeleteButton.png",
+            posContextDelBtn,
+            sizeContextDelBtn
+        );
+        window.draw(spriteDelBtn);
+
+        Vect2D posContextMenu = inventory->selection * cellSize + pos->point + Vect2D(cellSize.x, 0);
+        Vect2D sizeContextMenu = Vect2D(96, 64);
+        sf::Sprite sprite = textureLoader.getSprite(
+            "Store/view/Inventory/BorderChoiseMenu2.png",
             posContextMenu,
             sizeContextMenu
         );
