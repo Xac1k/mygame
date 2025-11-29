@@ -78,6 +78,14 @@ public:
         id++;
     }
 
+    int getID() {
+        return id-1;
+    }
+
+    void clearEntities() {
+        entities.clear();
+    }
+
     void removeEntity(int entityID) {
         entities.erase(entityID);
     };

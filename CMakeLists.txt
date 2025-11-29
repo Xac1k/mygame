@@ -10,7 +10,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 add_executable(myapp main.cpp)
 
-file(GLOB_RECURSE SOURCES */*.cpp */*.h)
+file(GLOB_RECURSE SOURCES */*.cpp */*.h */*.hpp)
 add_library(lib_utils ${SOURCES})
 
 target_link_libraries(myapp lib_utils sfml-graphics sfml-window sfml-system sfml-audio)

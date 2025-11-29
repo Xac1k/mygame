@@ -10,7 +10,7 @@
 #include "../Common/collisionCycle.hpp"
 #include "../Common/dist.hpp"
 
-sf::Vector2f circleCord(const float radius, const float angleDeg) {
+inline sf::Vector2f circleCord(const float radius, const float angleDeg) {
     sf::Vector2f p;
     p.x = sin((angleDeg * M_PI / 180)) * radius;
     p.y = cos((angleDeg * M_PI / 180)) * radius;
@@ -18,7 +18,7 @@ sf::Vector2f circleCord(const float radius, const float angleDeg) {
     return p;
 }
 
-spiralType createArchimedeanSpiral(
+inline spiralType createArchimedeanSpiral(
     float initialRadius = 0.0f,
     float gain = 1.0f,
     float turns = 8.0f,
@@ -42,7 +42,7 @@ spiralType createArchimedeanSpiral(
     return spiral;
 }
 
-sf::Vector2f getPointFromCenterOnLen(float targetLength, spiralType spiral) {
+inline sf::Vector2f getPointFromCenterOnLen(float targetLength, spiralType spiral) {
     float length = 0;
     int id = 0;
     while (length < targetLength && id < spiral.size() - 1 && spiral.size() > 1)
@@ -54,7 +54,7 @@ sf::Vector2f getPointFromCenterOnLen(float targetLength, spiralType spiral) {
     return spiral[id];
 } 
 
-void cropSpiralByLength(spiralType& spiral, float targetLength) {
+inline void cropSpiralByLength(spiralType& spiral, float targetLength) {
     float length = 0;
     int id = 0;
     while (length < targetLength && id < spiral.size() - 1 && spiral.size() > 1)
@@ -65,7 +65,7 @@ void cropSpiralByLength(spiralType& spiral, float targetLength) {
     spiral.resize(id);
 }
 
-std::tuple<spiralType, roomsType> generateSpiralMap() {
+inline std::tuple<spiralType, roomsType> generateSpiralMap() {
     srand(time(nullptr));
     spiralType spiral = createArchimedeanSpiral(
         25.0f,      // a

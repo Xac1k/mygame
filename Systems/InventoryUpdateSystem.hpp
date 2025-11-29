@@ -49,6 +49,7 @@ void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
                     std::cout << "Dnd started" << std::endl;
                     inventory->selection = Vect2D(column-1, row-1);
                     inventoryState->state = (int) InventoryState::selected;
+                    inventory->isSelected = true;
                 }
             }
             break;

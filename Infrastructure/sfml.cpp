@@ -1,24 +1,64 @@
 #include "sfml.h"
 
-Frame getCurrentSprite(float time, Animation animation) {
+sf::Sprite getCurrentSprite(AnimationComponent* animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader, int state) {
     float resultTime = 0;
+    auto animation = animationComponent->animation[state];
+
     for (auto sprite : animation) {
         resultTime += sprite.durationTime;
-        if (time < resultTime) return sprite;
+        if (animationComponent->time < resultTime) 
+            return textureLoader.getSprite(sprite.path, pos, size);
     }
-    return animation[animation.size() - 1];
+    return textureLoader.getSprite(animation[animation.size() - 1].path, pos, size);
+}
+
+sf::Sprite getCurrentSprite(AnimationGridComponent* animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader, int state) {
+    float resultTime = 0;
+    auto animation = animationComponent->animation[state];
+
+    for (auto sprite : animation) {
+        resultTime += sprite.durationTime;
+        if (animationComponent->time < resultTime) 
+            return textureLoader.getSprite(sprite, pos, size, animationComponent->TileSizeInGrid);
+    }
+    
+    return textureLoader.getSprite(animation[animation.size() - 1], pos, size, animationComponent->TileSizeInGrid);
+}
+
+void drawGridAnimation(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader, int id) {
+    auto animation = manager.getComponent<AnimationGridComponent>(id);
+
+    auto state = manager.getComponent<StateComponent>(id).get()->state;
+    auto pos = manager.getComponent<PositionComponent>(id).get()->point;
+    auto size = manager.getComponent<SizeComponent>(id).get()->size;
+
+    auto sprite = getCurrentSprite(animation.get(), pos, size, textureLoader, state);
+    window.draw(sprite);
+}
+
+bool drawAnimationOneFile(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader, int id) {
+    auto animation = manager.getComponent<AnimationComponent>(id);
+    if(!animation) return false;
+
+    auto state = manager.getComponent<StateComponent>(id).get()->state;
+    auto pos = manager.getComponent<PositionComponent>(id).get()->point;
+    auto size = manager.getComponent<SizeComponent>(id).get()->size;
+
+    auto sprite = getCurrentSprite(animation.get(), pos, size, textureLoader, state);
+    window.draw(sprite);
+    return true;
 }
 
 void SfmlRenderer::render(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader) {
     auto entitiIDs = manager.with<AnimationComponent>().with<PositionComponent>().with<SizeComponent>().get();
-    for(int id : entitiIDs) {
-        auto animation = manager.getComponent<AnimationComponent>(id).get();
-        auto state = manager.getComponent<StateComponent>(id).get()->state;
-        auto pos = manager.getComponent<PositionComponent>(id).get()->point;
-        auto size = manager.getComponent<SizeComponent>(id).get()->size;
+    auto entitiIDsWithGrid = manager.with<AnimationGridComponent>().with<PositionComponent>().with<SizeComponent>().get();
+    entitiIDs.insert( entitiIDs.end(), entitiIDsWithGrid.begin(), entitiIDsWithGrid.end());
+    std::sort(entitiIDs.begin(), entitiIDs.end());
 
-        auto sprite = getCurrentSprite(animation->time, animation->animation[state]);
-        sf::Sprite spriteD = textureLoader.getSprite(sprite.path, pos, size);
-        window.draw(spriteD);
+    for(int id : entitiIDs) {
+        if(!drawAnimationOneFile(window, manager, textureLoader, id)) {
+            drawGridAnimation(window, manager, textureLoader, id);
+            continue;
+        }
     } 
 }

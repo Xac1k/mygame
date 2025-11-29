@@ -34,9 +34,7 @@ void InventoryDrawSystem(
             inventoryState->state == (int)InventoryState::selected
         )
     ) {
-        //получить координаты и размеры выделения
         Vect2D select = inventory->selection;
-
         Vect2D selectionPos = select * cellSize + pos->point;
 
         sf::Sprite sprite = textureLoader.getSprite("Store/view/Inventory/SelectionCell.png", selectionPos, cellSize);

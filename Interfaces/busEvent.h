@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <map>
 #include <SFML/Graphics.hpp>
 #include "../Common/Vect.hpp"
 
@@ -9,15 +10,17 @@ private:
 public:
     enum class Event {
         MouseDownLeft, MouseDownRight, MouseMove, MouseUp, A, W, S, D, I, Space, None,
-        Num0, Num1, Num2, Num3, Num4, Num5
+        Num0, Num1, Num2, Num3, Num4, Num5, Last
     };
     Event currEvent;
     Vect2D mousePos;
     bool shiftPressed = false;
     bool ctrlPressed = false;
     bool altPressed = false;
+    std::map<Event, bool> processedEvents;
 
     void update(sf::Event Event);
+    void init();
     int addEventListenre(Event event, std::function<void(BusEvent&)> callback);
 };
 

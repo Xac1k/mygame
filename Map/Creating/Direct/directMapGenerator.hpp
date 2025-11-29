@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <cmath>
@@ -17,7 +18,7 @@ struct Edge {
     }
 };
 
-void paint(std::map<int, int>& coloredVertex, int x, int y) {
+inline void paint(std::map<int, int>& coloredVertex, int x, int y) {
     int targetColor = coloredVertex[y];
     int mainColor = coloredVertex[x];
 
@@ -26,7 +27,7 @@ void paint(std::map<int, int>& coloredVertex, int x, int y) {
     }
 }
 
-std::tuple<roomsType, corridorsType> generateDirectMap() {
+inline std::tuple<roomsType, corridorsType> generateDirectMap() {
     roomsType rooms;
     corridorsType corridors;
 
@@ -86,8 +87,8 @@ std::tuple<roomsType, corridorsType> generateDirectMap() {
     }
 
     for(auto& room : rooms) {
-        room.x -= minX;
-        room.y -= minY;
+        room.x -= minX - 2;
+        room.y -= minY - 2;
     }
 
     return std::make_tuple(rooms, corridors);

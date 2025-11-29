@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <math.h>
 #include <SFML/Graphics.hpp>
@@ -6,6 +7,7 @@
 #include "../Creating/Config/configCircle.hpp"
 #include "../Creating/Circle/circleMapGenerator.hpp"
 #include "../Creating/Direct/directMapGenerator.hpp"
+#include "../../Common/Vect.hpp"
 
 enum class TileType {
     Empty,
@@ -125,19 +127,21 @@ public:
         }
     }
 
-private:
-    std::vector<Tile> tiles;
+    private:
+        std::vector<Tile> tiles;
 };
 
 class TileRenderer {
 public:
     static constexpr int TILE_SIZE = 32;
 
-    TileRenderer(sf::Texture& floorTex, sf::Texture& emptyTex, sf::Texture& wallTex) {
+    TileRenderer( sf::Texture& floorTex, sf::Texture& emptyTex, sf::Texture& wallTex) {
         textures[TileType::Floor] = floorTex;
         textures[TileType::Empty] = emptyTex;
         textures[TileType::Wall] = wallTex;
     }
+
+    TileRenderer() {}
 
     void render(GameMap& map, sf::RenderWindow& window, sf::Vector2i& cameraPosPixel, sf::Vector2i& visiableArea) {
         sf::Vector2f tempShift;
@@ -154,6 +158,41 @@ public:
         sf::Vector2u winSize = window.getSize();
         sf::Vector2f shiftAlign;
         shiftAlign.x = - visiableArea.x/2 * TILE_SIZE + (float)(winSize.x/2);
+        shiftAlign.y = - (float)(visiableArea.y/2) * TILE_SIZE +  (float)(winSize.y/2);
+
+        for (int y = top; y < bottom; ++y) {
+            for (int x = left; x < right; ++x) {
+                Tile tile = map.get(x, y);
+                auto texture = textures.find(tile.type);
+                if (texture == textures.end()) continue;
+
+                sf::Sprite sprite(texture->second);
+                auto size = texture->second.getSize();
+
+                sf::Vector2f pos({(float)((x - left) * TILE_SIZE), (float)((y - top) * TILE_SIZE)});
+
+                sprite.setPosition(pos + shiftAlign - tempShift);
+                sprite.setScale(TILE_SIZE/size.x, TILE_SIZE/size.y);
+                window.draw(sprite);
+            }
+        }
+    }
+
+    void render(GameMap& map, sf::RenderWindow& window, Vect2D& cameraPosPixel, Vect2D& visiableArea) {
+        sf::Vector2f tempShift;
+        tempShift.x = (int)cameraPosPixel.x % TILE_SIZE;
+        tempShift.y = (int)cameraPosPixel.y % TILE_SIZE;
+
+        sf::Vector2i cameraPos(cameraPosPixel.x/TILE_SIZE, cameraPosPixel.y/TILE_SIZE);
+
+        int left   = cameraPos.x - (int)visiableArea.x/2;
+        int top    = cameraPos.y - (int)visiableArea.y/2;
+        int right  = std::min(GameMap::WIDTH, cameraPos.x + (int)visiableArea.x/2);
+        int bottom = std::min(GameMap::HEIGHT, cameraPos.y + (int)visiableArea.y/2);
+
+        sf::Vector2u winSize = window.getSize();
+        sf::Vector2f shiftAlign;
+        shiftAlign.x = - (int)visiableArea.x/2 * TILE_SIZE + (float)(winSize.x/2);
         shiftAlign.y = - (float)(visiableArea.y/2) * TILE_SIZE +  (float)(winSize.y/2);
 
         for (int y = top; y < bottom; ++y) {

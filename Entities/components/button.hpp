@@ -6,7 +6,7 @@
 
 enum class ButtonState { idle, over, pressed, blocked };
 
-void startButton(EntitiesManager& manager, TextureLoader& textureLoader) {
+int startButton(EntitiesManager& manager, TextureLoader& textureLoader) {
     manager.addEntity();
 
     PositionComponent pos(287, 93);
@@ -43,11 +43,19 @@ void startButton(EntitiesManager& manager, TextureLoader& textureLoader) {
     );
     manager.addComponent<AnimationComponent>(animationComponent);
 
-    CallBackComponent<BusEvent&> callBackComponent([](BusEvent& event) { std::cout << "Button Start clicked!\n"; });
+    CallBackComponent<BusEvent&> callBackComponent([&manager](BusEvent& event) { 
+        auto gameStateIDs = manager.with<GameStateComponent>().get();
+        if(gameStateIDs.size() == 0) return;
+        auto gameState = manager.getComponent<GameStateComponent>(gameStateIDs[0]).get();
+        gameState->screen = GameScreen::play;
+        std::cout << "Button Start clicked!\n"; 
+    });
     manager.addComponent<CallBackComponent<BusEvent&>>(callBackComponent);
+
+    return manager.getID();
 }
 
-void continueButton(EntitiesManager& manager, TextureLoader& textureLoader) {
+int continueButton(EntitiesManager& manager, TextureLoader& textureLoader) {
     manager.addEntity();
 
     PositionComponent pos(287, 167);
@@ -86,9 +94,11 @@ void continueButton(EntitiesManager& manager, TextureLoader& textureLoader) {
 
     CallBackComponent<BusEvent&> callBackComponent([](BusEvent& event) { std::cout << "Button Continue clicked!\n"; });
     manager.addComponent<CallBackComponent<BusEvent&>>(callBackComponent);
+
+    return manager.getID();
 }
 
-void settingButton(EntitiesManager& manager, TextureLoader& textureLoader) {
+int settingButton(EntitiesManager& manager, TextureLoader& textureLoader) {
     manager.addEntity();
 
     PositionComponent pos(287, 237);
@@ -127,4 +137,63 @@ void settingButton(EntitiesManager& manager, TextureLoader& textureLoader) {
 
     CallBackComponent<BusEvent&> callBackComponent([](BusEvent& event) { std::cout << "Button Setting clicked!\n"; });
     manager.addComponent<CallBackComponent<BusEvent&>>(callBackComponent);
+
+    return manager.getID();
+}
+
+enum class SettingButtonState {idle};
+int plusButton(EntitiesManager& manager, TextureLoader& textureLoader) {
+    manager.addEntity();
+
+    PositionComponent pos(455, 186);
+    manager.addComponent<PositionComponent>(pos);
+
+    SizeComponent size(32, 32);
+    manager.addComponent<SizeComponent>(size);
+
+    StateComponent state((int) SettingButtonState::idle);
+    manager.addComponent<StateComponent>(state);
+
+    AnimationComponent animationComponent;
+    loadAnimations(animationComponent.animation, 
+        {
+            {(int)SettingButtonState::idle, {
+                {"Store/view/Lable/BtnPlus.png", 1.f, false},
+            }},
+        }
+    );
+    manager.addComponent<AnimationComponent>(animationComponent);
+
+    CallBackComponent<BusEvent&> callBackComponent([](BusEvent& event) { std::cout << "Button Plus clicked!\n"; });
+    manager.addComponent<CallBackComponent<BusEvent&>>(callBackComponent);
+
+    return manager.getID();
+}
+
+int minusButton(EntitiesManager& manager, TextureLoader& textureLoader) {
+    manager.addEntity();
+
+    PositionComponent pos(213, 186);
+    manager.addComponent<PositionComponent>(pos);
+
+    SizeComponent size(32, 32);
+    manager.addComponent<SizeComponent>(size);
+
+    StateComponent state((int) SettingButtonState::idle);
+    manager.addComponent<StateComponent>(state);
+
+    AnimationComponent animationComponent;
+    loadAnimations(animationComponent.animation, 
+        {
+            {(int)SettingButtonState::idle, {
+                {"Store/view/Lable/BtnMinus.png", 1.f, false},
+            }},
+        }
+    );
+    manager.addComponent<AnimationComponent>(animationComponent);
+
+    CallBackComponent<BusEvent&> callBackComponent([](BusEvent& event) { std::cout << "Button Minus clicked!\n"; });
+    manager.addComponent<CallBackComponent<BusEvent&>>(callBackComponent);
+
+    return manager.getID();
 }

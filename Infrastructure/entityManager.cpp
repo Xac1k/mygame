@@ -1,4 +1,5 @@
 #include "entityManager.h"
+#include <Entities/utils/component.hpp>
 
 bool TextureLoader::isLoaded(const std::string& filename) {
     return buff.find(filename) != buff.cend();
@@ -32,6 +33,31 @@ sf::Sprite& TextureLoader::getSprite(const std::string& filename, Vect2D pos, Ve
     sprite.setPosition(pos.x, pos.y);
     sprite.scale(sf::Vector2f({scaleX, scaleY}));
     //sprite.setOrigin({20/2, 20/2});
+
+    return sprite;
+}
+
+sf::Texture TextureLoader::getTexture(const std::string &filename) {
+    if(!isLoaded(filename)) loadFromFile(filename);
+
+    std::string fullpath = buildFullPath(filename, 1);
+    return buff[fullpath];
+}
+
+sf::Sprite& TextureLoader::getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2D size, Vect2D tileSize) {
+    if(!isLoaded(frame.path)) loadFromFile(frame.path);
+
+    sprite = sf::Sprite();
+
+    std::string fullpath = buildFullPath(frame.path, 1);
+    sprite.setTexture(buff[fullpath]);
+
+    float scaleX = size.x / tileSize.x;
+    float scaleY = size.y / tileSize.y;
+    
+    sprite.setTextureRect(sf::IntRect(tileSize.x * frame.cellID.x, tileSize.y * frame.cellID.y, tileSize.x, tileSize.y));
+    sprite.setPosition(pos.x, pos.y);
+    sprite.scale(sf::Vector2f({scaleX, scaleY}));
 
     return sprite;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <cmath>  // ← лучше использовать <cmath> вместо "math.h"
+#include <cmath>
 
 class Vect2D
 {
@@ -26,6 +26,16 @@ public:
         return Vect2D(x + other.x, y + other.y);
     };
 
+    void operator+=(const Vect2D& other) {
+        this->x += other.x;
+        this->y += other.y;
+    };
+
+    void operator-=(const Vect2D& other) {
+        this->x -= other.x;
+        this->y -= other.y;
+    };
+
     Vect2D operator*(const Vect2D& other) const {
         return Vect2D(x * other.x, y * other.y);
     };
@@ -45,8 +55,6 @@ public:
     Vect2D operator/(int other) const {
         return Vect2D(x / other, y / other);
     };
-
-    
 
     Vect2D& operator=(const Vect2D& other) {
         x = other.x; 

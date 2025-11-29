@@ -6,7 +6,7 @@
 #include "../../main.h"
 
 enum class BackgroundState { idle };
-void background(EntitiesManager& manager, TextureLoader& textureLoader) {
+int background(EntitiesManager& manager, TextureLoader& textureLoader) {
     manager.addEntity();
 
     PositionComponent pos(0, 0);
@@ -45,4 +45,6 @@ void background(EntitiesManager& manager, TextureLoader& textureLoader) {
         }
     );
     manager.addComponent<AnimationComponent>(animationComponent);
+
+    return manager.getID();
 }

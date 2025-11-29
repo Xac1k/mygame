@@ -59,6 +59,7 @@
         "chrono": "cpp",
         "format": "cpp",
         "span": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "syncstream": "cpp"
     }
 }

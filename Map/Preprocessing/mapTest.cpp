@@ -1,7 +1,7 @@
 #include "map.hpp"
 
 void positionUpdate(sf::Vector2i& playerPos) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         playerPos.x -= 5;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || 
             sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)) {

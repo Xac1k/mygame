@@ -3,6 +3,17 @@
 #include <functional>
 #include <string>
 #include <map>
+#include <variant>
+#include "../../Map/Preprocessing/map.hpp"
+
+struct PositionOnMapComponent {
+    Vect2D point;
+
+    PositionOnMapComponent(float x, float y): point({x, y}) {};
+    PositionOnMapComponent(Vect2D pointI): point(pointI) {};
+    PositionOnMapComponent(): point({0, 0}) {};
+    ~PositionOnMapComponent() = default;
+};
 
 struct  PositionComponent
 {
@@ -12,6 +23,16 @@ struct  PositionComponent
     PositionComponent(Vect2D pointI): point(pointI) {};
     PositionComponent(): point({0, 0}) {};
     ~PositionComponent() = default;
+};
+
+struct  PlayerPosComponent
+{
+    Vect2D point;
+
+    PlayerPosComponent(float x, float y): point({x, y}) {};
+    PlayerPosComponent(Vect2D pointI): point(pointI) {};
+    PlayerPosComponent(): point({0, 0}) {};
+    ~PlayerPosComponent() = default;
 };
 
 struct SizeComponent {
@@ -47,7 +68,34 @@ struct Frame {
     Frame(): path(""), durationTime(0), repeatingFlag(0) {};
     ~Frame() = default;
 };
+
+struct FrameOnGrid {
+    std::string path;
+    Vect2D cellID;
+    float durationTime;
+    bool repeatingFlag;
+    bool turn = false;
+    Vect2D mirror; //(1, 1) (-1, -1) (-1, 1) (1, -1)
+
+    FrameOnGrid(std::string pathI, Vect2D cellIDI, float time, bool repeat, Vect2D mirrorI): 
+        path(pathI), cellID(cellIDI), durationTime(time), repeatingFlag(repeat), mirror(mirrorI) {};
+    FrameOnGrid(std::string pathI, Vect2D cellIDI, float time, bool repeat): 
+        path(pathI), cellID(cellIDI), durationTime(time), repeatingFlag(repeat), mirror(1, 1) {};
+    FrameOnGrid(): 
+        cellID(0, 0), durationTime(0), repeatingFlag(0) {};
+    ~FrameOnGrid() = default;
+};
+
 using Animation = std::vector<Frame>;
+using AnimationGrid = std::vector<FrameOnGrid>;
+
+enum class DirectionFrame { forward, backward };
+struct AnimationGridComponent {
+    Vect2D TileSizeInGrid;
+    DirectionFrame dir = DirectionFrame::forward;
+    float time = 0;
+    std::map<int, AnimationGrid> animation;
+};
 
 struct AnimationComponent {
     float time = 0;
@@ -61,10 +109,33 @@ struct StateComponent {
     StateComponent(): state(0) {};
 };
 
-enum class GameScreen {start, play, exchange, inventory};
+enum class GameScreen {start, play, exchange, inventory, setting, none};
 struct GameStateComponent {
     GameScreen screen;
+
     GameStateComponent(): screen(GameScreen::start) {};
+};
+
+struct MiniMapComponent {
+    miniMapRenderer miniMap;
+};
+
+struct MapComponent {
+    GameMap map;
+    Vect2D cameraPos;
+    Vect2D visiableArea;
+    int TileSize;
+    TileRenderer tileRender;
+
+    MapComponent(): map(GameMap ()), cameraPos(0, 0), TileSize(64), tileRender(TileRenderer ())  {};
+};
+
+struct CollisionComponent {
+    Vect2D size;
+    Vect2D shiftFromLeftUp;
+
+    CollisionComponent(): size(0, 0), shiftFromLeftUp(0, 0) {};
+    CollisionComponent(Vect2D sizeI, Vect2D shiftFromCenterI): size(sizeI), shiftFromLeftUp(shiftFromCenterI) {};
 };
 
 enum class Items {
@@ -102,4 +173,23 @@ struct DragAndDropComponent {
 
 struct HealthComponent {
     int health;
+
+    HealthComponent(int healthI): health(healthI) {};
+};
+
+struct AttackComponent {
+    int damage;
+
+    AttackComponent(): damage(0) {};
+};
+
+
+template<typename Enum>
+struct MutexComponent {
+    bool blocked;
+    float currTime;
+    float durationTime;
+    Enum WhoIsUsing;
+
+    MutexComponent(): blocked(false), currTime(0), durationTime(0) {};
 };
