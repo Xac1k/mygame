@@ -112,6 +112,7 @@ struct StateComponent {
 enum class GameScreen {start, play, exchange, inventory, setting, none};
 struct GameStateComponent {
     GameScreen screen;
+    int volume = 5;
 
     GameStateComponent(): screen(GameScreen::start) {};
 };

@@ -68,6 +68,9 @@ void BusEvent::update(sf::Event event) {
         case sf::Keyboard::Key::Num5:
             currEvent = Event::Num5;
             break;
+        case sf::Keyboard::Key::Escape:
+            currEvent = Event::Esc;
+            break;
         default:
             currEvent = Event::None;
             break;

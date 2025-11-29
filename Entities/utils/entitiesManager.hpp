@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <Common/regex.hpp>
 #include "component.hpp"
 
 template<typename T>
@@ -65,6 +66,8 @@ class EntitiesManager
 {
 private:
     MapEntities<void> entities = {};
+    std::map<std::string, int> existedEntities;
+
     int id = 0;
 public:
     void addEntity(int entityID) {
@@ -75,6 +78,13 @@ public:
 
     void addEntity() {
         entities[id] = std::unordered_map<std::type_index, std::shared_ptr<void>>();
+        existedEntities[std::to_string(id)] = id;
+        id++;
+    }
+
+    void addEntity(std::string className) {
+        entities[id] = std::unordered_map<std::type_index, std::shared_ptr<void>>();
+        existedEntities[className] = id;
         id++;
     }
 
@@ -82,13 +92,23 @@ public:
         return id-1;
     }
 
-    void clearEntities() {
-        entities.clear();
-    }
-
     void removeEntity(int entityID) {
         entities.erase(entityID);
     };
+
+    void removeEntityByClass(std::string pattern) {
+        for (auto className : existedEntities) {
+            std::cout << className.first << std::endl;
+            if(regexmatch(pattern, className.first)) {
+                removeEntity(className.second);
+            }
+        }
+    }
+
+    bool isEntityExist(std::string className) {
+        auto it = existedEntities.find(className);
+        return it != existedEntities.end();
+    }
 
     template <typename ...T>
     void addComponent(int entityID, std::function<void(T...)> callback) {

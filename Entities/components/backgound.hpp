@@ -6,8 +6,9 @@
 #include "../../main.h"
 
 enum class BackgroundState { idle };
-int background(EntitiesManager& manager, TextureLoader& textureLoader) {
-    manager.addEntity();
+int background(EntitiesManager& manager, TextureLoader& textureLoader, std::string className) {
+    if(manager.isEntityExist(className)) return -1;
+    manager.addEntity(className);
 
     PositionComponent pos(0, 0);
     manager.addComponent<PositionComponent>(pos);
@@ -41,6 +42,31 @@ int background(EntitiesManager& manager, TextureLoader& textureLoader) {
                 {"Store/view/Background/sprites/startmenu-16.png", 0.25f, false},
                 {"Store/view/Background/sprites/startmenu-17.png", 0.25f, false},
                 {"Store/view/Background/sprites/startmenu-18.png", 0.25f, true},
+            }},
+        }
+    );
+    manager.addComponent<AnimationComponent>(animationComponent);
+
+    return manager.getID();
+}
+
+int backgroundSetting(EntitiesManager& manager, TextureLoader& textureLoader, std::string className) {
+    manager.addEntity(className);
+
+    PositionComponent pos(197, 50);
+    manager.addComponent<PositionComponent>(pos);
+
+    SizeComponent size(306, 306);
+    manager.addComponent<SizeComponent>(size);
+
+    StateComponent state((int) BackgroundState::idle);
+    manager.addComponent<StateComponent>(state);
+
+    AnimationComponent animationComponent;
+    loadAnimations(animationComponent.animation, 
+        {
+            {(int)BackgroundState::idle, {
+                {"Store/view/Lable/BackgroundSettings.png", 5.f, false},
             }},
         }
     );

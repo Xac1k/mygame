@@ -21,6 +21,7 @@
 #include <Systems/SpawnSystem.hpp>
 #include <Systems/MovementPlayerSystem.hpp>
 #include <Systems/HurtPlayerSystem.hpp>
+#include <Systems/VolumLevelDraw.hpp>
 
 void SettingPage(
     sf::Clock& clock, sf::RenderWindow& window, BusEvent& busEvent,
@@ -35,12 +36,19 @@ void SettingPage(
             window.close();
         }
         busEvent.update(event);
-        //TODO: Добавить Поле ввода настроек
+        ButtonUpdate(manager, busEvent);
+        if(busEvent.currEvent == BusEvent::Event::Esc) {
+            auto ids = manager.with<GameStateComponent>().get();
+            if(ids.size() != 0) {
+                auto gameState = manager.getComponent<GameStateComponent>(ids[0]).get();
+                gameState->screen = GameScreen::start;
+            }
+        }
     }
     animator.AnimationUpdate(manager, df);
 
-    //TODO: Добавить окно заднего меню
     window.clear(sf::Color::White);
     renderer.render(window, manager, textureLoader);
+    VolumeLevelDrawSystem(window, textureLoader, manager);
     window.display();
 }

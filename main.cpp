@@ -10,6 +10,7 @@
 #include <Entities/components/inventory.hpp>
 #include <Entities/components/button.hpp>
 #include <Entities/components/player.hpp>
+#include <Entities/components/Label.hpp>
 #include <Entities/components/map.hpp>
 
 #include <Systems/InventoryContextMenuSystem.hpp>
@@ -32,9 +33,10 @@
 void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
     gameState(manager);
 
-    audioManager.loadMusic("Стартовое меню", "Sounds/asset/the_wind.mp3");
+    audioManager.loadMusic("Стартовое меню", "Sounds/asset/Дымок.mp3");
     audioManager.loadMusic("PlayerDamage", "Sounds/asset/PlayerDamage.mp3");
     audioManager.playMusic("Стартовое меню", true);
+    audioManager.setMasterVolume(1000);
 }
 
 int main() {
@@ -56,17 +58,17 @@ int main() {
     auto gameStateIds = manager.with<GameStateComponent>().get();
     auto prevGameState = GameScreen::none;
     auto gameState = manager.getComponent<GameStateComponent>(gameStateIds[0]).get();
-    std::map<std::string, int> existedEntities;
     
     while(window.isOpen())
     {
         if(gameState->screen == GameScreen::start) {
             if(prevGameState != gameState->screen) {
                 prevGameState = gameState->screen;
-                existedEntities["background"] = background(manager, textureLoader);
-                existedEntities["startBtn"] = startButton(manager, textureLoader);
-                existedEntities["continueBtn"] = continueButton(manager, textureLoader);
-                existedEntities["settingBtn"] = settingButton(manager, textureLoader);
+                manager.removeEntityByClass("settingMenu*");
+                background(manager, textureLoader, "startMenu:background");
+                startButton(manager, textureLoader, "startMenu:button:start");
+                continueButton(manager, textureLoader, "startMenu:button:continue");
+                settingButton(manager, textureLoader, "startMenu:button:setting");
             }
             StartPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
         }
@@ -74,11 +76,12 @@ int main() {
         if(gameState->screen == GameScreen::setting) {
             if(prevGameState != gameState->screen) {
                 prevGameState = gameState->screen;
-                manager.removeEntity(existedEntities["continueBtn"]);
-                manager.removeEntity(existedEntities["startBtn"]);
-                manager.removeEntity(existedEntities["settingBtn"]);
-                existedEntities["plusVolumeBtn"] = plusButton(manager, textureLoader);
-                existedEntities["minusVolumeBtn"] = minusButton(manager, textureLoader);
+                manager.removeEntityByClass("startMenu:button*");
+                backgroundSetting(manager, textureLoader, "settingMenu:background");
+                plusButton(manager, textureLoader, audioManager, "settingMenu:button:plus");
+                minusButton(manager, textureLoader, audioManager, "settingMenu:button:minus");
+                optionLable(manager, textureLoader, "settingMenu:lable:option");
+                volumeLable(manager, textureLoader, "settingMenu:button:volume");
             }
             SettingPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
         }
@@ -86,14 +89,10 @@ int main() {
         if(gameState->screen == GameScreen::play) {
             if(prevGameState != gameState->screen) {
                 prevGameState = gameState->screen;
-                manager.removeEntity(existedEntities["background"]);
-                manager.removeEntity(existedEntities["continueBtn"]);
-                manager.removeEntity(existedEntities["startBtn"]);
-                manager.removeEntity(existedEntities["settingBtn"]);
-
+                manager.removeEntityByClass("startMenu:*");
                 player(manager, textureLoader);
                 inventory(manager, textureLoader);
-                existedEntities["map"] = map(manager, textureLoader);
+                map(manager, textureLoader);
                 SpawnSystemUpdate(manager);
             }
             PlayPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);

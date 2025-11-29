@@ -10,7 +10,7 @@ private:
 public:
     enum class Event {
         MouseDownLeft, MouseDownRight, MouseMove, MouseUp, A, W, S, D, I, Space, None,
-        Num0, Num1, Num2, Num3, Num4, Num5, Last
+        Num0, Num1, Num2, Num3, Num4, Num5, Esc, Last
     };
     Event currEvent;
     Vect2D mousePos;
