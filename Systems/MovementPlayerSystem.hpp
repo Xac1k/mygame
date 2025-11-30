@@ -4,6 +4,7 @@
 #include <Entities/utils/component.hpp>
 #include <Entities/utils/entitiesManager.hpp>
 #include <SFML/Graphics.hpp>
+#include <Common/CollisionRect.hpp>
 
 constexpr float lenVeloVect = TILE_SIZE * 8;
 
@@ -31,8 +32,8 @@ Direction getDirection(Vect2D vect) {
     return Direction::none;
 }
 
-std::tuple<int, int> isPermitted(MapComponent* map, PlayerPosComponent* playerPos, CollisionComponent* rect, SizeComponent* size, VelocityComponent* velo, float df) {
-    auto collRectLeftUp = playerPos->point - Vect2D(size->size.x/2, size->size.y/2) + rect->shiftFromLeftUp + velo->dir * df;
+std::tuple<int, int> isPermittedByMap(MapComponent* map, PositionOnMapComponent* playerPos, CollisionComponent* rect, OriginComponent* origin, VelocityComponent* velo, float df) {
+    auto collRectLeftUp = playerPos->point - origin->shift + rect->shiftFromLeftUp + velo->dir * df;
     sf::Vector2i Left = {(int)collRectLeftUp.x, (int)(collRectLeftUp.y + rect->size.y/2)};
     sf::Vector2i LeftUp = {(int)collRectLeftUp.x, (int)collRectLeftUp.y};
     sf::Vector2i Up = {(int)(collRectLeftUp.x + rect->size.x/2), (int)collRectLeftUp.y};
@@ -75,8 +76,32 @@ std::tuple<int, int> isPermitted(MapComponent* map, PlayerPosComponent* playerPo
     return std::make_tuple<int, int>(1, 1);
 }
 
+std::tuple<int, int> isPermittedByEnemy(
+    EntitiesManager& manager, PositionOnMapComponent* playerPos, CollisionComponent* playerCollRect,
+    OriginComponent* origin, VelocityComponent* velo, float df
+) {
+    auto playerCollRectLeftUp = playerPos->point - origin->shift + playerCollRect->shiftFromLeftUp;
+    int xAllow = 1; int yAllow = 1;
+
+    auto enemyIDs = manager.withClassName("*Enemy*");
+    for (int enemyID : enemyIDs) {
+        auto enemyPos = manager.getComponent<PositionOnMapComponent>(enemyID).get();
+        auto enemySize = manager.getComponent<SizeComponent>(enemyID).get();
+        auto enemyCollRect = manager.getComponent<CollisionComponent>(enemyID).get();
+        auto enemyCollRectLeftUp = enemyPos->point + enemyCollRect->shiftFromLeftUp;
+        if(boxesOverlap(playerCollRectLeftUp + Vect2D(velo->dir.x * df, 0), playerCollRect->size, enemyCollRectLeftUp, enemyCollRect->size)) {
+            xAllow = 0;
+        }
+        if(boxesOverlap(playerCollRectLeftUp + Vect2D(0, velo->dir.y * df), playerCollRect->size, enemyCollRectLeftUp, enemyCollRect->size)) {
+            yAllow = 0;
+        }
+        return std::make_pair(xAllow, yAllow);
+    }
+    return std::make_pair(1, 1);
+}
+
 void CreateMovementPlayerSystem(EntitiesManager& manager) {
-    auto playerIds = manager.with<PlayerPosComponent>().get();
+    auto playerIds = manager.withClassName("*player*");
     if(playerIds.size() == 0) return;
 
     auto playerVelocity = manager.getComponent<VelocityComponent>(playerIds[0]).get();
@@ -102,7 +127,7 @@ void CreateMovementPlayerSystem(EntitiesManager& manager) {
 
 void MovementPlayerSystem(EntitiesManager& manager, float df) {
     CreateMovementPlayerSystem(manager);
-    auto playerIds = manager.with<PlayerPosComponent>().get();
+    auto playerIds = manager.withClassName("*player*");
     if(playerIds.size() == 0) return;
 
     auto playerMutex = manager.getComponent<MutexComponent<ControlFlow>>(playerIds[0]).get();
@@ -112,21 +137,22 @@ void MovementPlayerSystem(EntitiesManager& manager, float df) {
     if(mapIds.size() == 0) return;
 
     auto playerVelocity = manager.getComponent<VelocityComponent>(playerIds[0]).get();
-    auto playerPos = manager.getComponent<PlayerPosComponent>(playerIds[0]).get();
+    auto playerPos = manager.getComponent<PositionOnMapComponent>(playerIds[0]).get();
     auto playerState = manager.getComponent<StateComponent>(playerIds[0]).get();
     auto playerCollisionRect = manager.getComponent<CollisionComponent>(playerIds[0]).get();
-    auto playerSize = manager.getComponent<SizeComponent>(playerIds[0]).get();
+    auto playerOrigin = manager.getComponent<OriginComponent>(playerIds[0]).get();
 
     auto map = manager.getComponent<MapComponent>(mapIds[0]).get();
-    auto [xCoef, yCoef] = isPermitted(map, playerPos, playerCollisionRect, playerSize, playerVelocity, df);
+    auto [xCoef, yCoef] = isPermittedByMap(map, playerPos, playerCollisionRect, playerOrigin, playerVelocity, df);
+    auto [xCoefEnemy, yCoefEnemy] = isPermittedByEnemy(manager, playerPos, playerCollisionRect, playerOrigin, playerVelocity, df);
 
     if((playerVelocity->dir.x || playerVelocity->dir.y) && (xCoef || yCoef)) {
-        playerPos->point += Vect2D(playerVelocity->dir.x * xCoef * df, playerVelocity->dir.y * yCoef * df);
+        playerPos->point += Vect2D(playerVelocity->dir.x * xCoef * xCoefEnemy * df, playerVelocity->dir.y * yCoef * yCoefEnemy * df);
 
-        if(0 < playerVelocity->dir.x * xCoef) playerState->state = (int)PlayerState::WalkRight;
-        if(0 > playerVelocity->dir.x * xCoef) {playerState->state = (int)PlayerState::WalkLeft;}
-        if(0 < playerVelocity->dir.y * yCoef) {playerState->state = (int)PlayerState::WalkDirect;}
-        if(0 > playerVelocity->dir.y * yCoef) {playerState->state = (int)PlayerState::WalkBackward;}
+        if(0 < playerVelocity->dir.x * xCoef * xCoefEnemy) playerState->state = (int)PlayerState::WalkRight;
+        if(0 > playerVelocity->dir.x * xCoef * xCoefEnemy) {playerState->state = (int)PlayerState::WalkLeft;}
+        if(0 < playerVelocity->dir.y * yCoef * yCoefEnemy) {playerState->state = (int)PlayerState::WalkDirect;}
+        if(0 > playerVelocity->dir.y * yCoef * yCoefEnemy) {playerState->state = (int)PlayerState::WalkBackward;}
     }
     else {
         if(playerState->state == (int)PlayerState::WalkRight) playerState->state = (int)PlayerState::IdleRight;

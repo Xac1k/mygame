@@ -18,6 +18,7 @@
 #include <Systems/MovementPlayerSystem.hpp>
 #include <Systems/InventoryDrawSystem.hpp>
 #include <Systems/ButtonUpdateSystem.hpp>
+#include <Systems/SpawnBarrelSystem.hpp>
 #include <Systems/HurtPlayerSystem.hpp>
 #include <Systems/AnimationUpdate.hpp>
 #include <Systems/MapDrawSystem.hpp>
@@ -27,8 +28,7 @@
 #include <Pages/StartPage.hpp>
 #include <Pages/PlayPage.hpp>
 
-//TODO: Переход между экранами
-//TODO: Взаимодействия с сундуком
+//TODO: Взаимодействия с бочкой
 
 void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
     gameState(manager);
@@ -94,6 +94,7 @@ int main() {
                 inventory(manager, textureLoader);
                 map(manager, textureLoader);
                 SpawnSystemUpdate(manager);
+                SpawnBarrelSystemUpdate(manager, textureLoader);
             }
             PlayPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
         }

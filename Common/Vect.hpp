@@ -61,4 +61,20 @@ public:
         y = other.y;
         return *this;
     };
+
+    bool operator>(const Vect2D& other) {
+        return x > other.x && y > other.y;
+    };
+
+    bool operator>(const int& num) {
+        return x > num && y > num;
+    };
+
+    bool operator<(const int& num) {
+        return x < num && y < num;
+    };
+
+    bool operator<(const Vect2D& other) {
+        return x < other.x && y < other.y;
+    };
 };

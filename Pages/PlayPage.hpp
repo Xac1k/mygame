@@ -21,6 +21,7 @@
 #include <Systems/SpawnSystem.hpp>
 #include <Systems/MovementPlayerSystem.hpp>
 #include <Systems/HurtPlayerSystem.hpp>
+#include <Systems/EntitiOnMapDrawSystem.hpp>
 
 void PlayPage(
     sf::Clock& clock, sf::RenderWindow& window, BusEvent& busEvent,
@@ -45,8 +46,8 @@ void PlayPage(
 
     window.clear(sf::Color::White);
     MapDrawSystem(window, textureLoader, manager);
+    EntitiOnMapDrawSystem(window, textureLoader, manager);
     renderer.render(window, manager, textureLoader);
-
     InventoryDrawSystem(window, textureLoader, manager);
     window.display();
 }

@@ -4,28 +4,31 @@
 #include "../../Infrastructure/entityManager.h"
 #include "../utils/animationLoader.hpp"
 #include "../../main.h"
+#include <Entities/components/map.hpp>
 
 enum class PlayerState { 
     IdleDirect, IdleBackward, IdleLeft, 
     IdleRight, WalkDirect, WalkBackward, 
     WalkLeft, WalkRight, HurtDirect, 
-    HurtBackward, HurtLeft, HurtRight };
+    HurtBackward, HurtLeft, HurtRight,
+    AttackIdleLeft, AttackIdleRight, AttackIdleDirect,
+    AttackIdleBackward,
+ };
 enum class ControlFlow {
     HurtSystem, 
     All
 };
-
 void player(EntitiesManager& manager, TextureLoader& textureLoader) {
-    manager.addEntity();
+    manager.addEntity("playMenu:player");
 
-    PlayerPosComponent pos(0, 0);
-    manager.addComponent<PlayerPosComponent>(pos);
-
-    PositionComponent posMap(WINDOW_WIDTH/2 - 128/2, WINDOW_HEIGHT/2 - 128/2);
-    manager.addComponent<PositionComponent>(posMap);
+    PositionOnMapComponent posMap(0, 0);
+    manager.addComponent<PositionOnMapComponent>(posMap);
 
     SizeComponent size(128, 128);
     manager.addComponent<SizeComponent>(size);
+
+    OriginComponent origin(64, 64);
+    manager.addComponent<OriginComponent>(origin);
 
     VelocityComponent velo;
     manager.addComponent<VelocityComponent>(velo);
@@ -41,6 +44,9 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
 
     MutexComponent<ControlFlow> mutex;
     manager.addComponent<MutexComponent<ControlFlow>>(mutex);
+
+    WeaponComponent weaponComp(20, TILE_SIZE*2);
+    manager.addComponent<WeaponComponent>(weaponComp);
 
     AnimationGridComponent animationComponent;
     animationComponent.TileSizeInGrid = {64, 64};
@@ -194,6 +200,46 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
                 {"Store/view/Player/Swordsman_lvl1_Hurt.png", {3, 3}, 0.125f, false},
                 {"Store/view/Player/Swordsman_lvl1_Hurt.png", {4, 3}, 0.125f, false},
             }},
+            {(int)PlayerState::AttackIdleDirect, {
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 4}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 5}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 6}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {0, 7}, 0.125f, false},
+            }},
+            {(int)PlayerState::AttackIdleLeft, {
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 4}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 5}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 6}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {1, 7}, 0.125f, false},
+            }},
+            {(int)PlayerState::AttackIdleRight, {
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 4}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 5}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 6}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {2, 7}, 0.125f, false},
+            }},
+            {(int)PlayerState::AttackIdleBackward, {
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 4}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 5}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 6}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_attack.png", {3, 7}, 0.125f, false},
+            }}
         }
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);

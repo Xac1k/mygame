@@ -82,8 +82,9 @@ public:
         id++;
     }
 
-    void addEntity(std::string className) {
+    void addEntity(std::string className, bool useID=false) {
         entities[id] = std::unordered_map<std::type_index, std::shared_ptr<void>>();
+        if(useID) className += ":" + std::to_string(id);
         existedEntities[className] = id;
         id++;
     }
@@ -161,5 +162,16 @@ public:
             }
         }
         return EntityQuery<T>(result, entities);
+    }
+
+    std::vector<int> withClassName(std::string pattern) {
+        std::vector<int> result;
+        for (auto className : existedEntities) {
+            std::cout << className.first << std::endl;
+            if(regexmatch(pattern, className.first)) {
+                result.push_back(className.second);
+            }
+        }
+        return result;
     }
 };

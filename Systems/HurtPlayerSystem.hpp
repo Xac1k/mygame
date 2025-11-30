@@ -6,11 +6,11 @@
 #include <SFML/Graphics.hpp>
 
 void HurtPlayerSystem(EntitiesManager& manager, float df, AudioSystem& audioManager) {
-    auto playerIds = manager.with<PlayerPosComponent>().get();
+    auto playerIds = manager.withClassName("*player*");
     if(playerIds.size() == 0) return;
 
     auto playerVelocity = manager.getComponent<VelocityComponent>(playerIds[0]).get();
-    auto playerPos = manager.getComponent<PlayerPosComponent>(playerIds[0]).get();
+    auto playerPos = manager.getComponent<PositionOnMapComponent>(playerIds[0]).get();
     auto playerState = manager.getComponent<StateComponent>(playerIds[0]).get();
     auto playerCollisionRect = manager.getComponent<CollisionComponent>(playerIds[0]).get();
     auto playerSize = manager.getComponent<SizeComponent>(playerIds[0]).get();

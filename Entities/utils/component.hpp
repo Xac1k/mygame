@@ -25,16 +25,6 @@ struct  PositionComponent
     ~PositionComponent() = default;
 };
 
-struct  PlayerPosComponent
-{
-    Vect2D point;
-
-    PlayerPosComponent(float x, float y): point({x, y}) {};
-    PlayerPosComponent(Vect2D pointI): point(pointI) {};
-    PlayerPosComponent(): point({0, 0}) {};
-    ~PlayerPosComponent() = default;
-};
-
 struct SizeComponent {
     Vect2D size;
 
@@ -102,6 +92,13 @@ struct AnimationComponent {
     std::map<int, Animation> animation;
 };
 
+struct OriginComponent {
+    Vect2D shift;
+
+    OriginComponent(float x, float y): shift({x, y}) {};
+    OriginComponent(Vect2D shiftI): shift(shiftI) {};
+};
+
 struct StateComponent {
     int state;
 
@@ -136,7 +133,7 @@ struct CollisionComponent {
     Vect2D shiftFromLeftUp;
 
     CollisionComponent(): size(0, 0), shiftFromLeftUp(0, 0) {};
-    CollisionComponent(Vect2D sizeI, Vect2D shiftFromCenterI): size(sizeI), shiftFromLeftUp(shiftFromCenterI) {};
+    CollisionComponent(Vect2D sizeI, Vect2D shiftFromLeftUpI): size(sizeI), shiftFromLeftUp(shiftFromLeftUpI) {};
 };
 
 enum class Items {
@@ -174,16 +171,26 @@ struct DragAndDropComponent {
 
 struct HealthComponent {
     int health;
+    int maxHealth;
 
-    HealthComponent(int healthI): health(healthI) {};
+    HealthComponent(int healthI): health(healthI), maxHealth(100) {};
+    HealthComponent(int healthI, int maxHealth): health(healthI), maxHealth(maxHealth) {};
 };
 
-struct AttackComponent {
+struct WeaponComponent {
     int damage;
+    float atackLength;
 
-    AttackComponent(): damage(0) {};
+    WeaponComponent(int damageI, float atackLengthI): damage(damageI), atackLength(atackLengthI) {};
 };
 
+using Possibility = float;
+struct LootTableComponent {
+    std::vector<std::pair<Items, Possibility>> lootTable;
+
+    LootTableComponent(std::vector<std::pair<Items, Possibility>> lootTableI): lootTable(lootTableI) {};
+    LootTableComponent(): lootTable() {};
+};
 
 template<typename Enum>
 struct MutexComponent {
