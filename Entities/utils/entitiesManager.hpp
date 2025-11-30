@@ -57,6 +57,14 @@ public:
         }
     }
 
+    EntityQuery<ComponentTypes...> except(int ID) {
+        std::vector<int> result;
+        for(auto entityID : entityIDs) {
+            if(entityID != ID) result.push_back(entityID);
+        }
+        return EntityQuery<ComponentTypes...>(result, entities);
+    }
+
     std::vector<int> get() const {
         return entityIDs;
     }
@@ -99,7 +107,6 @@ public:
 
     void removeEntityByClass(std::string pattern) {
         for (auto className : existedEntities) {
-            std::cout << className.first << std::endl;
             if(regexmatch(pattern, className.first)) {
                 removeEntity(className.second);
             }
@@ -131,6 +138,20 @@ public:
         auto entity = entities.find(id-1);
         if (entity == entities.end()) return;
         entity->second[typeid(T)] = std::make_shared<T>(component);
+    }
+
+    template <typename T>
+    void addComponent(T& component, int entityID) {
+        auto entity = entities.find(entityID);
+        if (entity == entities.end()) return;
+        entity->second[typeid(T)] = std::make_shared<T>(component);
+    }
+
+    template <typename T>
+    void removeComponent(int entityID) {
+        auto entity = entities.find(entityID);
+        if (entity == entities.end()) return;
+        entity->second.erase(typeid(T));
     }
 
     template <typename T>
@@ -167,7 +188,6 @@ public:
     std::vector<int> withClassName(std::string pattern) {
         std::vector<int> result;
         for (auto className : existedEntities) {
-            std::cout << className.first << std::endl;
             if(regexmatch(pattern, className.first)) {
                 result.push_back(className.second);
             }

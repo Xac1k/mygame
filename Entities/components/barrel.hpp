@@ -5,9 +5,7 @@
 #include "../utils/animationLoader.hpp"
 #include "../../main.h"
 
-enum class BarrelState { 
-    idle, death
-};
+enum class BarrelState {idle, death = 450};
 enum class ControlFlowBarrel {
     HurtSystem, 
     All
@@ -37,8 +35,11 @@ void barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOn
     manager.addComponent<MutexComponent<ControlFlowBarrel>>(mutex);
 
     LootTableComponent lootTable;
-    lootTable.lootTable.push_back({Items::ironPickaxe, 1.f});
+    lootTable.lootTable.push_back({Items::goldenPickaxe, 1.f});
     manager.addComponent<LootTableComponent>(lootTable);
+
+    DeathComponent deathComp(0.125f* 7, "BarrelDeath");
+    manager.addComponent<DeathComponent>(deathComp);
 
     AnimationGridComponent animationComponent;
     animationComponent.TileSizeInGrid = {64, 64};
@@ -48,12 +49,13 @@ void barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOn
                 {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 0}, 1.f, true},
             }},
             {(int)BarrelState::death, {
-                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 1},  0.25f, false},
-                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 0},  0.25f, false},
-                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 1},  0.25f, false},
-                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 0},  0.25f, false},
-                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 1},  0.25f, false},
-                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 0},  0.25f, false},
+                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 1},  0.125f, false},
+                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 0},  0.125f, false},
+                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 1},  0.125f, false},
+                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 0},  0.125f, false},
+                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 1},  0.125f, false},
+                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 0},  0.125f, false},
+                {"Store/view/Enemy/Barrel/Barrel Sprite.png", {0, 1},  0.125f, false},
             }},
         }
     );

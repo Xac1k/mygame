@@ -85,6 +85,8 @@ std::tuple<int, int> isPermittedByEnemy(
 
     auto enemyIDs = manager.withClassName("*Enemy*");
     for (int enemyID : enemyIDs) {
+        auto enemyDeath = manager.getComponent<DeathComponent>(enemyID).get();
+        if(enemyDeath->isDead) continue;
         auto enemyPos = manager.getComponent<PositionOnMapComponent>(enemyID).get();
         auto enemySize = manager.getComponent<SizeComponent>(enemyID).get();
         auto enemyCollRect = manager.getComponent<CollisionComponent>(enemyID).get();
@@ -95,9 +97,8 @@ std::tuple<int, int> isPermittedByEnemy(
         if(boxesOverlap(playerCollRectLeftUp + Vect2D(0, velo->dir.y * df), playerCollRect->size, enemyCollRectLeftUp, enemyCollRect->size)) {
             yAllow = 0;
         }
-        return std::make_pair(xAllow, yAllow);
     }
-    return std::make_pair(1, 1);
+    return std::make_pair(xAllow, yAllow);
 }
 
 void CreateMovementPlayerSystem(EntitiesManager& manager) {

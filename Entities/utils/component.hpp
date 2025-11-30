@@ -15,8 +15,7 @@ struct PositionOnMapComponent {
     ~PositionOnMapComponent() = default;
 };
 
-struct  PositionComponent
-{
+struct  PositionComponent {
     Vect2D point;
 
     PositionComponent(float x, float y): point({x, y}) {};
@@ -178,10 +177,37 @@ struct HealthComponent {
 };
 
 struct WeaponComponent {
-    int damage;
-    float atackLength;
+    int damage; // Урон оружия
+    float atackLength; // Растояние атаки
+    float deviation; // Градус отклонения от угла атаки
 
-    WeaponComponent(int damageI, float atackLengthI): damage(damageI), atackLength(atackLengthI) {};
+    WeaponComponent(int damageI, float atackLengthI, float deviationI): damage(damageI), atackLength(atackLengthI), deviation(deviationI) {};
+};
+
+enum class Effects {none, fire, wet, frozen, poisoned};
+// Персонаж атакует кого-то
+struct AttackComponent {
+    int damage;
+    Vect2D attackerPos; // Позиция атакующего
+    Vect2D attackArea; // [x, y] x - начальный угол, y - конечный угол. Диапозон из которого мы берем entity 
+    float attackLen; // Растояние между атакующим и атакованным
+    Effects effect; // Нужно ли накладывать эффект или нет?
+    Vect2D repulsionVel; //Если нужно кого-то оттолкнуть(скорость)
+
+    AttackComponent(
+        int damageI, Vect2D AttackerPosI, 
+        Vect2D attackAreaI, float attackLenI, 
+        Effects effectI, Vect2D repulsionVelI
+    ): damage(damageI), attackerPos(AttackerPosI),
+    attackArea(attackAreaI), attackLen(attackLenI),
+    effect(effectI), repulsionVel(repulsionVelI) {};
+
+    AttackComponent(
+        int damageI, Vect2D AttackerPosI, 
+        Vect2D attackAreaI, float attackLenI
+    ): damage(damageI), attackerPos(AttackerPosI),
+    attackArea(attackAreaI), attackLen(attackLenI) {};
+
 };
 
 using Possibility = float;
@@ -200,4 +226,19 @@ struct MutexComponent {
     Enum WhoIsUsing;
 
     MutexComponent(): blocked(false), currTime(0), durationTime(0) {};
+};
+
+struct DeathComponent {
+    bool isDead = false;
+    float deathTime = 0.0f;
+    float fadeOutTime = 2.0f;
+    std::string soudnFXname;
+
+    DeathComponent(float timeLimit, std::string soundFX): fadeOutTime(timeLimit), soudnFXname(soundFX) {}
+    DeathComponent(std::string soundFX): soudnFXname(soundFX) {};
+};
+
+enum class Facing {Down, Up, Left, Rigth};
+struct DirectionalDeathComponent {
+    Facing facing = Facing::Down;
 };

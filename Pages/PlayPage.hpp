@@ -22,6 +22,10 @@
 #include <Systems/MovementPlayerSystem.hpp>
 #include <Systems/HurtPlayerSystem.hpp>
 #include <Systems/EntitiOnMapDrawSystem.hpp>
+#include <Systems/PlayerAttackSystem.hpp>
+#include <Systems/HurtEntitySystem.hpp>
+#include <Systems/DeathEntitySystem.hpp>
+#include <Systems/DeathAnimationUpdate.hpp>
 
 void PlayPage(
     sf::Clock& clock, sf::RenderWindow& window, BusEvent& busEvent,
@@ -39,9 +43,14 @@ void PlayPage(
         ButtonUpdate(manager, busEvent);
         InventoryContextMenuUpdate(manager, busEvent);
         InventoryDndUpdate(manager, busEvent);
+        InitAttackPlayerSystem(manager, busEvent, audioManager);
     }
     HurtPlayerSystem(manager, df, audioManager);
+    UpdateAttackPlayerSystem(manager, df);
+    HurtEntitySystem(manager);
+    DeathEntitySystem(manager, audioManager);
     MovementPlayerSystem(manager, df);
+    DeathAnimationUpdateSystem(manager);
     animator.AnimationUpdate(manager, df);
 
     window.clear(sf::Color::White);
