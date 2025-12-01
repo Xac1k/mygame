@@ -26,6 +26,8 @@
 #include <Systems/HurtEntitySystem.hpp>
 #include <Systems/DeathEntitySystem.hpp>
 #include <Systems/DeathAnimationUpdate.hpp>
+#include <Systems/ConvertorToLoot.hpp>
+#include <Systems/PickUpItemsSystem.hpp>
 
 void PlayPage(
     sf::Clock& clock, sf::RenderWindow& window, BusEvent& busEvent,
@@ -48,9 +50,11 @@ void PlayPage(
     HurtPlayerSystem(manager, df, audioManager);
     UpdateAttackPlayerSystem(manager, df);
     HurtEntitySystem(manager);
-    DeathEntitySystem(manager, audioManager);
+    DeathEntitySystem(manager, audioManager, df);
     MovementPlayerSystem(manager, df);
     DeathAnimationUpdateSystem(manager);
+    LootDropSystem(manager, textureLoader);
+    LootPickUpSystem(manager, audioManager);
     animator.AnimationUpdate(manager, df);
 
     window.clear(sf::Color::White);

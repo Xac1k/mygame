@@ -14,6 +14,8 @@ void addAttackComp(EntitiesManager& manager, int ID, float angle) {
     Vect2D attackArea(angle - playerWeapon->deviation, angle + playerWeapon->deviation);
     if(attackArea.x > 360) attackArea.x -= 360;
     if(attackArea.y > 360) attackArea.y -= 360;
+    if(attackArea.x < 0) attackArea.x += 360;
+    if(attackArea.y < 0) attackArea.y += 360;
     AttackComponent attack(playerWeapon->damage, playerPos, attackArea, playerWeapon->atackLength);
     manager.addComponent<AttackComponent>(attack, ID);
 }

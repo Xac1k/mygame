@@ -12,7 +12,8 @@ enum class PlayerState {
     WalkLeft, WalkRight, HurtDirect, 
     HurtBackward, HurtLeft, HurtRight,
     AttackIdleLeft, AttackIdleRight, AttackIdleDirect,
-    AttackIdleBackward,
+    AttackIdleBackward, AttackWalkLeft, AttackWalkRight, 
+    AttackWalkDirect, AttackWalkBackward
  };
 enum class ControlFlow {
     HurtSystem, 
@@ -48,6 +49,9 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
 
     WeaponComponent weaponComp(20, TILE_SIZE*2, 60);
     manager.addComponent<WeaponComponent>(weaponComp);
+
+    DeathComponent deathComp(0.125f* 8, "PlayerDeath");
+    manager.addComponent<DeathComponent>(deathComp);
 
     AnimationGridComponent animationComponent;
     animationComponent.TileSizeInGrid = {64, 64};
@@ -240,6 +244,38 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
                 {"Store/view/Player/Swordsman_lvl1_attack.png", {5, 3}, 0.125f, false},
                 {"Store/view/Player/Swordsman_lvl1_attack.png", {6, 3}, 0.125f, false},
                 {"Store/view/Player/Swordsman_lvl1_attack.png", {7, 3}, 0.125f, false},
+            }},
+            {(int)PlayerState::AttackWalkDirect, {
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {0, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {1, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {2, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {3, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {4, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {5, 0}, 0.125f, false},
+            }},
+            {(int)PlayerState::AttackWalkLeft, {
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {0, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {1, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {2, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {3, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {4, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {5, 1}, 0.125f, false},
+            }},
+            {(int)PlayerState::AttackWalkRight, {
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {0, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {1, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {2, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {3, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {4, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {5, 2}, 0.125f, false},
+            }},
+            {(int)PlayerState::AttackWalkBackward, {
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {0, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {1, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {2, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {3, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {4, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {5, 3}, 0.125f, false},
             }}
         }
     );

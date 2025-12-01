@@ -140,7 +140,8 @@ enum class Items {
     startSword, startSpear, startPickaxe, 
     ironSword, ironSpear, ironPickaxe,
     goldenSword, goldenSpear, goldenPickaxe,
-    fireSword, fireSpear, firePickaxe
+    fireSword, fireSpear, firePickaxe,
+    coin,
 };
 struct InventoryComponent {
     std::vector<std::vector<Items>> inventory;
@@ -210,12 +211,40 @@ struct AttackComponent {
 
 };
 
-using Possibility = float;
-struct LootTableComponent {
-    std::vector<std::pair<Items, Possibility>> lootTable;
+struct LootDrop {
+    Items itemID;        
+    float chance;  
+    int minCount;
+    int maxCount;
+    float offsetRadius;  
 
-    LootTableComponent(std::vector<std::pair<Items, Possibility>> lootTableI): lootTable(lootTableI) {};
-    LootTableComponent(): lootTable() {};
+    LootDrop( Items itemIDI, float chanceI = 1.0f, 
+        int minCountI = 1, int maxCountI = 1, 
+        float offsetRadiusI = 30.0f
+    ): itemID(itemIDI), chance(chanceI),
+    minCount(minCountI), maxCount(maxCountI), 
+    offsetRadius(offsetRadiusI) {};
+};
+
+struct LootTableComponent {
+    std::vector<LootDrop> drops;
+
+    LootTableComponent(): drops({}) {};
+    LootTableComponent(std::vector<LootDrop> lootTableI): drops(lootTableI) {};
+};
+
+struct PhysicsComponent {
+    Vect2D velo;
+
+    PhysicsComponent(float x, float y): velo(Vect2D(x, y)) {};
+};
+
+struct PickUpItemComponent {
+    int count = 0;
+    float pickUpRadius;
+
+    PickUpItemComponent(int countI, float pickUpRadiusI): count(countI), pickUpRadius(pickUpRadiusI) {};
+    PickUpItemComponent() {};
 };
 
 template<typename Enum>

@@ -51,6 +51,4 @@ void inventory(EntitiesManager& manager, TextureLoader& textureLoader) {
     );
 
     manager.addComponent<AnimationComponent>(animationComponent);
-
-
 }

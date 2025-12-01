@@ -45,6 +45,8 @@ class SorterInMap {
             
             std::vector<int> res;
             while(!pq.empty()) res.push_back(pop());
+            auto secondaryIDs = manager.with<PositionOnMapComponent>().with<SizeComponent>().without<CollisionComponent>().get();
+            res.insert(res.end(), secondaryIDs.begin(), secondaryIDs.end());
             return res;
         }
 };

@@ -16,9 +16,18 @@ class EntityQuery {
 private:
     std::vector<int> entityIDs = {};
     MapEntities<void> entities = {};
+    std::map<std::string, int> existedEntities;
+
+    bool isValid(int entityID) {
+        for (auto id : entityIDs) {
+            if(id == entityID) return true;
+        }
+        return false;
+    }
+
 public:
-    EntityQuery(std::vector<int> ids, MapEntities<void>& entitiesI) 
-        : entityIDs(ids), entities(entitiesI) {};
+    EntityQuery(std::vector<int> ids, MapEntities<void>& entitiesI, std::map<std::string, int>& existedEntitiesI) 
+        : entityIDs(ids), entities(entitiesI), existedEntities(existedEntitiesI) {};
 
     template<typename NewComponent>
     EntityQuery<ComponentTypes..., NewComponent> with() {
@@ -28,7 +37,18 @@ public:
                 result.push_back(id);
             }
         }
-        return EntityQuery<ComponentTypes..., NewComponent>(result, entities);
+        return EntityQuery<ComponentTypes..., NewComponent>(result, entities, existedEntities);
+    }
+
+    template<typename NewComponent>
+    EntityQuery<ComponentTypes..., NewComponent> without() {
+        std::vector<int> result;
+        for (int id : entityIDs) {
+            if(!hasComponent<NewComponent>(id)) {
+                result.push_back(id);
+            }
+        }
+        return EntityQuery<ComponentTypes..., NewComponent>(result, entities, existedEntities);
     }
 
     template<typename T>
@@ -62,11 +82,22 @@ public:
         for(auto entityID : entityIDs) {
             if(entityID != ID) result.push_back(entityID);
         }
-        return EntityQuery<ComponentTypes...>(result, entities);
+        return EntityQuery<ComponentTypes...>(result, entities, existedEntities);
     }
 
     std::vector<int> get() const {
         return entityIDs;
+    }
+
+
+    std::vector<int> withClassName(std::string pattern) {
+        std::vector<int> result;
+        for (auto className : existedEntities) {
+            if(regexmatch(pattern, className.first) && isValid(className.second)) {
+                result.push_back(className.second);
+            }
+        }
+        return result;
     }
 };
 
@@ -97,20 +128,43 @@ public:
         id++;
     }
 
+    void setClassName(int entityID, std::string newClassName, bool useID) {
+        std::string className = getClassEntity(entityID);
+        existedEntities.erase(className);
+        if(useID) newClassName += ":" + std::to_string(id);
+        existedEntities[newClassName] = entityID;
+    }
+
     int getID() {
         return id-1;
     }
 
     void removeEntity(int entityID) {
+        existedEntities.erase(getClassEntity(entityID));
         entities.erase(entityID);
     };
 
     void removeEntityByClass(std::string pattern) {
+        std::vector<int> deletionIDs;
         for (auto className : existedEntities) {
             if(regexmatch(pattern, className.first)) {
-                removeEntity(className.second);
+                deletionIDs.push_back(className.second);
             }
         }
+        for(int id : deletionIDs) {
+            removeEntity(id);
+        }
+    }
+
+    std::string getClassEntity(int entityID) {
+        std::string className;
+        for (auto it : existedEntities) {
+            if(it.second == entityID) {
+                className = it.first;
+                break;
+            }
+        }
+        return className;
     }
 
     bool isEntityExist(std::string className) {
@@ -182,7 +236,7 @@ public:
                 result.push_back(pair.first);
             }
         }
-        return EntityQuery<T>(result, entities);
+        return EntityQuery<T>(result, entities, existedEntities);
     }
 
     std::vector<int> withClassName(std::string pattern) {

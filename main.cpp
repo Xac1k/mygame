@@ -37,6 +37,7 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     audioManager.loadMusic("BarrelDeath", "Sounds/asset/BarrelDeath.mp3");
     audioManager.loadMusic("PlayerDamage", "Sounds/asset/PlayerDamage.mp3");
     audioManager.loadMusic("PlayerAttack", "Sounds/asset/PlayerAttack.wav");
+    audioManager.loadMusic("item13", "Sounds/asset/items/item13.wav");
     //audioManager.playMusic("Стартовое меню", true);
     audioManager.setMasterVolume(1000);
 }

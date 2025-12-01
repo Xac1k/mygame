@@ -4,6 +4,7 @@
 #include "../../Infrastructure/entityManager.h"
 #include "../utils/animationLoader.hpp"
 #include "../../main.h"
+#include <Entities/utils/toolTableLoader.hpp>
 
 enum class BarrelState {idle, death = 450};
 enum class ControlFlowBarrel {
@@ -35,7 +36,7 @@ void barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOn
     manager.addComponent<MutexComponent<ControlFlowBarrel>>(mutex);
 
     LootTableComponent lootTable;
-    lootTable.lootTable.push_back({Items::goldenPickaxe, 1.f});
+    loadLootTable(lootTable.drops, {{Items::coin, 1, 1, 5, 30},});
     manager.addComponent<LootTableComponent>(lootTable);
 
     DeathComponent deathComp(0.125f* 7, "BarrelDeath");

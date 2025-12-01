@@ -9,7 +9,7 @@
 #include <Common/getAngle.hpp>
 #include <Map/Creating/Common/dist.hpp>
 
-void DeathEntitySystem(EntitiesManager& manager, AudioSystem& audioManager) {
+void DeathEntitySystem(EntitiesManager& manager, AudioSystem& audioManager, float df) {
     auto entityIDs = manager.with<HealthComponent>().get();
     for (int entityID : entityIDs) {
         auto healthComp = manager.getComponent<HealthComponent>(entityID).get();
@@ -18,6 +18,9 @@ void DeathEntitySystem(EntitiesManager& manager, AudioSystem& audioManager) {
             std::cout << "Умер:" << entityID << std::endl;
             deathComp->isDead = true;
             audioManager.playMusic(deathComp->soudnFXname, false);
+        }
+        if(deathComp->isDead) {
+            deathComp->deathTime += df;
         }
     }
 }

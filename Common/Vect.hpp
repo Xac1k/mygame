@@ -7,7 +7,6 @@ public:
     float x;
     float y;
     
-
     constexpr Vect2D(float xI = 0, float yI = 0) : x(xI), y(yI) {};
 
     float length() const {
@@ -78,3 +77,9 @@ public:
         return x < other.x && y < other.y;
     };
 };
+
+inline Vect2D fromAngle(float angleDeg) {
+    float x = sin(angleDeg / 180 * M_PI);
+    float y = cos(angleDeg / 180 * M_PI);
+    return Vect2D (x, y);
+}
