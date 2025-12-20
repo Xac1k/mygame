@@ -36,7 +36,7 @@ int main() {
     window.setFramerateLimit(60);
     
     GameMap map;
-    map.generateMap(GameMap::mapType::Circle);
+    map.generateMap(mapType::Circle);
 
     sf::Texture floorTex;
     floorTex.loadFromFile("/home/xac1k/Desktop/Project Practicum/mygame/Store/view/Tiles/Floor.png");

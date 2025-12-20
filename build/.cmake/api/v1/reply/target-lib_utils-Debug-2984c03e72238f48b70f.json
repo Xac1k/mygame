@@ -75,13 +75,13 @@
 			},
 			"sourceIndexes" : 
 			[
-				16,
-				18,
-				20,
-				30,
+				31,
+				33,
 				35,
-				53,
-				54
+				45,
+				50,
+				74,
+				75
 			]
 		}
 	],
@@ -115,8 +115,11 @@
 				13,
 				14,
 				15,
+				16,
 				17,
+				18,
 				19,
+				20,
 				21,
 				22,
 				23,
@@ -126,9 +129,8 @@
 				27,
 				28,
 				29,
-				31,
+				30,
 				32,
-				33,
 				34,
 				36,
 				37,
@@ -139,27 +141,46 @@
 				42,
 				43,
 				44,
-				45,
 				46,
 				47,
 				48,
 				49,
-				50,
 				51,
-				52
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				72,
+				73
 			]
 		},
 		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				16,
-				18,
-				20,
-				30,
+				31,
+				33,
 				35,
-				53,
-				54
+				45,
+				50,
+				74,
+				75
 			]
 		}
 	],
@@ -182,12 +203,52 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Common/const.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Common/getAngle.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Common/getCollisionRectOnMap.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Common/getMiddleAngle.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Common/isPermitedByMap.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Common/normAngle.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Common/randFloat.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Common/regex.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Depricated/HurtPlayerSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Depricated/MovementPlayerSystem.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -212,12 +273,27 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Entities/components/entityState.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Entities/components/gameState.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Entities/components/goblin.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Entities/components/inventory.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Entities/components/items.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -228,6 +304,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Entities/components/player.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Entities/components/stone.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -243,6 +324,21 @@
 		{
 			"backtrace" : 1,
 			"path" : "Entities/utils/entitiesManager.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Entities/utils/itemsConfig/ItemsID.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Entities/utils/itemsConfig/ItemsStack.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Entities/utils/toolTableLoader.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -357,12 +453,27 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Systems/AIEnemy.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Systems/AnimationUpdate.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"path" : "Systems/ButtonUpdateSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/ConvertorToLoot.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/Cooldown.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -382,12 +493,17 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "Systems/HurtEntitySystem.hpp",
+			"path" : "Systems/Game/Effects/EffectsSystem.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
-			"path" : "Systems/HurtPlayerSystem.hpp",
+			"path" : "Systems/HealthPlayerDrawSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/HurtEntitySystem.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -412,7 +528,12 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "Systems/MovementPlayerSystem.hpp",
+			"path" : "Systems/PhysicsSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/PickUpItemsSystem.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -428,6 +549,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Systems/SpawnSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/StateUpdater.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

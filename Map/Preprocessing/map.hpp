@@ -15,6 +15,8 @@ enum class TileType {
     Floor,
 };
 
+enum class mapType { Rect, Circle };
+
 struct Tile {
     TileType type = TileType::Empty;
 };
@@ -25,6 +27,7 @@ public:
     static constexpr int HEIGHT = 800;
     static constexpr int WallRadius = 2;
     roomsType roomsMap;
+    mapType type;
     corridorsType corridorsMap;
     spiralType spiralCorridors;
     Tile nullTile;
@@ -108,9 +111,10 @@ public:
         resterizeSpiralCorridors(rooms, spiral, 4);
     }
 
-    enum class mapType { Rect, Circle };
-    void generateMap(mapType type) {
+    void generateMap(mapType typeI) {
         srand(time(nullptr));
+
+        type = typeI;
 
         if(type == mapType::Rect) {
             auto [rooms, corridors] = generateDirectMap();

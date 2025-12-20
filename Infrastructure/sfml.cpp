@@ -1,5 +1,19 @@
 #include "sfml.h"
 
+sf::Sprite getCurrentSprite(OverlayAnimationComponent animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader) {
+    float resultTime = 0;
+    auto animation = animationComponent.overlayAnim;
+    
+    for (auto sprite : animation) {
+        resultTime += sprite.durationTime;
+        if (animationComponent.overlayTime < resultTime){
+            return textureLoader.getSprite(sprite, pos, size, animationComponent.TileSizeInGrid, sprite.alpha);
+        }
+    }
+    
+    return textureLoader.getSprite(animation[animation.size() - 1], pos, size, animationComponent.TileSizeInGrid, animation[animation.size() - 1].alpha);
+}
+
 sf::Sprite getCurrentSprite(AnimationComponent* animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader, int state) {
     float resultTime = 0;
     auto animation = animationComponent->animation[state];
@@ -15,15 +29,18 @@ sf::Sprite getCurrentSprite(AnimationComponent* animationComponent, Vect2D pos, 
 sf::Sprite getCurrentSprite(AnimationGridComponent* animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader, int state) {
     float resultTime = 0;
     auto animation = animationComponent->animation[state];
-
+    
     for (auto sprite : animation) {
         resultTime += sprite.durationTime;
-        if (animationComponent->time < resultTime) 
+        if (animationComponent->time < resultTime){
             return textureLoader.getSprite(sprite, pos, size, animationComponent->TileSizeInGrid);
+        }
     }
     
     return textureLoader.getSprite(animation[animation.size() - 1], pos, size, animationComponent->TileSizeInGrid);
 }
+
+
 
 void drawGridAnimation(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader, int id) {
     auto animation = manager.getComponent<AnimationGridComponent>(id);

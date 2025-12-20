@@ -79,12 +79,14 @@ void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
                 }
 
                 auto moveableItem = inventory->inventory[inventory->selection.y][inventory->selection.x];
+                auto moveableItemCount = inventory->countItems[inventory->selection.y][inventory->selection.x];
                 auto targetItem = inventory->inventory[row][column];
+                auto targetItemCount = inventory->countItems[row][column];
 
-                Items tempItem = targetItem;
-
-                inventory->inventory[inventory->selection.y][inventory->selection.x] = tempItem;
+                inventory->inventory[inventory->selection.y][inventory->selection.x] = targetItem;
+                inventory->countItems[inventory->selection.y][inventory->selection.x] = targetItemCount;
                 inventory->inventory[row][column] = moveableItem;
+                inventory->countItems[row][column] = moveableItemCount;
                 inventory->selection = Vect2D(column, row);
             }
         

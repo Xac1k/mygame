@@ -6,12 +6,14 @@
 #include "../../main.h"
 #include <Entities/utils/toolTableLoader.hpp>
 
+Vect2D sizeCollRectBarrel(32, 10);
+
 enum class BarrelState {idle, death = 450};
 enum class ControlFlowBarrel {
     HurtSystem, 
     All
 };
-void barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap) {
+int barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap) {
     manager.addEntity("playMenu:Enemy:barrel", true);
 
     PositionOnMapComponent posMap(posOnMap);
@@ -29,17 +31,17 @@ void barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOn
     StateComponent state((int) BarrelState::idle);
     manager.addComponent<StateComponent>(state);
 
-    CollisionComponent rect({32, 1}, {0, 31});
+    CollisionComponent rect(sizeCollRectBarrel, Vect2D(32, 32) - sizeCollRectBarrel);
     manager.addComponent<CollisionComponent>(rect);
 
     MutexComponent<ControlFlowBarrel> mutex;
     manager.addComponent<MutexComponent<ControlFlowBarrel>>(mutex);
 
     LootTableComponent lootTable;
-    loadLootTable(lootTable.drops, {{Items::coin, 1, 1, 5, 30},});
+    loadLootTable(lootTable.drops, {{Items::coin, 1, 3, 10, 30},});
     manager.addComponent<LootTableComponent>(lootTable);
 
-    DeathComponent deathComp(0.125f* 7, "BarrelDeath");
+    DeathComponent deathComp(0.125f* 7, "BarrelDeath", 0);
     manager.addComponent<DeathComponent>(deathComp);
 
     AnimationGridComponent animationComponent;
@@ -61,4 +63,6 @@ void barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOn
         }
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);
+
+    return manager.getID();
 }

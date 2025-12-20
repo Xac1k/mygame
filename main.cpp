@@ -10,16 +10,15 @@
 #include <Entities/components/inventory.hpp>
 #include <Entities/components/button.hpp>
 #include <Entities/components/player.hpp>
+#include <Entities/components/goblin.hpp>
 #include <Entities/components/Label.hpp>
 #include <Entities/components/map.hpp>
 
 #include <Systems/InventoryContextMenuSystem.hpp>
 #include <Systems/InventoryUpdateSystem.hpp>
-#include <Systems/MovementPlayerSystem.hpp>
 #include <Systems/InventoryDrawSystem.hpp>
 #include <Systems/ButtonUpdateSystem.hpp>
 #include <Systems/SpawnBarrelSystem.hpp>
-#include <Systems/HurtPlayerSystem.hpp>
 #include <Systems/AnimationUpdate.hpp>
 #include <Systems/MapDrawSystem.hpp>
 #include <Systems/SpawnSystem.hpp>
@@ -27,8 +26,6 @@
 #include <Pages/SettingPage.hpp>
 #include <Pages/StartPage.hpp>
 #include <Pages/PlayPage.hpp>
-
-//TODO: Взаимодействия с бочкой
 
 void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
     gameState(manager);
@@ -38,6 +35,10 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     audioManager.loadMusic("PlayerDamage", "Sounds/asset/PlayerDamage.mp3");
     audioManager.loadMusic("PlayerAttack", "Sounds/asset/PlayerAttack.wav");
     audioManager.loadMusic("item13", "Sounds/asset/items/item13.wav");
+    audioManager.loadMusic("item14", "Sounds/asset/items/item14.wav");
+    audioManager.loadMusic("item15", "Sounds/asset/items/item15.mp3");
+    audioManager.loadMusic("PlayerDeath", "Sounds/asset/PlayerKilled.wav");
+    audioManager.loadMusic("SkeletonDeath", "Sounds/asset/SkeletonDeath.wav");
     //audioManager.playMusic("Стартовое меню", true);
     audioManager.setMasterVolume(1000);
 }
@@ -61,6 +62,8 @@ int main() {
     auto gameStateIds = manager.with<GameStateComponent>().get();
     auto prevGameState = GameScreen::none;
     auto gameState = manager.getComponent<GameStateComponent>(gameStateIds[0]).get();
+
+    SpawnBarrelSystem SpawnBarrel;
     
     while(window.isOpen())
     {
@@ -96,8 +99,8 @@ int main() {
                 player(manager, textureLoader);
                 inventory(manager, textureLoader);
                 map(manager, textureLoader);
-                SpawnSystemUpdate(manager);
-                SpawnBarrelSystemUpdate(manager, textureLoader);
+                SpawnSystemUpdate(manager, textureLoader);
+                SpawnBarrel.update(manager, textureLoader);
             }
             PlayPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
         }

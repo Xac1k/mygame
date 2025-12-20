@@ -23,5 +23,4 @@ void VolumeLevelDrawSystem(
         fullCell.setPosition(pos.x + size.x/10 * i, pos.y);
         window.draw(fullCell);
     }
-    
 }

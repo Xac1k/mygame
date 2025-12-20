@@ -15,7 +15,7 @@ void DeathEntitySystem(EntitiesManager& manager, AudioSystem& audioManager, floa
         auto healthComp = manager.getComponent<HealthComponent>(entityID).get();
         auto deathComp = manager.getComponent<DeathComponent>(entityID).get();
         if(healthComp->health <= 0 && !deathComp->isDead) {
-            std::cout << "Умер:" << entityID << std::endl;
+            std::cout << "Умер: " << entityID << std::endl;
             deathComp->isDead = true;
             audioManager.playMusic(deathComp->soudnFXname, false);
         }

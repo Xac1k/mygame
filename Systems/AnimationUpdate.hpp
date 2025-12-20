@@ -25,6 +25,17 @@ float getFullTimeLine(
     return MAXFLOAT;
 }
 
+float getFullTimeLineForDelete(
+    OverlayAnimationComponent &overlay
+) {
+    float res = 0;
+    for (auto spriteElt : overlay.overlayAnim) {
+        res += spriteElt.durationTime;
+        if(spriteElt.deleteAfterPlay) return res;
+    }
+    return MAXFLOAT;
+}
+
 class Animator {
     public:
         void AnimationUpdate(EntitiesManager& manager, float df) {
@@ -57,6 +68,26 @@ class Animator {
 
                 if (animComp->time >= getFullTimeLine(anim)) {
                     animComp->time = 0.0f;
+                }
+            }
+
+            auto entityOveralyAnimIDs = manager.with<OverlayesStorageComponent>().get();
+            for(int id : entityOveralyAnimIDs) {
+                auto anims = manager.getComponent<OverlayesStorageComponent>(id).get();
+                int overlayID = 0;
+
+                for(auto& overlay : anims->overlayes) {
+                    overlay.overlayTime += df;
+
+                    if (overlay.overlayTime >= getFullTimeLine(overlay.overlayAnim)) {
+                        overlay.overlayTime = 0.0f;
+                    }
+
+                    if(overlay.overlayTime >= getFullTimeLineForDelete(overlay)) {
+                        anims->overlayes.erase(anims->overlayes.begin() + overlayID);
+                        std::cout << "Удаление слоя на " << id << " id слоя " << overlayID << std::endl;
+                    }
+                    overlayID++;
                 }
             }
         }

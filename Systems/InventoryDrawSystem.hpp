@@ -5,6 +5,27 @@
 #include <Entities/components/inventory.hpp>
 #include <Common/CollisionRect.hpp>
 
+void drawCountItems(sf::RenderWindow &window, TextureLoader &textureLoader, InventoryComponent *inventory, Vect2D cellSize, Vect2D pos) {
+    for(int y = 0; y < inventory->size.y; y++) {
+        for(int x = 0; x < inventory->size.x; x++) {
+            if(inventory->inventory[y][x] != Items::none) {
+                auto count = inventory->countItems[y][x];
+                if(count < 2) continue;
+                auto posNextItem = pos + Vect2D(x + 1, y) * cellSize;
+                
+                int сategory = 1;
+                while (count) {
+                    int num = count % 10;
+                    count /= 10;
+                    FrameOnGrid frame("Store/view/Numbers/numbers.png", Vect2D(num, 0));
+                    auto sprite = textureLoader.getSprite(frame, posNextItem - Vect2D(10, 0) * сategory++ + Vect2D(-15, cellSize.y - 30), Vect2D (10, 20), Vect2D (190, 190));
+                    window.draw(sprite);
+                }
+            }
+        }
+    }
+}
+
 void InventoryDrawSystem(
     sf::RenderWindow &window, TextureLoader &textureLoader, 
     EntitiesManager& manager
@@ -71,6 +92,9 @@ void InventoryDrawSystem(
         y++;
         if(inventoryState->state == (int)InventoryState::wrapped) break;
     }
+
+    if(inventoryState->state != (int)InventoryState::wrapped)  
+        drawCountItems(window, textureLoader, inventory, cellSize, pos->point);
 
     //Рисовка выделенного объекта на верхнем слое
     if(inventoryState->state == (int)InventoryState::selected){

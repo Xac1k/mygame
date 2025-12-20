@@ -13,7 +13,9 @@ enum class PlayerState {
     HurtBackward, HurtLeft, HurtRight,
     AttackIdleLeft, AttackIdleRight, AttackIdleDirect,
     AttackIdleBackward, AttackWalkLeft, AttackWalkRight, 
-    AttackWalkDirect, AttackWalkBackward
+    AttackWalkDirect, AttackWalkBackward, 
+    
+    DeathLeft = 451, DeathRight = 452, DeathDirect = 453, DeathBackward = 454
  };
 enum class ControlFlow {
     HurtSystem, 
@@ -47,11 +49,37 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
     MutexComponent<ControlFlow> mutex;
     manager.addComponent<MutexComponent<ControlFlow>>(mutex);
 
-    WeaponComponent weaponComp(20, TILE_SIZE*2, 60);
+    WeaponComponent weaponComp(20, TILE_SIZE*2, 60, 0.125f * 8, 0.125f * 8);
     manager.addComponent<WeaponComponent>(weaponComp);
 
-    DeathComponent deathComp(0.125f* 8, "PlayerDeath");
+    DeathComponent deathComp(0.125f* 8, "PlayerDeath", 0);
     manager.addComponent<DeathComponent>(deathComp);
+
+    DirectionalDeathComponent dirDeathComp;
+    manager.addComponent(dirDeathComp);
+
+    CooldownInfo cooldownInfo(0.125f * 5, 2, 1);
+    manager.addComponent(cooldownInfo);
+
+    EffectsComponent arrayOfEffects;
+    EffectComponent effect;
+    effect.effect = Effects::wet;
+    effect.duration = 3600.f;
+    effect.period = 10.f;
+    arrayOfEffects.effects.push_back(effect);
+    manager.addComponent(arrayOfEffects);
+
+    EffectsInfo effectsInfo(TILE_SIZE * 2, TILE_SIZE * 2);
+    manager.addComponent(effectsInfo);
+
+    CanFire canFire;
+    manager.addComponent(canFire);
+    CanFrozen canFrozen;
+    manager.addComponent(canFrozen);
+    CanWet canWet;
+    manager.addComponent(canWet);
+    CanPoisoned canPoisoned;
+    manager.addComponent(canPoisoned);
 
     AnimationGridComponent animationComponent;
     animationComponent.TileSizeInGrid = {64, 64};
@@ -276,8 +304,47 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
                 {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {3, 3}, 0.125f, false},
                 {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {4, 3}, 0.125f, false},
                 {"Store/view/Player/Swordsman_lvl1_walkAttack.png", {5, 3}, 0.125f, false},
-            }}
+            }},
+            {(int)PlayerState::DeathDirect, {
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {0, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {1, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {2, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {3, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {4, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {5, 0}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {6, 0}, 0.125f, false},
+            }},
+            {(int)PlayerState::DeathLeft, {
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {0, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {1, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {2, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {3, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {4, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {5, 1}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {6, 1}, 0.125f, false},
+            }},
+            {(int)PlayerState::DeathRight, {
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {0, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {1, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {2, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {3, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {4, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {5, 2}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {6, 2}, 0.125f, false},
+            }},
+            {(int)PlayerState::DeathBackward, {
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {0, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {1, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {2, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {3, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {4, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {5, 3}, 0.125f, false},
+                {"Store/view/Player/Swordsman_lvl1_Death.png", {6, 3}, 0.125f, false},
+            }},
         }
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);
+
+    OverlayesStorageComponent storage;
+    manager.addComponent<OverlayesStorageComponent>(storage);
 }

@@ -91,6 +91,15 @@ void EntitiOnMapDrawSystem(
 
             auto sprite = getCurrentSprite(animation.get(), pos, size, textureLoader, state);
             window.draw(sprite);
+
+            if(manager.hasComponent<OverlayesStorageComponent>(enemyID)) {
+                auto anims = manager.getComponent<OverlayesStorageComponent>(enemyID).get();
+                for(auto& anim : anims->overlayes) {
+                    auto sprite = getCurrentSprite(anim, pos, size, textureLoader);
+                    window.draw(sprite);
+                }
+            }
         }
     }
 }
+

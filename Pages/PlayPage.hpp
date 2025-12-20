@@ -19,8 +19,6 @@
 #include <Systems/InventoryContextMenuSystem.hpp>
 #include <Systems/MapDrawSystem.hpp>
 #include <Systems/SpawnSystem.hpp>
-#include <Systems/MovementPlayerSystem.hpp>
-#include <Systems/HurtPlayerSystem.hpp>
 #include <Systems/EntitiOnMapDrawSystem.hpp>
 #include <Systems/PlayerAttackSystem.hpp>
 #include <Systems/HurtEntitySystem.hpp>
@@ -28,6 +26,29 @@
 #include <Systems/DeathAnimationUpdate.hpp>
 #include <Systems/ConvertorToLoot.hpp>
 #include <Systems/PickUpItemsSystem.hpp>
+#include <Systems/PhysicsSystem.hpp>
+#include <Systems/HealthPlayerDrawSystem.hpp> 
+#include <Systems/AIEnemy.hpp>
+#include <Systems/StateUpdater.hpp>
+#include <Systems/Cooldown.hpp>
+#include <Systems/Game/Effects/EffectsSystem.hpp>
+
+#include <Depricated/MovementPlayerSystem.hpp>
+
+
+void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader, SfmlRenderer& renderer) {
+    //Systems
+    HealthPlayerLevel HealthPlayerIndicator;
+
+    window.clear(sf::Color::White);
+    MapDrawSystem(window, textureLoader, manager);
+    EntitiOnMapDrawSystem(window, textureLoader, manager);
+    renderer.render(window, manager, textureLoader);
+    InventoryDrawSystem(window, textureLoader, manager);
+
+    HealthPlayerIndicator.draw(window, textureLoader, manager);
+    window.display();
+}
 
 void PlayPage(
     sf::Clock& clock, sf::RenderWindow& window, BusEvent& busEvent,
@@ -36,6 +57,12 @@ void PlayPage(
 ) {
     float df = clock.restart().asSeconds();
     sf::Event event;
+
+    //Systems
+    AIAgent AIAgentUpdater;
+    StateUpdater StateUpdater;
+    Cooldown CooldownSystem;
+    EffectsSystem EffectsSystem;
 
     while(window.pollEvent(event)) {
         if(event.type == sf::Event::Closed) {
@@ -47,20 +74,23 @@ void PlayPage(
         InventoryDndUpdate(manager, busEvent);
         InitAttackPlayerSystem(manager, busEvent, audioManager);
     }
-    HurtPlayerSystem(manager, df, audioManager);
-    UpdateAttackPlayerSystem(manager, df);
     HurtEntitySystem(manager);
+    EffectsSystem.update(manager, df);
     DeathEntitySystem(manager, audioManager, df);
-    MovementPlayerSystem(manager, df);
+    CreateMovementPlayerSystem(manager);
     DeathAnimationUpdateSystem(manager);
     LootDropSystem(manager, textureLoader);
     LootPickUpSystem(manager, audioManager);
+
+    AIAgentUpdater.updateAgressiveEnemy(manager, df);
+    AIAgentUpdater.defineEnemyVelocityByWandering(manager);
+    AIAgentUpdater.updateEnemyPos(manager, df);
+
+    CooldownSystem.update(manager, df);
+    UpdatePhysicsSystem(manager, textureLoader, df);
+
+    StateUpdater.updateEnemyStates(manager);
     animator.AnimationUpdate(manager, df);
 
-    window.clear(sf::Color::White);
-    MapDrawSystem(window, textureLoader, manager);
-    EntitiOnMapDrawSystem(window, textureLoader, manager);
-    renderer.render(window, manager, textureLoader);
-    InventoryDrawSystem(window, textureLoader, manager);
-    window.display();
+    drawPlayPage(window, manager, textureLoader, renderer);
 }

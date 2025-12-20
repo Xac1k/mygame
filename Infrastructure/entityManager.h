@@ -22,4 +22,5 @@ public:
     sf::Texture getTexture(const std::string& filename);
     sf::Sprite& getSprite(const std::string& filename, Vect2D pos, Vect2D size);
     sf::Sprite& getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2D size, Vect2D tileSize);
+    sf::Sprite& getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2D size, Vect2D tileSize, float alpha);
 };

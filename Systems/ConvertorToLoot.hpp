@@ -10,6 +10,7 @@
 #include <Map/Creating/Common/dist.hpp>
 #include <Map/Creating/Common/randomRange.hpp>
 #include <Entities/components/items.hpp>
+#include <Common/randFloat.hpp>
 
 constexpr int pickUpRadius = 32;
 
@@ -25,8 +26,23 @@ std::vector<int> sortByDeath(EntitiesManager& manager, std::vector<int> entityID
     return result;
 }
 
-float randFloat() {
-    return (float)rand() / RAND_MAX;
+Vect2D getVelocity(Vect2D angleArea) {
+    float angle;
+
+    angle = randRange(angleArea.x, angleArea.y);
+    if(angleArea.x > angleArea.y) {
+        int side = randRange(0, 1);
+        if(side == 0) {
+            angle = randRange(angleArea.x, 360);
+        }
+        if(side == 1) {
+            angle = randRange(0, angleArea.y);
+        }
+    }
+
+    float lenVelo = randRange(-100, 100);
+
+    return Vect2D(lenVelo * sin(angle), lenVelo * cos(angle));
 }
 
 void LootDropSystem(EntitiesManager& manager, TextureLoader textureLoader) {
@@ -36,23 +52,26 @@ void LootDropSystem(EntitiesManager& manager, TextureLoader textureLoader) {
     for (int entityId : entityToLoot) {
         auto pos = manager.getComponent<PositionOnMapComponent>(entityId).get();
         auto lootTable = manager.getComponent<LootTableComponent>(entityId).get();
+        auto deathComp = manager.getComponent<DeathComponent>(entityId).get();
 
         for (const auto& drop : lootTable->drops) {
             if (randFloat() > drop.chance) continue;
             int count = randRange(drop.minCount, drop.maxCount);
-            Vect2D offset = fromAngle(randFloat() * 360.0f) * randFloat() * drop.offsetRadius;
-            Vect2D spawnPos = pos->point + offset;
+            for(int i = 0; i < count; i++) {
+                Vect2D offset = fromAngle(randFloat() * 360.0f) * randFloat() * drop.offsetRadius;
+                Vect2D spawnPos = pos->point + offset;
 
-            int newEntityID = item(manager, textureLoader, spawnPos);
+                int newEntityID = item(manager, textureLoader, spawnPos);
+                auto stateComp = manager.getComponent<StateComponent>(newEntityID).get();
+                stateComp->state = (int)drop.itemID;
 
-            auto stateComp = manager.getComponent<StateComponent>(newEntityID).get();
-            stateComp->state = (int)drop.itemID;
-               
-            PhysicsComponent physic(randRange(-50, 50), randRange(-50, 50));
-            manager.addComponent<PhysicsComponent>(newEntityID, physic);
+                auto velo = getVelocity(deathComp->angleOfDeath);
+                PhysicsComponent physic(velo.x, velo.y);
+                manager.addComponent<PhysicsComponent>(newEntityID, physic);
 
-            PickUpItemComponent pickUp(count, pickUpRadius);
-            manager.addComponent<PickUpItemComponent>(newEntityID, pickUp);
+                PickUpItemComponent pickUp(count, pickUpRadius);
+                manager.addComponent<PickUpItemComponent>(newEntityID, pickUp);
+            }
         }
 
         std::cout << "Удалили:" << entityId << " | Появился лут\n";

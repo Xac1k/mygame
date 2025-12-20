@@ -27,6 +27,14 @@ int item(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap
             {(int)Items::coin, {
                 {"Store/view/Items/item13.png", {0, 0}, 1.f, true},
             }},
+
+            {(int)Items::skull, {
+                    {"Store/view/Items/item14.png", {0, 0}, 1.f, true},
+            }},
+
+            {(int)Items::bone, {
+                    {"Store/view/Items/item15.png", {0, 0}, 1.f, true},
+            }},
         }
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);

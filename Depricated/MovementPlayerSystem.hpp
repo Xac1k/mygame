@@ -84,13 +84,17 @@ std::tuple<int, int> isPermittedByEnemy(
     int xAllow = 1; int yAllow = 1;
 
     auto enemyIDs = manager.with<CollisionComponent>().withClassName("*Enemy*");
+    auto enemySkeletonIDs = manager.withClassName("*skeleton*");
     for (int enemyID : enemyIDs) {
         auto enemyDeath = manager.getComponent<DeathComponent>(enemyID).get();
         if(enemyDeath->isDead) continue;
         auto enemyPos = manager.getComponent<PositionOnMapComponent>(enemyID).get();
         auto enemySize = manager.getComponent<SizeComponent>(enemyID).get();
         auto enemyCollRect = manager.getComponent<CollisionComponent>(enemyID).get();
-        auto enemyCollRectLeftUp = enemyPos->point + enemyCollRect->shiftFromLeftUp;
+        Vect2D origin({0, 0});
+        if(manager.hasComponent<OriginComponent>(enemyID))
+            origin = manager.getComponent<OriginComponent>(enemyID).get()->shift;
+        auto enemyCollRectLeftUp = enemyPos->point - origin + enemyCollRect->shiftFromLeftUp;
         if(boxesOverlap(playerCollRectLeftUp + Vect2D(velo->dir.x * df, 0), playerCollRect->size, enemyCollRectLeftUp, enemyCollRect->size)) {
             xAllow = 0;
         }
@@ -126,6 +130,7 @@ void CreateMovementPlayerSystem(EntitiesManager& manager) {
     }
 }
 
+//depricated
 void MovementPlayerSystem(EntitiesManager& manager, float df) {
     CreateMovementPlayerSystem(manager);
     auto playerIds = manager.withClassName("*player*");
@@ -133,6 +138,7 @@ void MovementPlayerSystem(EntitiesManager& manager, float df) {
 
     auto playerMutex = manager.getComponent<MutexComponent<ControlFlow>>(playerIds[0]).get();
     if(playerMutex->blocked && playerMutex->WhoIsUsing != ControlFlow::All) return;
+    
 
     auto mapIds = manager.with<MapComponent>().get();
     if(mapIds.size() == 0) return;
@@ -142,6 +148,7 @@ void MovementPlayerSystem(EntitiesManager& manager, float df) {
     auto playerState = manager.getComponent<StateComponent>(playerIds[0]).get();
     auto playerCollisionRect = manager.getComponent<CollisionComponent>(playerIds[0]).get();
     auto playerOrigin = manager.getComponent<OriginComponent>(playerIds[0]).get();
+    auto playerFacing = manager.getComponent<DirectionalDeathComponent>(playerIds[0]).get();
 
     auto map = manager.getComponent<MapComponent>(mapIds[0]).get();
     auto [xCoef, yCoef] = isPermittedByMap(map, playerPos, playerCollisionRect, playerOrigin, playerVelocity, df);
@@ -150,10 +157,22 @@ void MovementPlayerSystem(EntitiesManager& manager, float df) {
     if((playerVelocity->dir.x || playerVelocity->dir.y) && (xCoef || yCoef)) {
         playerPos->point += Vect2D(playerVelocity->dir.x * xCoef * xCoefEnemy * df, playerVelocity->dir.y * yCoef * yCoefEnemy * df);
 
-        if(0 < playerVelocity->dir.x * xCoef * xCoefEnemy) playerState->state = (int)PlayerState::WalkRight;
-        if(0 > playerVelocity->dir.x * xCoef * xCoefEnemy) {playerState->state = (int)PlayerState::WalkLeft;}
-        if(0 < playerVelocity->dir.y * yCoef * yCoefEnemy) {playerState->state = (int)PlayerState::WalkDirect;}
-        if(0 > playerVelocity->dir.y * yCoef * yCoefEnemy) {playerState->state = (int)PlayerState::WalkBackward;}
+        if(0 < playerVelocity->dir.x * xCoef * xCoefEnemy) {
+            playerState->state = (int)PlayerState::WalkRight;
+            playerFacing->facing = Facing::Rigth;
+        }
+        if(0 > playerVelocity->dir.x * xCoef * xCoefEnemy) {
+            playerState->state = (int)PlayerState::WalkLeft;
+            playerFacing->facing = Facing::Left;
+        }
+        if(0 < playerVelocity->dir.y * yCoef * yCoefEnemy) {
+            playerState->state = (int)PlayerState::WalkDirect;
+            playerFacing->facing = Facing::Direct;
+        }
+        if(0 > playerVelocity->dir.y * yCoef * yCoefEnemy) {
+            playerState->state = (int)PlayerState::WalkBackward;
+            playerFacing->facing = Facing::Backward;
+        }
     }
     else {
         if(playerState->state == (int)PlayerState::WalkRight) playerState->state = (int)PlayerState::IdleRight;

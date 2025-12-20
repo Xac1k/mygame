@@ -19,8 +19,6 @@
 #include <Systems/InventoryContextMenuSystem.hpp>
 #include <Systems/MapDrawSystem.hpp>
 #include <Systems/SpawnSystem.hpp>
-#include <Systems/MovementPlayerSystem.hpp>
-#include <Systems/HurtPlayerSystem.hpp>
 
 void StartPage(
     sf::Clock& clock, sf::RenderWindow& window, BusEvent& busEvent,

@@ -22,7 +22,11 @@ void HurtPlayerSystem(EntitiesManager& manager, float df, AudioSystem& audioMana
         playerMutex->currTime = 0;
         playerMutex->durationTime = 0.125f * 4;
         playerMutex->WhoIsUsing = ControlFlow::HurtSystem;
-        audioManager.playMusic("PlayerDamage", false);
+
+        playerHealth->health -= 10;
+        if(playerHealth->health > 0) {
+            audioManager.playMusic("PlayerDamage", false);
+        }
 
         if(playerState->state == (int)PlayerState::IdleDirect || playerState->state == (int)PlayerState::WalkDirect) {
             playerState->state = (int)PlayerState::HurtDirect;

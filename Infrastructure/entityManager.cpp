@@ -52,12 +52,23 @@ sf::Sprite& TextureLoader::getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2
     std::string fullpath = buildFullPath(frame.path, 1);
     sprite.setTexture(buff[fullpath]);
 
-    float scaleX = size.x / tileSize.x;
-    float scaleY = size.y / tileSize.y;
+    float scaleX = size.x / tileSize.x * frame.mirror.x;
+    float scaleY = size.y / tileSize.y * frame.mirror.y;
     
     sprite.setTextureRect(sf::IntRect(tileSize.x * frame.cellID.x, tileSize.y * frame.cellID.y, tileSize.x, tileSize.y));
-    sprite.setPosition(pos.x, pos.y);
+    Vect2D mirrorSpriteCorrection(frame.mirror.x < 0 ? size.x : 0, frame.mirror.y < 0 ? size.y : 0);
+    sprite.setPosition(pos.x + mirrorSpriteCorrection.x, pos.y + mirrorSpriteCorrection.y);
     sprite.scale(sf::Vector2f({scaleX, scaleY}));
 
     return sprite;
+}
+
+sf::Sprite& TextureLoader::getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2D size, Vect2D tileSize, float alpha) {
+   auto& sprite = getSprite(frame, pos, size, tileSize);
+
+   auto color = sprite.getColor();
+   color.a = alpha / 100 * 255;
+   sprite.setColor(color);
+
+   return sprite;
 }

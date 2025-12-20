@@ -27,7 +27,6 @@ void inventory(EntitiesManager& manager, TextureLoader& textureLoader) {
     InventoryComponent inventory(Vect2D(5, 3), Vect2D(0, 0));
     inventory.inventory[0][0] = Items::startSword;
     inventory.inventory[0][1] = Items::startPickaxe;
-    inventory.inventory[0][2] = Items::firePickaxe;
     manager.addComponent<InventoryComponent>(inventory);
 
     DragAndDropComponent dragAndDrop;

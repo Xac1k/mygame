@@ -8,6 +8,7 @@
 
 sf::Sprite getCurrentSprite(AnimationComponent* animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader, int state);
 sf::Sprite getCurrentSprite(AnimationGridComponent* animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader, int state);
+sf::Sprite getCurrentSprite(OverlayAnimationComponent animationComponent, Vect2D pos, Vect2D size, TextureLoader &textureLoader);
 void drawGridAnimation(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader, int id);
 bool drawAnimationOneFile(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader, int id);
 

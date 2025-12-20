@@ -19,8 +19,6 @@
 #include <Systems/InventoryContextMenuSystem.hpp>
 #include <Systems/MapDrawSystem.hpp>
 #include <Systems/SpawnSystem.hpp>
-#include <Systems/MovementPlayerSystem.hpp>
-#include <Systems/HurtPlayerSystem.hpp>
 #include <Systems/VolumLevelDraw.hpp>
 
 void SettingPage(

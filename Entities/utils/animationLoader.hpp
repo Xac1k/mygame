@@ -27,3 +27,14 @@ void loadAnimations(
         }
     }
 };
+
+void loadOverlayAnimations(
+    AnimationGrid& animations, 
+    std::initializer_list<std::initializer_list<FrameOnGrid>> data
+) {
+    for(auto& frameList : data) {
+        for( auto frame : frameList) {
+            animations.push_back(frame);
+        }
+    }
+};

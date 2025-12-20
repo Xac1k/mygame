@@ -20,13 +20,17 @@ void DeathAnimationUpdateSystem(EntitiesManager& manager) {
                 auto directionalDeath = manager.getComponent<DirectionalDeathComponent>(entityID).get()->facing;
                 switch (directionalDeath)
                 {
-                case Facing::Down:
+                case Facing::Backward:
+                    stateComp->state = (int)EntityState::deathBackward;
                     break;
                 case Facing::Rigth:
+                    stateComp->state = (int)EntityState::deathRight;
                     break;
                 case Facing::Left:
+                    stateComp->state = (int)EntityState::deathLeft;
                     break;
-                case Facing::Up:
+                case Facing::Direct:
+                    stateComp->state = (int)EntityState::deathDirect;
                     break;
                 }
             }
