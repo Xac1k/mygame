@@ -110,8 +110,10 @@ void CreateMovementPlayerSystem(EntitiesManager& manager) {
     if(playerIds.size() == 0) return;
 
     auto playerVelocity = manager.getComponent<VelocityComponent>(playerIds[0]).get();
+    auto playerDeath = manager.getComponent<DeathComponent>(playerIds[0]).get();
     playerVelocity->dir.x = 0;
     playerVelocity->dir.y = 0;
+    if(playerDeath->isDead) return;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         playerVelocity->dir.x = -lenVeloVect;

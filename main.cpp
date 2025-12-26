@@ -46,7 +46,8 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
 int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 0;
-    sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Cave", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Cave", sf::Style::Titlebar | sf::Style::Close, settings);
+    window.setVerticalSyncEnabled(false);
 
     BusEvent busEvent;
     SfmlRenderer renderer;

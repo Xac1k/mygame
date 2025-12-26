@@ -6,4 +6,4 @@
 #include <regex>
 
 constexpr int WINDOW_WIDTH = 700;
-constexpr int WINDOW_HEIGHT = 400; 
+constexpr int WINDOW_HEIGHT = 400;

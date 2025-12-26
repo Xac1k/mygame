@@ -35,7 +35,6 @@
 
 #include <Depricated/MovementPlayerSystem.hpp>
 
-
 void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader, SfmlRenderer& renderer) {
     //Systems
     HealthPlayerLevel HealthPlayerIndicator;
@@ -62,7 +61,7 @@ void PlayPage(
     AIAgent AIAgentUpdater;
     StateUpdater StateUpdater;
     Cooldown CooldownSystem;
-    EffectsSystem EffectsSystem;
+    EffectsSystem effectsSystem;
 
     while(window.pollEvent(event)) {
         if(event.type == sf::Event::Closed) {
@@ -75,7 +74,7 @@ void PlayPage(
         InitAttackPlayerSystem(manager, busEvent, audioManager);
     }
     HurtEntitySystem(manager);
-    EffectsSystem.update(manager, df);
+    effectsSystem.update(manager, df);
     DeathEntitySystem(manager, audioManager, df);
     CreateMovementPlayerSystem(manager);
     DeathAnimationUpdateSystem(manager);

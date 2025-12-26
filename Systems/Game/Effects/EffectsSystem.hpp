@@ -254,9 +254,8 @@ private:
         auto it = effectsEnemy->find(effect);
         if(it == effectsEnemy->effects.end()) return;
         effectsTarget->cloneEffect(it.base());
-        std::cout << "Эффект с" << enemyID <<  " был распространён и на " << targetID << '\n';
+        std::cout << "Эффект с " << enemyID <<  " был распространён и на " << targetID << '\n';
     }
-
     
     std::pair<bool, int> hasNearEntitiesWithEffect(EntitiesManager& manager, float distForExpand, int targetID, Effects effect) {
         auto posTarget = manager.getComponent<PositionOnMapComponent>(targetID).get()->point;

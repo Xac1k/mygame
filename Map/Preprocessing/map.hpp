@@ -210,8 +210,10 @@ public:
 
                 sf::Vector2f pos({(float)((x - left) * TILE_SIZE), (float)((y - top) * TILE_SIZE)});
 
-                sprite.setPosition(pos + shiftAlign - tempShift);
+                sf::Vector2f Position = pos + shiftAlign - tempShift;
+                sprite.setPosition(Position.x, Position.y);
                 sprite.setScale(TILE_SIZE/size.x, TILE_SIZE/size.y);
+
                 window.draw(sprite);
             }
         }
