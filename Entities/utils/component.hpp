@@ -314,12 +314,26 @@ struct EffectsComponent {
         return effects.begin() + j;
     }
 
+    bool hasEffect(Effects effect) {
+        auto it = find(effect);
+        if(it != effects.end()) return true;
+        return false;
+    }
+
     void addEffect(AttackComponent* weapon) {
         EffectComponent effect;
         effect.moveEffect(weapon);
         auto it = find(effect);
         if(it != effects.end()) return;
         effects.push_back(effect);
+    }
+
+    void cloneEffect(EffectComponent* effect) {
+        EffectComponent effectNew;
+        effectNew = *effect;
+        auto it = find(effectNew);
+        if(it != effects.end()) return;
+        effects.push_back(effectNew);
     }
 
     void removeEffect(EffectComponent effect) {
@@ -494,6 +508,17 @@ struct ColldownBeforeAttackComp {
     ColldownBeforeAttackComp(float duration): duration(duration) {};
 };
 
+struct ColldownBeforeEffectExpand {
+    Effects effect;
+    float duration;
+    float currentTime = 0;
+
+    ColldownBeforeEffectExpand(Effects effectI, float duration):
+    effect(effectI), duration(duration) {};
+};
+
+struct ReadyToExpandEffect{};
+
 struct WanderPointCompanent {
     Vect2D point;
     float cooldown = 0.0f;
@@ -508,6 +533,14 @@ struct CooldownInfo {
     CooldownInfo(float cooldownMoving, float cooldownAttack, float cooldownBeforeAttack):
     cooldownMoving(cooldownMoving), cooldownAttack(cooldownAttack), cooldownBeforeAttack(cooldownBeforeAttack)
     {};
+};
+
+struct CooldownEffectsInfo {
+    float cooldownBeforeFire = 0;
+    float cooldownBeforeWet = 0;
+
+    CooldownEffectsInfo(float cooldownFire, float cooldownWet): 
+    cooldownBeforeFire(cooldownFire), cooldownBeforeWet(cooldownWet) {};
 };
 
 struct HurtComponent {

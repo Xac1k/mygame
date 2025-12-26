@@ -377,12 +377,12 @@ class AIAgent {
                 if(manager.hasComponent<OriginComponent>(enemyID))
                     origin = manager.getComponent<OriginComponent>(enemyID).get()->shift;
                 auto enemyCollRectLeftUp = enemyPos->point - origin + enemyCollRect->shiftFromLeftUp;
-                if(boxesOverlap(moverCollRectLeftUp + Vect2D(velo->dir.x * df, 0), moverCollRect->size, enemyCollRectLeftUp, enemyCollRect->size)) {
+                if(boxesOverlap(moverCollRectLeftUp + Vect2D(velo->dir.x * df, 0), moverCollRect->size, enemyCollRectLeftUp, enemyCollRect->size))
                     xAllow = 0;
-                }
-                if(boxesOverlap(moverCollRectLeftUp + Vect2D(0, velo->dir.y * df), moverCollRect->size, enemyCollRectLeftUp, enemyCollRect->size)) {
+                if(boxesOverlap(moverCollRectLeftUp + Vect2D(0, velo->dir.y * df), moverCollRect->size, enemyCollRectLeftUp, enemyCollRect->size)) 
                     yAllow = 0;
-                }
+                if(xAllow == 0 && yAllow == 0) 
+                    return std::make_pair(0, 0);
             }
             return std::make_pair(xAllow, yAllow);
         }

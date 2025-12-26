@@ -85,7 +85,7 @@ class Animator {
 
                     if(overlay.overlayTime >= getFullTimeLineForDelete(overlay)) {
                         anims->overlayes.erase(anims->overlayes.begin() + overlayID);
-                        std::cout << "Удаление слоя на " << id << " id слоя " << overlayID << std::endl;
+                        //std::cout << "Удаление слоя на " << id << " id слоя " << overlayID << std::endl;
                     }
                     overlayID++;
                 }

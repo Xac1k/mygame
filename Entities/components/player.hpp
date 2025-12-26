@@ -61,11 +61,12 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
     CooldownInfo cooldownInfo(0.125f * 5, 2, 1);
     manager.addComponent(cooldownInfo);
 
+    //============================= EFFECTS =============================
     EffectsComponent arrayOfEffects;
     EffectComponent effect;
-    effect.effect = Effects::wet;
+    effect.effect = Effects::fire;
     effect.duration = 3600.f;
-    effect.period = 10.f;
+    effect.period = 1.f;
     arrayOfEffects.effects.push_back(effect);
     manager.addComponent(arrayOfEffects);
 
@@ -81,6 +82,7 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
     CanPoisoned canPoisoned;
     manager.addComponent(canPoisoned);
 
+    //============================= ANIMATION =============================
     AnimationGridComponent animationComponent;
     animationComponent.TileSizeInGrid = {64, 64};
     loadAnimations(animationComponent.animation, 
@@ -345,6 +347,7 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);
 
+    //============================= LAYERS =============================
     OverlayesStorageComponent storage;
     manager.addComponent<OverlayesStorageComponent>(storage);
 }

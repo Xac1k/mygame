@@ -37,13 +37,35 @@ int barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnM
     MutexComponent<ControlFlowBarrel> mutex;
     manager.addComponent<MutexComponent<ControlFlowBarrel>>(mutex);
 
+//============================= LOOT =============================
     LootTableComponent lootTable;
     loadLootTable(lootTable.drops, {{Items::coin, 1, 3, 10, 30},});
     manager.addComponent<LootTableComponent>(lootTable);
 
+//============================= DEATH =============================
     DeathComponent deathComp(0.125f* 7, "BarrelDeath", 0);
     manager.addComponent<DeathComponent>(deathComp);
 
+//============================= EFFECTS =============================
+    EffectsComponent arrayOfEffects;
+    manager.addComponent(arrayOfEffects);
+
+    EffectsInfo effectsInfo(TILE_SIZE * 2, TILE_SIZE * 2);
+    manager.addComponent(effectsInfo);
+
+    CanFrozen canFrozen;
+    manager.addComponent(canFrozen);
+    CanWet canWet;
+    manager.addComponent(canWet);
+    CanPoisoned canPoisoned;
+    manager.addComponent(canPoisoned);
+    CanFire canFire;
+    manager.addComponent(canFire);
+
+    CooldownEffectsInfo cooldownEffects(1, 1);
+    manager.addComponent(cooldownEffects);
+
+//============================= ANIMATION =============================
     AnimationGridComponent animationComponent;
     animationComponent.TileSizeInGrid = {64, 64};
     loadAnimations(animationComponent.animation, 
@@ -63,6 +85,10 @@ int barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnM
         }
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);
+
+//============================= LAYERS =============================
+    OverlayesStorageComponent storage;
+    manager.addComponent<OverlayesStorageComponent>(storage);
 
     return manager.getID();
 }

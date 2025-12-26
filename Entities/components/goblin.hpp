@@ -46,23 +46,30 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     manager.addComponent<CollisionComponent>(rect);
 
     WeaponComponent weaponComp(20, TILE_SIZE*2, 30, 2, 0.125f * 7);
-    weaponComp.setEffect(Effects::fire, 10, 5, 10);
+    weaponComp.setEffect(Effects::fire, 10, 1, 1);
     manager.addComponent<WeaponComponent>(weaponComp);
 
+//============================= DEATH =============================
     DeathComponent deathComp(0.125f * 10, "SkeletonDeath", 0);
     manager.addComponent<DeathComponent>(deathComp);
 
     DirectionalDeathComponent dirDeathComp(Facing::Left);
     manager.addComponent<DirectionalDeathComponent>(dirDeathComp);
 
+//============================= AI =============================
     AIAgentCompanent aiComp(HowToFindTarget::ByClassName, TILE_SIZE * 10, TILE_SIZE * 5, TILE_SIZE * 1.5, "*player*", veloWalk, veloChasing);
     manager.addComponent<AIAgentCompanent>(aiComp);
 
+//============================= COOLDOWN =============================
     CooldownInfo colldownInfo(0.125f * 7, 2, 1.5);
     manager.addComponent(colldownInfo);
 
+//============================= EFFECTS =============================
     EffectsComponent arrayOfEffects;
     manager.addComponent(arrayOfEffects);
+
+    EffectsInfo effectsInfo(TILE_SIZE * 2, TILE_SIZE * 2);
+    manager.addComponent(effectsInfo);
 
     CanFrozen canFrozen;
     manager.addComponent(canFrozen);
@@ -71,6 +78,7 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     CanPoisoned canPoisoned;
     manager.addComponent(canPoisoned);
 
+//============================= LOOT =============================
     LootTableComponent lootTable;
     loadLootTable(lootTable.drops, {
         {Items::coin, 1, 3, 10, 30},
@@ -79,6 +87,7 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     });
     manager.addComponent<LootTableComponent>(lootTable);
 
+//============================= ANIMATION =============================
     AnimationGridComponent animationComponent;
     animationComponent.TileSizeInGrid = {96, 64};
     loadAnimations(animationComponent.animation, 
@@ -187,6 +196,7 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);
 
+//============================= LAYERS =============================
     OverlayesStorageComponent storage;
     manager.addComponent<OverlayesStorageComponent>(storage);
 }

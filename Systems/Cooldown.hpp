@@ -59,11 +59,26 @@ private:
         }
     }
 
+    void updateCooldownBeforeEffectsExpand(EntitiesManager& manager, float df) {
+        auto enemyIDs = manager.with<ColldownBeforeEffectExpand>().get();
+
+        for (int enemyID : enemyIDs) {
+            auto cooldownComp = manager.getComponent<ColldownBeforeEffectExpand>(enemyID).get();
+            cooldownComp->currentTime += df;
+
+            if(cooldownComp->currentTime > cooldownComp->duration){
+                manager.removeComponent<ColldownBeforeEffectExpand>(enemyID);
+                ReadyToExpandEffect ready; 
+                manager.addComponent(ready, enemyID);
+            }
+        }
+    }
 public:
     void update(EntitiesManager& manager, float df) {
         updateStune(manager, df);
         updateCooldownAttack(manager, df);
         updateCooldownBeforeAttack(manager, df);
+        updateCooldownBeforeEffectsExpand(manager, df);
     }
 };
 
