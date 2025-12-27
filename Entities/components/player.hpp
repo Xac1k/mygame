@@ -64,9 +64,9 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
     //============================= EFFECTS =============================
     EffectsComponent arrayOfEffects;
     EffectComponent effect;
-    effect.effect = Effects::fire;
+    effect.effect = Effects::wet;
     effect.duration = 3600.f;
-    effect.period = 1.f;
+    effect.period = 5.f;
     arrayOfEffects.effects.push_back(effect);
     manager.addComponent(arrayOfEffects);
 

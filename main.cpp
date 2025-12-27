@@ -30,7 +30,7 @@
 void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
     gameState(manager);
 
-    audioManager.loadMusic("Стартовое меню", "Sounds/asset/Дымок.mp3");
+    audioManager.loadMusic("Стартовое меню", "Sounds/asset/Thunder-Unison-Action-Dramatic-Epic-Music-chosic.com_.mp3");
     audioManager.loadMusic("BarrelDeath", "Sounds/asset/BarrelDeath.mp3");
     audioManager.loadMusic("PlayerDamage", "Sounds/asset/PlayerDamage.mp3");
     audioManager.loadMusic("PlayerAttack", "Sounds/asset/PlayerAttack.wav");
@@ -39,8 +39,8 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     audioManager.loadMusic("item15", "Sounds/asset/items/item15.mp3");
     audioManager.loadMusic("PlayerDeath", "Sounds/asset/PlayerKilled.wav");
     audioManager.loadMusic("SkeletonDeath", "Sounds/asset/SkeletonDeath.wav");
-    //audioManager.playMusic("Стартовое меню", true);
-    audioManager.setMasterVolume(1000);
+    audioManager.playMusic("Стартовое меню", true);
+    audioManager.setMasterVolume(50);
 }
 
 int main() {

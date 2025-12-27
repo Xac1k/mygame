@@ -41,8 +41,8 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     StateComponent state((int) SkeletonState::IdleLeft);
     manager.addComponent<StateComponent>(state);
 
-    Vect2D sizeCollRect(13*scale, 1*scale);
-    CollisionComponent rect(sizeCollRect, {(float)42*scale, (float)39*scale});
+    Vect2D sizeCollRect(13*scale, 10*scale);
+    CollisionComponent rect(sizeCollRect, {(float)42*scale, (float)30*scale});
     manager.addComponent<CollisionComponent>(rect);
 
     WeaponComponent weaponComp(20, TILE_SIZE*2, 30, 2, 0.125f * 7);

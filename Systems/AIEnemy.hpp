@@ -221,7 +221,7 @@ class AIAgent {
                 // stune handler for enemy with AI
                 if(manager.hasComponent<StuneCompanent>(enemyID)) {
                     velocityComp->dir = Vect2D(0, 0);
-                    return;
+                    continue;
                 }
 
                 // movment
@@ -257,7 +257,7 @@ class AIAgent {
                 // stune handler
                 if(manager.hasComponent<StuneCompanent>(enemyID)) {
                     velocityComp->dir = Vect2D(0, 0);
-                    return;
+                    continue;
                 }
 
                 // permissions
