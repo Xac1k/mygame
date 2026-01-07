@@ -173,7 +173,8 @@ enum class Items {
     ironSword, ironSpear, ironPickaxe,
     goldenSword, goldenSpear, goldenPickaxe,
     fireSword, fireSpear, firePickaxe,
-    coin, skull, bone
+    coin, skull, bone, 
+    coal, iron, gold, rubin
 };
 struct InventoryComponent {
     std::vector<std::vector<Items>> inventory;

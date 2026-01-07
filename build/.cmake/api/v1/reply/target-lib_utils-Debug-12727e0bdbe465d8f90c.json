@@ -80,8 +80,8 @@
 				40,
 				50,
 				55,
-				82,
-				83
+				83,
+				84
 			]
 		}
 	],
@@ -175,7 +175,8 @@
 				78,
 				79,
 				80,
-				81
+				81,
+				82
 			]
 		},
 		{
@@ -187,8 +188,8 @@
 				40,
 				50,
 				55,
-				82,
-				83
+				83,
+				84
 			]
 		}
 	],
@@ -532,6 +533,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Systems/Game/Effects/EffectsSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/Game/Spawn/SpawnSystem.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

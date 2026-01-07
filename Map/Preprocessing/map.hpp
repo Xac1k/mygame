@@ -36,7 +36,7 @@ public:
     GameMap() : tiles(WIDTH * HEIGHT) {}
 
     Tile& get(int x, int y) {
-        if(x>=0 && y>=0) 
+        if(x>=0 && y>=0 && (y * WIDTH + x) < tiles.size()) 
             return tiles[y * WIDTH + x];
         return nullTile;
     }
@@ -219,7 +219,6 @@ public:
             }
         }
     }
-
 
     void render(GameMap& map, sf::RenderTexture& window, sf::Vector2i& cameraPosPixel, sf::Vector2i& visiableArea) {
         sf::Vector2f tempShift;

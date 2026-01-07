@@ -3,35 +3,51 @@
 #include <sstream>
 #include <tuple>
 
-std::vector<std::string> wrapText(const sf::Font& font, const std::string& text, unsigned int characterSize, float maxWidth)
+std::vector<std::string> wrapText( const sf::Font& font, const std::string& text, unsigned int characterSize, float maxWidth)
 {
     std::vector<std::string> lines;
-    std::istringstream words(text);
-    std::string word;
     std::string currentLine;
+    std::size_t lastSpacePos = std::string::npos;
 
-    while (words >> word) {
-        std::string testLine = currentLine.empty() ? word : currentLine + " " + word;
+    sf::Text measure("", font, characterSize);
 
-        sf::Text testText(sf::String::fromUtf8(testLine.begin(), testLine.end()), font, characterSize);
-        float width = testText.getLocalBounds().width;
+    for (int i = 0; i < text.size(); ++i) {
+        char c = text[i];
 
-        if (width <= maxWidth) {
-            currentLine = testLine;
-        } else {
-            if (!currentLine.empty()) {
+        if (c == '\n') {
+            lines.push_back(currentLine);
+            currentLine.clear();
+            lastSpacePos = std::string::npos;
+            continue;
+        }
+
+        currentLine += c;
+
+        if (c == ' ' || c == '\t')
+            lastSpacePos = currentLine.size() - 1;
+
+        measure.setString(sf::String::fromUtf8(
+            currentLine.begin(), currentLine.end()));
+
+        if (measure.getLocalBounds().width > maxWidth) {
+            if (lastSpacePos != std::string::npos) {
+                lines.push_back(currentLine.substr(0, lastSpacePos));
+                currentLine = currentLine.substr(lastSpacePos + 1);
+            } else {
                 lines.push_back(currentLine);
+                currentLine.clear();
             }
-            currentLine = word;
+
+            lastSpacePos = std::string::npos;
         }
     }
 
-    if (!currentLine.empty()) {
+    if (!currentLine.empty())
         lines.push_back(currentLine);
-    }
 
     return lines;
 }
+
 
 std::tuple<sf::Text, std::string> createWrappedText(const sf::Font& font, const std::string& text, unsigned int characterSize, float maxWidth, float maxHeight)
 {

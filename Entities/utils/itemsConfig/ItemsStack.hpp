@@ -17,5 +17,9 @@ std::map<Items, int> limitationStack = {
     {Items::startSpear, 1},
     {Items::startSword, 1},
     {Items::skull, 10},
-    {Items::bone, 64}
+    {Items::bone, 64},
+    {Items::coal, 10},
+    {Items::iron, 10},
+    {Items::gold, 10},
+    {Items::rubin, 10}
 };

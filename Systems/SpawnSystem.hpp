@@ -5,6 +5,7 @@
 #include <Entities/components/goblin.hpp>
 #include <Entities/components/items.hpp>
 #include <Entities/components/caveVillager.hpp>
+#include <Entities/components/stone.hpp>
 
 Vect2D getSpawnPosition(MapComponent *map) {
     std::map<int, int> countRooms;
@@ -57,7 +58,9 @@ void SpawnSystemUpdate(EntitiesManager& manager, TextureLoader textureLoader) {
     // skeleton(manager, textureLoader, player->point + Vect2D(100, 300));
     
     villager(manager, textureLoader, player->point - Vect2D(100, 100));
-    addDialogToVillager(manager, "ExampleOfDialog.txt");
+    addDialogToVillager(manager, "ExampleOfDialog.json");
+
+    ore(manager, textureLoader, player->point - Vect2D(200, 200), StoneType::rubin);
     villager(manager, textureLoader, player->point - Vect2D(200, 100));
     villager(manager, textureLoader, player->point - Vect2D(300, 100));
     villager(manager, textureLoader, player->point - Vect2D(100, 300));

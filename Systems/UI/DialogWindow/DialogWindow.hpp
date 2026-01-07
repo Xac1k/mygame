@@ -32,6 +32,14 @@ private:
     sf::Clock clockForEnter;
     float treshholdTime = 0.3f;
 
+//===========================STORE-FOR-REDRIG===========================
+    sf::Clock clockForRedrig;
+    bool useRedrigLeft = false;
+    float strongOfRedrigLeft = 0.0f;
+    bool useRedrigRight = false;
+    float strongOfRedrigRight = 0.0f;
+    static constexpr float max_duration_redrig = 1.f;
+
 //==================================UI==================================
     // Button
     Vect2D BUTTON_E_SIZE = {64, 64};
@@ -49,7 +57,7 @@ private:
 
     Vect2D DIALOG_MENU_SIZE = {460, 152};
     Vect2D DIALOG_MENU_POS_CENTER = {350, 100};
-    Vect2D DIALOG_MENU_TEXTBOX = {396.175908222, 87.5};
+    Vect2D DIALOG_MENU_TEXTBOX = {396.175908222, 90};
 
     Vect2D DIALOG_ANSWER_POS_CENTER = {350, 250};
     Vect2D DIALOG_ANSWER_SIZE = {342.2265625, 100};
@@ -165,8 +173,31 @@ private:
         isActivate = false;
     }
 
-    void redrig(std::string side, int strong) {
+    void redrig(var_env_type var_env) {
+        auto sideIt = var_env.find("side");
+        auto strongIt = var_env.find("strong");
+        if(sideIt == var_env.end()) return;
+        if(strongIt == var_env.end()) return;
 
+        auto sideVoidPtr = sideIt->second;
+        auto sidePtr = std::static_pointer_cast<std::string>(sideVoidPtr);
+        auto side = *sidePtr;
+
+        auto strongVoidPtr = strongIt->second;
+        auto strongPtr = std::static_pointer_cast<int>(strongVoidPtr);
+        auto strong = *strongPtr;
+
+        
+        if(side == "left") {
+            useRedrigLeft = true;
+            strongOfRedrigLeft = strong;
+        }
+        else if(side == "right") {
+            useRedrigRight = true;
+            strongOfRedrigRight = strong;
+        }
+        
+        clockForRedrig.restart();
     }
     
     void setAvatar(var_env_type var_env) {
@@ -261,7 +292,7 @@ private:
                 exit();
                 break;
             case ComandType::redrig:
-                //redrig();
+                redrig(comand.var_env);
                 break;
             case ComandType::setAvatar:
                 setAvatar(comand.var_env);
@@ -326,6 +357,23 @@ private:
         if(useShiftRight)
             LEFT_UP_POINT_R -= shiftRight;
 
+        if(useRedrigLeft) {
+            Vect2D shiftLeft = Vect2D(1, 1) / Vect2D(1, 1).length() * strongOfRedrigLeft;
+            LEFT_UP_POINT_L -= shiftLeft * sin(clockForRedrig.getElapsedTime().asSeconds() * 80);
+            if(clockForRedrig.getElapsedTime().asSeconds() > max_duration_redrig) {
+                useRedrigLeft = false; 
+                useRedrigRight = false;
+            }
+        }
+
+        if(useRedrigRight) {
+            Vect2D shiftRigth = Vect2D(1, 1) / Vect2D(1, 1).length() * strongOfRedrigRight;
+            LEFT_UP_POINT_R -= shiftRigth * sin(clockForRedrig.getElapsedTime().asSeconds() * 80);
+            if(clockForRedrig.getElapsedTime().asSeconds() > max_duration_redrig) {
+                useRedrigLeft = false; 
+                useRedrigRight = false;
+            }
+        }
 
         if(pathAvatarLeft.size() != 0)
             if(!useGridLeft) {

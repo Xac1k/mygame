@@ -1,0 +1,109 @@
+"root": {
+  "text": "Тьма медленно отступает. Слышно, как где-то капает вода.
+Герой: … *резкий вдох* Это… не мой потолок.
+
+Камень холодный. Что-то мягко шевелится рядом.
+Незнакомка: Тихо.... Эй. Ты живой?
+
+Пауза. Где-то далеко раздаётся пустой глухой стук, будто шаг… но без веса.",
+  "init_func": "
+    setName(Незнакомка);
+    setAvatar(left, Store/view/Interactive_icons/Player_Avatar.png, tileSize: {250, 250}, tileID: {1, 0});
+    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {0, 2});
+  ",
+  "answers": {
+    "Где мы?": "node_1",
+    "Кто ты?": "node_2",
+    "Это сон?": "node_3"
+  }
+},
+
+"node_1": {
+  "text": "*нервный смешок*
+Если я скажу «под землёй», это прозвучит слишком спокойно, да?
+Тут… стены дышат. Я чувствую это кожей.",
+  "init_func": "    
+    redrig(right, 10);
+    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {2, 1});
+  ",
+  "answers": {
+    "Обратно": "root"
+  }
+},
+
+"node_3": {
+  "text": "*щипает себя* ... Ай!!!
+Нет. К сожалению, это не из тех снов, где можно проснуться.",
+  "init_func": "
+  redrig(right, 10);
+  setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {3, 0});
+  ",
+  "answers": {
+    "Обратно": "root"
+  }
+},
+
+"return": {
+  "text": "Тьма медленно отступает. Слышно, как где-то капает вода.
+Герой: … *резкий вдох* Это… не мой потолок.
+
+Камень холодный. Что-то мягко шевелится рядом.
+Лио: Тихо.... Эй. Ты живой?
+
+Пауза. Где-то далеко раздаётся пустой глухой стук, будто шаг… но без веса.",
+  "init_func": "
+    setAvatar(left, Store/view/Interactive_icons/Player_Avatar.png, tileSize: {250, 250}, tileID: {1, 0});
+    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {0, 2});
+  ",
+  "answers": {
+    "Где мы?": "node_1_return",
+    "Кто ты?": "node_2",
+    "Это сон?": "node_3_return",
+    "Пойти дальше": "exit_node"
+  }
+},
+
+"node_2": {
+  "text": "Лиора. Но если полностью — мы застрянем здесь навсегда, пока я договорю. Так что просто Лио.",
+  "init_func": "
+    setName(Лио);
+    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {2, 2});
+  ",
+  "answers": {
+    "Обратно": "return"
+  }
+},
+
+"node_1_return": {
+  "text": "*нервный смешок*
+Если я скажу «под землёй», это прозвучит слишком спокойно, да?
+Тут… стены дышат. Я чувствую это кожей.",
+  "init_func": "
+    redrig(right, 10);
+    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {2, 1});
+  ",
+  "answers": {
+    "Обратно": "return"
+  }
+},
+
+"node_3_return": {
+  "text": "*щипает себя* ... Ай!!!
+Нет. К сожалению, это не из тех снов, где можно проснуться.",
+  "init_func": "
+  redrig(right, 10);
+  setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {3, 0});
+  ",
+  "answers": {
+    "Обратно": "return"
+  }
+},
+
+
+
+"exit_node": {
+  "text": "",
+  "init_func": "exit();",
+  "answers": {
+  }
+}

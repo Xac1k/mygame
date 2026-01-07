@@ -202,10 +202,31 @@ private:
             }
         }   
     }
+
+    void updateStateStone(EntitiesManager& manager) {
+        auto enemyIDs = manager.withClassName("*stone*");
+        if(enemyIDs.size() == 0) return;
+
+        for (int enemyID : enemyIDs) {
+            auto stateComp = manager.getComponent<StateComponent>(enemyID).get();
+            auto healthComp = manager.getComponent<HealthComponent>(enemyID);
+
+            float hp = (float)healthComp->health / healthComp->maxHealth;
+            if(hp < 0.25) 
+                stateComp->state = (int)StoneState::hurt3;
+            else if(hp < 0.5)
+                stateComp->state = (int)StoneState::hurt2;
+            else if(hp < 0.75)
+                stateComp->state = (int)StoneState::hurt1;
+            else 
+                stateComp->state = (int)StoneState::hurt0;
+        }   
+    }
 public:
     void updateEnemyStates(EntitiesManager& manager) {
         updateStateSkeletons(manager);
         updateStatePlayer(manager);
         updateStateVillager(manager);
+        updateStateStone(manager);
     }
 };

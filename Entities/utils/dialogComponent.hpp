@@ -142,7 +142,7 @@ struct DialogTreeComponent {
                     
 
                     if(isInt(paramTokenMap["1"])) 
-                        var_env.insert(std::make_pair("strong", std::make_shared<std::string>(paramTokenMap["1"])));
+                        var_env.insert(std::make_pair("strong", std::make_shared<int>(std::stoi(paramTokenMap["1"]))));
                     else 
                         std::cerr << "Ошибка в программе. Неправельный тип параметра strong. strong может быть типа int\n";
                 }
