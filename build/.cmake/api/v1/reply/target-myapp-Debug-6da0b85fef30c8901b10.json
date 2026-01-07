@@ -129,6 +129,11 @@
 				"backtrace" : 2,
 				"fragment" : "/usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1",
 				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lGL",
+				"role" : "libraries"
 			}
 		],
 		"language" : "CXX"

@@ -63,23 +63,28 @@ private:
             break;
         case Effects::wet:
             loadOverlayAnimations(overlayAnim, {{
-                {"Store/view/Effects/664.png", {0, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {1, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {2, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {3, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {4, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {5, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {6, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {7, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {8, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {9, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {10, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {11, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {12, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {13, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {14, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {15, 8}, 0.0625f, false, {1, -1}, 50},
-                {"Store/view/Effects/664.png", {16, 8}, 0.0625f, false, {1, -1}, 50, true},
+                {"Store/view/Effects/Wet_effect.png", {0, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {1, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {2, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {3, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {4, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {5, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {6, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {7, 0}, 0.100f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {8, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {9, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {10, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {11, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {12, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {13, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {14, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {15, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {16, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {17, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {18, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {19, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {20, 0}, 0.05f, false, {1, 1}, 70},
+                {"Store/view/Effects/Wet_effect.png", {21, 0}, 0.05f, false, {1, 1}, 70, true},
             }});
             break;
         case Effects::poisoned:
@@ -112,7 +117,7 @@ private:
         overlay.overlayAnim = overlayAnim;
         overlay.priority = 1;
         overlay.TileSizeInGrid = Vect2D(64, 64);
-        overlay.size = Vect2D(128, 128);
+        overlay.size = Vect2D(64, 64);
 
         anims->overlayes.push_back(overlay);
     }
@@ -229,10 +234,10 @@ private:
         }
     }
 
-    void updateForOtherEntitiesByTargetDist(EntitiesManager& manager, std::vector<int> enemyIDs) {
+    void updateForOtherEntitiesByTargetDist(EntitiesManager& manager) {
+        auto enemyIDs = manager.with<EffectsInfo>().with<EffectsComponent>().get();
         for(auto enemyID : enemyIDs) {
             auto effects = manager.getComponent<EffectsComponent>(enemyID).get();
-            if(!manager.hasComponent<EffectsInfo>(enemyID)) continue;
             auto effectsInfo = manager.getComponent<EffectsInfo>(enemyID).get();
 
             bool Fire = !effects->hasEffect(Effects::fire) && manager.hasComponent<CanFire>(enemyID);
@@ -319,7 +324,7 @@ public:
     void update(EntitiesManager& manager, float df) {
         auto enemyIDs = manager.with<EffectsComponent>().get();
         updateCollisionEffects(manager, enemyIDs);
-        updateForOtherEntitiesByTargetDist(manager, enemyIDs);
+        updateForOtherEntitiesByTargetDist(manager);
         updateEffectsByTime(manager, enemyIDs, df);
     }
 };

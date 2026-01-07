@@ -66,7 +66,7 @@ build CMakeFiles/myapp.dir/main.cpp.o: CXX_COMPILER__myapp_unscanned_Debug /home
 
 build myapp: CXX_EXECUTABLE_LINKER__myapp_Debug CMakeFiles/myapp.dir/main.cpp.o | liblib_utils.a /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1 /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1 /usr/lib/x86_64-linux-gnu/libsfml-audio.so.2.6.1 /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1 || liblib_utils.a
   FLAGS = -g
-  LINK_LIBRARIES = liblib_utils.a  /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-audio.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1
+  LINK_LIBRARIES = liblib_utils.a  /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-audio.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1  -lGL
   OBJECT_DIR = CMakeFiles/myapp.dir
   POST_BUILD = :
   PRE_LINK = :

@@ -32,6 +32,9 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     OriginComponent origin(96*scale/2, 64*scale/2);
     manager.addComponent<OriginComponent>(origin);
 
+    HealthIndicatorShift shift(0, -32);
+    manager.addComponent<HealthIndicatorShift>(shift);
+
     VelocityComponent velo;
     manager.addComponent<VelocityComponent>(velo);
 
@@ -66,6 +69,12 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
 
 //============================= EFFECTS =============================
     EffectsComponent arrayOfEffects;
+    // EffectComponent effect;
+    // effect.effect = Effects::fire;
+    // effect.duration = 3600.f;
+    // effect.period = 2;
+    // effect.damage = 1;
+    // arrayOfEffects.effects.push_back(effect);
     manager.addComponent(arrayOfEffects);
 
     EffectsInfo effectsInfo(TILE_SIZE * 2, TILE_SIZE * 2);

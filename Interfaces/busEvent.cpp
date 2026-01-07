@@ -1,10 +1,10 @@
 #include "busEvent.h"
 
-void BusEvent::update(sf::Event event) {
+void BusEvent::update(sf::Event event, sf::Vector2f rescaleCoeff) {
     switch (event.type) {
     case sf::Event::MouseButtonPressed:
-        mousePos.x = event.mouseButton.x;
-        mousePos.y = event.mouseButton.y;
+        mousePos.x = event.mouseButton.x / rescaleCoeff.x;
+        mousePos.y = event.mouseButton.y / rescaleCoeff.y;
         switch (event.mouseButton.button) {
         case sf::Mouse::Left:
             currEvent = Event::MouseDownLeft;
@@ -20,14 +20,14 @@ void BusEvent::update(sf::Event event) {
 
     case sf::Event::MouseMoved:
         currEvent = Event::MouseMove;
-        mousePos.x = event.mouseMove.x;
-        mousePos.y = event.mouseMove.y;
+        mousePos.x = event.mouseMove.x / rescaleCoeff.x;
+        mousePos.y = event.mouseMove.y / rescaleCoeff.y;
         break;
 
     case sf::Event::MouseButtonReleased:
         currEvent = Event::MouseUp;
-        mousePos.x = event.mouseButton.x;
-        mousePos.y = event.mouseButton.y;
+        mousePos.x = event.mouseButton.x / rescaleCoeff.x;
+        mousePos.y = event.mouseButton.y / rescaleCoeff.y;
         break;
 
     case sf::Event::KeyPressed:

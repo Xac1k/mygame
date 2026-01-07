@@ -19,7 +19,7 @@ public:
     bool altPressed = false;
     std::map<Event, bool> processedEvents;
 
-    void update(sf::Event Event);
+    void update(sf::Event Event, sf::Vector2f rescaleCoeff);
     void init();
     int addEventListenre(Event event, std::function<void(BusEvent&)> callback);
 };

@@ -27,6 +27,13 @@
 #include <Pages/StartPage.hpp>
 #include <Pages/PlayPage.hpp>
 
+#define PATH_TO_FRAG_SHADER "Shaders/shader.frag"
+#define PATH_TO_VERTEX_SHADER "Shaders/basic.vert"
+sf::Shader DrunkShader;
+sf::RenderTexture renderTexture;
+
+sf::Vector2f rescaleCoeff({1., 1.});
+
 void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
     gameState(manager);
 
@@ -39,14 +46,29 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     audioManager.loadMusic("item15", "Sounds/asset/items/item15.mp3");
     audioManager.loadMusic("PlayerDeath", "Sounds/asset/PlayerKilled.wav");
     audioManager.loadMusic("SkeletonDeath", "Sounds/asset/SkeletonDeath.wav");
-    audioManager.playMusic("Стартовое меню", true);
+    // audioManager.playMusic("Стартовое меню", true);
     audioManager.setMasterVolume(50);
+
+    if (sf::Shader::isAvailable()) {
+        if (!DrunkShader.loadFromFile(buildFullPath(PATH_TO_FRAG_SHADER, 1), sf::Shader::Fragment)) {
+            std::cout << "ОШИБКА: Не удалось загрузить шейдер!\n";
+            std::cout << "Проверь пути:\n";
+            std::cout << "Vertex: " << buildFullPath(PATH_TO_VERTEX_SHADER, 1) << "\n";
+            std::cout << "Fragment: " << buildFullPath(PATH_TO_FRAG_SHADER, 1) << "\n";
+        } else {
+            std::cout << "Шейдер успешно загружен!\n";
+            DrunkShader.setUniform("texture", 0);
+        }
+    } else {
+        std::cout << "Шейдеры не поддерживаются на этом железе\n";
+    }
 }
 
 int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 0;
-    sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Cave", sf::Style::Titlebar | sf::Style::Close, settings);
+    sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Cave", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize, settings);
+    renderTexture.create(WINDOW_WIDTH + 80, WINDOW_HEIGHT);
     window.setVerticalSyncEnabled(false);
 
     BusEvent busEvent;
@@ -108,3 +130,6 @@ int main() {
     }
     return 0;
 }
+
+//TODO:  Добавить сути (не понятно, что нужно сделать)
+// Сделать больше экран.

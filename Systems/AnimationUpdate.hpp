@@ -73,7 +73,7 @@ class Animator {
 
             auto entityOveralyAnimIDs = manager.with<OverlayesStorageComponent>().get();
             for(int id : entityOveralyAnimIDs) {
-                auto anims = manager.getComponent<OverlayesStorageComponent>(id).get();
+                auto anims = manager.getComponent<OverlayesStorageComponent>(id);
                 int overlayID = 0;
 
                 for(auto& overlay : anims->overlayes) {

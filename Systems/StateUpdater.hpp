@@ -137,9 +137,75 @@ private:
             if(playerState->state == (int)PlayerState::AttackIdleBackward) playerState->state = (int)PlayerState::IdleBackward;
         }
     }
+
+    void updateStateVillager(EntitiesManager& manager) {
+        auto enemyIDs = manager.withClassName("*villager*");
+        if(enemyIDs.size() == 0) return;
+
+        for (int enemyID : enemyIDs) {
+            auto facingComp = manager.getComponent<DirectionalDeathComponent>(enemyID).get();
+            auto veloComp = manager.getComponent<VelocityComponent>(enemyID).get();
+            auto stateComp = manager.getComponent<StateComponent>(enemyID).get();
+
+            if(manager.hasComponent<AttackComponent>(enemyID)) {
+                auto attackComp = manager.getComponent<AttackComponent>(enemyID).get();
+                auto angelArea = attackComp->attackArea;
+                auto angle = angleMidpoint(angelArea.x, angelArea.y);
+                if(90 < angle && angle < 270) {
+                    stateComp->state = (int)VillagerState::AttackIdleLeft;
+                }
+                else {
+                    stateComp->state = (int)VillagerState::AttackIdleRight;
+                }
+                continue;
+            }
+
+            if(manager.hasComponent<HurtComponent>(enemyID)) {
+                auto angle = manager.getComponent<HurtComponent>(enemyID).get()->angle;
+                if(90 < angle && angle < 270) {
+                    stateComp->state = (int)VillagerState::HurtRight;
+                }
+                else {
+                    stateComp->state = (int)VillagerState::HurtLeft;
+                }
+                manager.removeComponent<HurtComponent>(enemyID);
+                continue;
+            }
+
+            if(manager.hasComponent<StuneCompanent>(enemyID)) continue;
+
+            if(0 < veloComp->dir.x) {
+                stateComp->state = (int)VillagerState::WalkRight;
+                facingComp->facing = Facing::Rigth;
+            }
+            else if(0 > veloComp->dir.x) {
+                stateComp->state = (int)VillagerState::WalkLeft;
+                facingComp->facing = Facing::Left;
+            }
+            else if(0 != veloComp->dir.y) {
+                if(stateComp->state == (int)VillagerState::IdleLeft) {
+                    stateComp->state = (int)VillagerState::WalkLeft;
+                    facingComp->facing = Facing::Left;
+                }
+                if(stateComp->state == (int)VillagerState::IdleRight) {
+                    stateComp->state = (int)VillagerState::WalkRight;
+                    facingComp->facing = Facing::Rigth;
+                }
+            }
+            else {
+                if(stateComp->state == (int)VillagerState::WalkRight) stateComp->state = (int)VillagerState::IdleRight;
+                if(stateComp->state == (int)VillagerState::WalkLeft) stateComp->state = (int)VillagerState::IdleLeft;
+                if(stateComp->state == (int)VillagerState::AttackIdleRight) stateComp->state = (int)VillagerState::IdleRight;
+                if(stateComp->state == (int)VillagerState::AttackIdleLeft) stateComp->state = (int)VillagerState::IdleLeft;
+                if(stateComp->state == (int)VillagerState::HurtRight) stateComp->state = (int)VillagerState::IdleRight;
+                if(stateComp->state == (int)VillagerState::HurtLeft) stateComp->state = (int)VillagerState::IdleLeft;
+            }
+        }   
+    }
 public:
     void updateEnemyStates(EntitiesManager& manager) {
         updateStateSkeletons(manager);
         updateStatePlayer(manager);
+        updateStateVillager(manager);
     }
 };

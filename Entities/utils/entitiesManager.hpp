@@ -172,6 +172,11 @@ public:
         return it != existedEntities.end();
     }
 
+    bool isEntityExist(int entityID) {
+        auto it = entities.find(entityID);
+        return it != entities.end();
+    }
+
     template <typename ...T>
     void addComponent(int entityID, std::function<void(T...)> callback) {
         auto entity = entities.find(entityID);

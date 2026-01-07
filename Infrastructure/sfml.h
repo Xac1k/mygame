@@ -12,11 +12,16 @@ sf::Sprite getCurrentSprite(OverlayAnimationComponent animationComponent, Vect2D
 void drawGridAnimation(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader, int id);
 bool drawAnimationOneFile(sf::RenderWindow &window, EntitiesManager &manager, TextureLoader &textureLoader, int id);
 
+
+void drawGridAnimation(sf::RenderTexture &window, EntitiesManager &manager, TextureLoader &textureLoader, int id);
+bool drawAnimationOneFile(sf::RenderTexture &window, EntitiesManager &manager, TextureLoader &textureLoader, int id);
+
 class SfmlRenderer
 {
 private:
 public:
     void render(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader);
+    void render(sf::RenderTexture &window, EntitiesManager &manager, TextureLoader &textureLoader);
 };
 
 

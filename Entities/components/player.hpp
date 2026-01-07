@@ -40,6 +40,9 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
     HealthComponent health(100);
     manager.addComponent<HealthComponent>(health);
 
+    RejectionHealthIndicator flag;
+    manager.addComponent<RejectionHealthIndicator>(flag);
+
     StateComponent state((int) PlayerState::IdleDirect);
     manager.addComponent<StateComponent>(state);
 
@@ -66,7 +69,7 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
     EffectComponent effect;
     effect.effect = Effects::wet;
     effect.duration = 3600.f;
-    effect.period = 5.f;
+    effect.period = 1.55f;
     arrayOfEffects.effects.push_back(effect);
     manager.addComponent(arrayOfEffects);
 

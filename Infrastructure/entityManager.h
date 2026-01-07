@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
@@ -13,13 +13,14 @@
 
 class TextureLoader {
 private:
-    std::map<std::string, sf::Texture> buff;
+    std::unordered_map<std::string, sf::Texture> buff;
     sf::Texture texture;
     sf::Sprite sprite;
 public:
     bool isLoaded(const std::string& filename);
     void loadFromFile(const std::string& filename);
     sf::Texture getTexture(const std::string& filename);
+    sf::Sprite& getSprite(const std::string& filename, Vect2D pos, Vect2D size, Vect2D tileSize, Vect2D tileID, Vect2D mirror);
     sf::Sprite& getSprite(const std::string& filename, Vect2D pos, Vect2D size);
     sf::Sprite& getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2D size, Vect2D tileSize);
     sf::Sprite& getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2D size, Vect2D tileSize, float alpha);

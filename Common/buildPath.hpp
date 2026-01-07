@@ -4,7 +4,7 @@
 #include <string>
 #include <filesystem>
 
-static std::string buildFullPath(std::string path, int levelsUp = 0) {
+static std::string buildFullPath(std::filesystem::path path, int levelsUp = 0) {
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::filesystem::path targetPath = currentPath;
     

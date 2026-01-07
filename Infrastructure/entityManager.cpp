@@ -6,7 +6,7 @@ bool TextureLoader::isLoaded(const std::string& filename) {
 }
 
 void TextureLoader::loadFromFile(const std::string& filename) {
-    sf::Sprite sprite;
+    std::cout << filename << std::endl;
     sf::Texture texture;
 
     texture.setSmooth(false);
@@ -14,25 +14,44 @@ void TextureLoader::loadFromFile(const std::string& filename) {
     std::string fullpath = buildFullPath(filename, 1);
 
     if (!texture.loadFromFile(fullpath)) { std::cout << "Невозможно открыть спрайт" << std::endl; }
-    buff.insert(std::make_pair(fullpath, texture));
+    buff.insert(std::make_pair(filename, texture));
+}
+
+void resetAlpha(sf::Sprite& sprite) {
+    auto color = sprite.getColor();
+   color.a = 255;
+   sprite.setColor(color);
 }
 
 sf::Sprite& TextureLoader::getSprite(const std::string& filename, Vect2D pos, Vect2D size) {
     if(!isLoaded(filename)) loadFromFile(filename);
+    resetAlpha(sprite);
 
-    sprite = sf::Sprite();
+    sprite.setTexture(buff[filename]);
 
-    std::string fullpath = buildFullPath(filename, 1);
-    sprite.setTexture(buff[fullpath]);
-
-    sf::Vector2u textureSize = buff[fullpath].getSize();
+    sf::Vector2u textureSize = buff[filename].getSize();
     float scaleX = size.x / textureSize.x;
     float scaleY = size.y / textureSize.y;
     
     sprite.setTextureRect(sf::IntRect(0, 0, textureSize.x, textureSize.y));
     sprite.setPosition(pos.x, pos.y);
-    sprite.scale(sf::Vector2f({scaleX, scaleY}));
-    //sprite.setOrigin({20/2, 20/2});
+    sprite.setScale(sf::Vector2f({scaleX, scaleY}));
+
+    return sprite;
+}
+
+sf::Sprite& TextureLoader::getSprite(const std::string& filename, Vect2D pos, Vect2D size, Vect2D tileSize, Vect2D tileID, Vect2D mirror) {
+   if(!isLoaded(filename)) loadFromFile(filename);
+
+    sprite.setTexture(buff[filename]);
+
+    float scaleX = size.x / tileSize.x * mirror.x;
+    float scaleY = size.y / tileSize.y * mirror.y;
+    
+    sprite.setTextureRect(sf::IntRect(tileSize.x * tileID.x, tileSize.y * tileID.y, tileSize.x, tileSize.y));
+    Vect2D mirrorSpriteCorrection(mirror.x < 0 ? size.x : 0, mirror.y < 0 ? size.y : 0);
+    sprite.setPosition(pos.x + mirrorSpriteCorrection.x, pos.y + mirrorSpriteCorrection.y);
+    sprite.setScale(sf::Vector2f({scaleX, scaleY}));
 
     return sprite;
 }
@@ -40,17 +59,14 @@ sf::Sprite& TextureLoader::getSprite(const std::string& filename, Vect2D pos, Ve
 sf::Texture TextureLoader::getTexture(const std::string &filename) {
     if(!isLoaded(filename)) loadFromFile(filename);
 
-    std::string fullpath = buildFullPath(filename, 1);
-    return buff[fullpath];
+    return buff[filename];
 }
 
 sf::Sprite& TextureLoader::getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2D size, Vect2D tileSize) {
     if(!isLoaded(frame.path)) loadFromFile(frame.path);
+    resetAlpha(sprite);
 
-    sprite = sf::Sprite();
-
-    std::string fullpath = buildFullPath(frame.path, 1);
-    sprite.setTexture(buff[fullpath]);
+    sprite.setTexture(buff[frame.path]);
 
     float scaleX = size.x / tileSize.x * frame.mirror.x;
     float scaleY = size.y / tileSize.y * frame.mirror.y;
@@ -58,7 +74,7 @@ sf::Sprite& TextureLoader::getSprite(const FrameOnGrid& frame, Vect2D pos, Vect2
     sprite.setTextureRect(sf::IntRect(tileSize.x * frame.cellID.x, tileSize.y * frame.cellID.y, tileSize.x, tileSize.y));
     Vect2D mirrorSpriteCorrection(frame.mirror.x < 0 ? size.x : 0, frame.mirror.y < 0 ? size.y : 0);
     sprite.setPosition(pos.x + mirrorSpriteCorrection.x, pos.y + mirrorSpriteCorrection.y);
-    sprite.scale(sf::Vector2f({scaleX, scaleY}));
+    sprite.setScale(sf::Vector2f({scaleX, scaleY}));
 
     return sprite;
 }

@@ -21,6 +21,8 @@
 #include <Systems/SpawnSystem.hpp>
 #include <Systems/VolumLevelDraw.hpp>
 
+extern sf::Vector2f rescaleCoeff;
+
 void SettingPage(
     sf::Clock& clock, sf::RenderWindow& window, BusEvent& busEvent,
     EntitiesManager& manager, AudioSystem& audioManager, Animator& animator,
@@ -33,7 +35,13 @@ void SettingPage(
         if(event.type == sf::Event::Closed) {
             window.close();
         }
-        busEvent.update(event);
+        if(event.type == sf::Event::Resized) {
+            sf::Vector2u winSize = window.getSize();
+            rescaleCoeff.x = (float)winSize.x / WINDOW_WIDTH;
+            rescaleCoeff.y = (float)winSize.y / WINDOW_HEIGHT;
+            std::cout << "Разрешение изменено коофициент пропорции: " << rescaleCoeff.x << 'x' << rescaleCoeff.y << std::endl;
+        }
+        busEvent.update(event, rescaleCoeff);
         ButtonUpdate(manager, busEvent);
         if(busEvent.currEvent == BusEvent::Event::Esc) {
             auto ids = manager.with<GameStateComponent>().get();

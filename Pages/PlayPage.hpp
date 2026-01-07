@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
 #include "./Interfaces/busEvent.h"
 #include "./Infrastructure/sfml.h"
 #include "./Entities/utils/entitiesManager.hpp"
@@ -32,20 +33,46 @@
 #include <Systems/StateUpdater.hpp>
 #include <Systems/Cooldown.hpp>
 #include <Systems/Game/Effects/EffectsSystem.hpp>
+#include <Systems/UI/HealthIndicator/HealthIndicator.hpp>
+#include <Systems/UI/DialogWindow/DialogWindow.hpp>
 
 #include <Depricated/MovementPlayerSystem.hpp>
+    
+HealthIndicator EntityHealthIndicator;
+DialogWindow DialogManager;
+extern sf::Shader DrunkShader;
+extern sf::RenderTexture renderTexture;
+extern sf::Vector2f rescaleCoeff;
 
-void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader, SfmlRenderer& renderer) {
+sf::Clock clockForDrunk;
+#define BIAS_IN_PIXEL 200.0f
+#define PIXEL_COEF 999.0f
+
+void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader, SfmlRenderer& renderer, float df) {
     //Systems
     HealthPlayerLevel HealthPlayerIndicator;
+    renderTexture.clear(sf::Color::White);
 
-    window.clear(sf::Color::White);
-    MapDrawSystem(window, textureLoader, manager);
-    EntitiOnMapDrawSystem(window, textureLoader, manager);
+    MapDrawSystem(renderTexture, textureLoader, manager);
+    EntitiOnMapDrawSystem(renderTexture, textureLoader, manager);
+    EntityHealthIndicator.draw(renderTexture, textureLoader, manager, df);
+    HealthPlayerIndicator.draw(renderTexture, textureLoader, manager);
+    
+
+    renderTexture.display();
+    sf::Sprite sprite(renderTexture.getTexture());
+
+    float time = clockForDrunk.getElapsedTime().asMilliseconds();
+    DrunkShader.setUniform("time", time);
+    DrunkShader.setUniform("bias", BIAS_IN_PIXEL);
+    DrunkShader.setUniform("resolution", sf::Vector2f((WINDOW_WIDTH + 80) * rescaleCoeff.x, (WINDOW_HEIGHT) * rescaleCoeff.y));
+    DrunkShader.setUniform("pixelizeCoeff", PIXEL_COEF);
+
+    window.clear();
+    window.draw(sprite, &DrunkShader);
     renderer.render(window, manager, textureLoader);
     InventoryDrawSystem(window, textureLoader, manager);
-
-    HealthPlayerIndicator.draw(window, textureLoader, manager);
+    DialogManager.UI(window, manager, textureLoader);
     window.display();
 }
 
@@ -67,7 +94,13 @@ void PlayPage(
         if(event.type == sf::Event::Closed) {
             window.close();
         }
-        busEvent.update(event);
+        if(event.type == sf::Event::Resized) {
+            sf::Vector2u winSize = window.getSize();
+            rescaleCoeff.x = (float)winSize.x / WINDOW_WIDTH;
+            rescaleCoeff.y = (float)winSize.y / WINDOW_HEIGHT;
+            std::cout << "Разрешение изменено коофициент пропорции: " << rescaleCoeff.x << 'x' << rescaleCoeff.y << std::endl;
+        }
+        busEvent.update(event, rescaleCoeff);
         ButtonUpdate(manager, busEvent);
         InventoryContextMenuUpdate(manager, busEvent);
         InventoryDndUpdate(manager, busEvent);
@@ -91,5 +124,7 @@ void PlayPage(
     StateUpdater.updateEnemyStates(manager);
     animator.AnimationUpdate(manager, df);
 
-    drawPlayPage(window, manager, textureLoader, renderer);
+    DialogManager.Controller(manager);
+
+    drawPlayPage(window, manager, textureLoader, renderer, df);
 }

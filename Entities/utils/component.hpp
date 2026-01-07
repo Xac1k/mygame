@@ -1,11 +1,12 @@
 #pragma once
-#include "../../Common/Vect.hpp"
 #include <functional>
 #include <string>
 #include <map>
 #include <variant>
 #include <set>
 #include "../../Map/Preprocessing/map.hpp"
+#include <Common/Vect.hpp>
+#include <Common/randFloat.hpp>
 
 struct PositionOnMapComponent {
     Vect2D point;
@@ -16,7 +17,7 @@ struct PositionOnMapComponent {
     ~PositionOnMapComponent() = default;
 };
 
-struct  PositionComponent {
+struct PositionComponent {
     Vect2D point;
 
     PositionComponent(float x, float y): point({x, y}) {};
@@ -69,7 +70,6 @@ struct FrameOnGrid {
     float alpha = 100;
     bool deleteAfterPlay = false;
 
-
     FrameOnGrid(std::string pathI, Vect2D cellIDI, float time, bool repeat, Vect2D mirrorI, float alphaI, bool deleteAfterPlayI): 
         path(pathI), cellID(cellIDI), durationTime(time), repeatingFlag(repeat), mirror(mirrorI), alpha(alphaI), deleteAfterPlay{deleteAfterPlayI} {};
     FrameOnGrid(std::string pathI, Vect2D cellIDI, float time, bool repeat, Vect2D mirrorI, float alphaI): 
@@ -120,6 +120,15 @@ struct OriginComponent {
     OriginComponent(float x, float y): shift({x, y}) {};
     OriginComponent(Vect2D shiftI): shift(shiftI) {};
 };
+
+struct HealthIndicatorShift {
+    Vect2D shift;
+
+    HealthIndicatorShift(float x, float y): shift({x, y}) {};
+    HealthIndicatorShift(Vect2D shiftI): shift(shiftI) {};
+};
+
+struct RejectionHealthIndicator{};
 
 struct StateComponent {
     int state;
@@ -204,7 +213,7 @@ struct HealthComponent {
 };
 
 
-
+//===============================EFFECTS================================
 enum class Effects {none, fire, wet, frozen, poisoned};
 struct WeaponComponent {
     int damage; // Урон оружия
@@ -362,8 +371,7 @@ struct CanWet{};
 struct CanPoisoned{};
 
 
-
-
+//===============================LOOTDROP===============================
 struct LootDrop {
     Items itemID;        
     float chance;  
@@ -410,6 +418,85 @@ struct MutexComponent {
     MutexComponent(): blocked(false), currTime(0), durationTime(0) {};
 };
 
+
+//================================SOUNDS================================
+struct SoundFX {
+    std::string nameSoundFX;   
+    float chance; 
+
+    SoundFX(std::string name, float chanceI): nameSoundFX(name), chance(chanceI) {};
+};
+
+using StorageSFX = std::vector<SoundFX>;
+enum class Action {Hit, Death, Step, Attack, Talk, Tink};
+struct SoundFXComponent {
+    std::unordered_map<Action, StorageSFX> sounds;
+
+    SoundFXComponent(Action actI): sounds({}) {};
+    void loadSound(Action act, std::string name, float chance) {
+        auto it = sounds.find(act);
+        if(it == sounds.end()) {
+            StorageSFX storage;
+            SoundFX sfx(name, chance);
+            storage.push_back(sfx);
+
+            sounds.insert(std::make_pair(act, storage));
+        }
+        else {
+            SoundFX sfx(name, chance);
+            it->second.push_back(sfx);
+        }
+    }
+
+    std::string getMusicByAct(Action act) {
+        auto it = sounds.find(act);
+        if(it == sounds.end()) return "";
+        auto random = randFloat();
+        auto storage = it->second;
+
+        float currentChance = 0;
+        for (int id = 0; id < storage.size(); id++) {
+            if(currentChance > random && random > currentChance + storage[id].chance) {
+                return storage[id].nameSoundFX;
+            }
+            else {
+                currentChance += storage[id].chance;
+            }
+        };
+        return "";
+    };
+};
+
+struct SoundTriggerComponent {
+    Action act;
+    sf::Vector2f position;
+    float volume = 1.0f;
+}; 
+
+struct PointEmmiterMusic {
+    std::string soundId;
+    Vect2D position;
+    float volume = 1.0f;
+    bool interruptPrevious = true;
+    float fadeRadius = 500.0f;
+
+    PointEmmiterMusic(
+        std::string soundId,
+        Vect2D position,
+        float volume,
+        bool interruptPrevious,
+        float fadeRadius
+    ): soundId(soundId), position(position), volume(volume), interruptPrevious(interruptPrevious), fadeRadius(fadeRadius) {};
+
+    PointEmmiterMusic(
+        std::string soundId,
+        Vect2D position,
+        float fadeRadius
+    ): soundId(soundId), position(position), fadeRadius(fadeRadius) {};
+};
+
+
+//================================DEATH=================================
 struct DeathComponent {
     bool isDead = false;
     float deathTime = 0.0f;
@@ -421,25 +508,6 @@ struct DeathComponent {
     DeathComponent(std::string soundFX): soudnFXname(soundFX) {};
 };
 
-struct SoundFX {
-    std::string nameSoundFX;        
-    float chance;  
-
-    SoundFX(std::string name, float chanceI): nameSoundFX(name), chance(chanceI) {};
-};
-
-enum class Action {Hit, Death, Step, Attack};
-struct SoundFXComponent {
-    Action act;
-    std::vector<SoundFX> sounds;
-
-    SoundFXComponent(Action actI): act(actI), sounds({}) {};
-    void loadSound(std::string name, float chance) {
-        SoundFX sound(name, chance);
-        sounds.push_back(sound);
-    }
-};
-
 enum class Facing {Backward, Direct, Left, Rigth};
 struct DirectionalDeathComponent {
     Facing facing = Facing::Direct;
@@ -448,12 +516,16 @@ struct DirectionalDeathComponent {
     DirectionalDeathComponent() = default;
 };
 
+
+//===============================SETTINGS===============================
 struct ChunkLoaderComponent {
     int countChunk;
 
     ChunkLoaderComponent(int countChunkI): countChunk(countChunkI) {};
 };
 
+
+//==================================AI==================================
 enum class AIState {
     Wandering,
     Chasing,
@@ -485,6 +557,14 @@ struct AIAgentCompanent {
     speedOfChasing(speedOfChasingI) {};
 };
 
+struct WanderPointCompanent {
+    Vect2D point;
+    float cooldown = 0.0f;
+    float currTime = 0.f;
+};
+
+
+//===============================COOLDOWN===============================
 struct StuneCompanent {
     float duration;
     float currentTime = 0;
@@ -519,12 +599,6 @@ struct ColldownBeforeEffectExpand {
 
 struct ReadyToExpandEffect{};
 
-struct WanderPointCompanent {
-    Vect2D point;
-    float cooldown = 0.0f;
-    float currTime = 0.f;
-};
-
 struct CooldownInfo {
     float cooldownMoving;
     float cooldownAttack;
@@ -549,3 +623,5 @@ struct HurtComponent {
     HurtComponent(float angleI): angle(angleI) {};
 };
 
+
+//================================DIALOG================================

@@ -18,7 +18,7 @@ class HealthPlayerLevel {
         Vect2D margin = Vect2D(10, 10);
         Vect2D size = Vect2D(120, 35);
 
-    void draw(sf::RenderWindow &window, TextureLoader &textureLoader, EntitiesManager& manager) {
+    void draw(sf::RenderTexture &window, TextureLoader &textureLoader, EntitiesManager& manager) {
         auto playerIds = manager.withClassName("*player*");
         if(playerIds.size() == 0) return;
         auto playHealthCom = manager.getComponent<HealthComponent>(playerIds[0]).get();
