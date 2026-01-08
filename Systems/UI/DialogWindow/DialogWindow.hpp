@@ -156,7 +156,7 @@ public:
         int playerID = manager.withClassName("*player*")[0];
 
         checkDialogPoint(manager, dialogPointIDs, playerID);
-        runInitProg();
+        runInitProg(manager);
         drawDialogMenu(window, manager, textureLoader);
         drawDialogText(window, manager, textureLoader);
         drawDialogName(window, manager, textureLoader);
@@ -288,7 +288,7 @@ private:
         gameState->level++;
     };
 
-    void runInitProg() {
+    void runInitProg(EntitiesManager& manager) {
         if(initProgDone) return;
         if(!currDialog) return;
         auto prog = currDialog->getProgramm();
@@ -309,7 +309,7 @@ private:
                 setName(comand.var_env);
                 break;
             case ComandType::nextLevel:
-                nextLevel();
+                nextLevel(manager);
                 break;
             default:
                 break;
