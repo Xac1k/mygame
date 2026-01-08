@@ -17,7 +17,7 @@ constexpr int pickUpRadius = 32;
 std::vector<int> sortByDeath(EntitiesManager& manager, std::vector<int> entityIDs) {
     std::vector<int> result;
     for(int id : entityIDs) {
-        auto deathComp = manager.getComponent<DeathComponent>(id).get();
+        auto deathComp = manager.getComponent<DeathComponent>(id);
         if(
             deathComp->isDead && 
             deathComp->deathTime > deathComp->fadeOutTime
@@ -50,22 +50,22 @@ void LootDropSystem(EntitiesManager& manager, TextureLoader textureLoader) {
     auto entityToLoot = sortByDeath(manager, entityIDs);
 
     for (int entityId : entityToLoot) {
-        auto pos = manager.getComponent<PositionOnMapComponent>(entityId).get();
-        auto lootTable = manager.getComponent<LootTableComponent>(entityId).get();
-        auto deathComp = manager.getComponent<DeathComponent>(entityId).get();
+        auto pos = manager.getComponent<PositionOnMapComponent>(entityId)->point;
+        auto drops = manager.getComponent<LootTableComponent>(entityId)->drops;
+        auto angleOfDeath = manager.getComponent<DeathComponent>(entityId)->angleOfDeath;
 
-        for (const auto& drop : lootTable->drops) {
+        for (const auto& drop : drops) {
             if (randFloat() > drop.chance) continue;
             int count = randRange(drop.minCount, drop.maxCount);
             for(int i = 0; i < count; i++) {
                 Vect2D offset = fromAngle(randFloat() * 360.0f) * randFloat() * drop.offsetRadius;
-                Vect2D spawnPos = pos->point + offset;
+                Vect2D spawnPos = pos + offset;
 
                 int newEntityID = item(manager, textureLoader, spawnPos);
-                auto stateComp = manager.getComponent<StateComponent>(newEntityID).get();
+                auto stateComp = manager.getComponent<StateComponent>(newEntityID);
                 stateComp->state = (int)drop.itemID;
 
-                auto velo = getVelocity(deathComp->angleOfDeath);
+                auto velo = getVelocity(angleOfDeath);
                 PhysicsComponent physic(velo.x, velo.y);
                 manager.addComponent<PhysicsComponent>(newEntityID, physic);
 

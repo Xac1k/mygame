@@ -182,6 +182,7 @@ private:
     void updateCollisionEffects(EntitiesManager& manager, std::vector<int> enemyIDs) {
         for(auto enemyID : enemyIDs) {
             auto effects = manager.getComponent<EffectsComponent>(enemyID).get();
+            if(effects->effects.empty()) continue;
             
             bool haveFire = effects->find(Effects::fire) != effects->effects.end();
             bool haveWet = effects->find(Effects::wet) != effects->effects.end();

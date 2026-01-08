@@ -23,7 +23,7 @@ enum class ControlFlow {
     All
 };
 void player(EntitiesManager& manager, TextureLoader& textureLoader) {
-    manager.addEntity("playMenu:player");
+    manager.addEntity("playMenu:player Dynamic");
 
     PositionOnMapComponent posMap(0, 0);
     manager.addComponent<PositionOnMapComponent>(posMap);

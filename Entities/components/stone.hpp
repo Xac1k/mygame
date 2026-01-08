@@ -11,7 +11,7 @@ Vect2D sizeCollRectStone(32, 10);
 enum class StoneType {coal, iron, gold, rubin};
 enum class StoneState {hurt0, hurt1, hurt2, hurt3, death = 450};
 int ore(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap, StoneType type) {
-    manager.addEntity("playMenu:Enemy:stone:" + std::to_string((int)type) , true);
+    manager.addEntity("playMenu:Enemy:stone:" + std::to_string((int)type) + " Static", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);

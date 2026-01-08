@@ -6,7 +6,7 @@
 #include "../../main.h"
 
 int item(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap) {
-    manager.addEntity("playMenu:Enemy:Item", true);
+    manager.addEntity("playMenu:Enemy:Item Dynamic", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);

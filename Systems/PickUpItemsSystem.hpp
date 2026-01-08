@@ -36,14 +36,14 @@ void insertIntoInventory(EntitiesManager& manager, int lootID, int count, AudioS
 
 void LootPickUpSystem(EntitiesManager& manager, AudioSystem& audioManager) {
     auto lootIDs = manager.with<PickUpItemComponent>().with<PositionOnMapComponent>().get();
-    auto playerIDs = manager.withClassName("*player*");
-    if(playerIDs.size() == 0 || lootIDs.size() == 0) return;
-    auto playerPos = manager.getComponent<PositionOnMapComponent>(playerIDs[0]).get()->point;
+    if(lootIDs.size() == 0) return;
+    auto playerPosPtr = manager.with<PositionOnMapComponent>().withClassName("*player*").getComponent<PositionOnMapComponent>();
+    if(!playerPosPtr) return;
 
     for (int lootId : lootIDs) {
-        auto pos = manager.getComponent<PositionOnMapComponent>(lootId).get()->point;
-        auto pickUpRadius = manager.getComponent<PickUpItemComponent>(lootId).get();
-        if(dist(pos, playerPos) < pickUpRadius->pickUpRadius) {
+        auto pos = manager.getComponent<PositionOnMapComponent>(lootId)->point;
+        auto pickUpRadius = manager.getComponent<PickUpItemComponent>(lootId);
+        if(dist(pos, playerPosPtr->point) < pickUpRadius->pickUpRadius) {
             insertIntoInventory(manager, lootId, pickUpRadius->count, audioManager);
         }
     }

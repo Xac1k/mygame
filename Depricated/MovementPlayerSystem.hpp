@@ -109,8 +109,8 @@ void CreateMovementPlayerSystem(EntitiesManager& manager) {
     auto playerIds = manager.withClassName("*player*");
     if(playerIds.size() == 0) return;
 
-    auto playerVelocity = manager.getComponent<VelocityComponent>(playerIds[0]).get();
-    auto playerDeath = manager.getComponent<DeathComponent>(playerIds[0]).get();
+    auto playerVelocity = manager.getComponent<VelocityComponent>(playerIds[0]);
+    auto playerDeath = manager.getComponent<DeathComponent>(playerIds[0]);
     playerVelocity->dir.x = 0;
     playerVelocity->dir.y = 0;
     if(playerDeath->isDead) return;

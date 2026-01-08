@@ -14,16 +14,13 @@ enum class ControlFlowBarrel {
     All
 };
 int barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap) {
-    manager.addEntity("playMenu:Enemy:barrel", true);
+    manager.addEntity("playMenu:Enemy:barrel Static", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);
 
     SizeComponent size(32, 32);
     manager.addComponent<SizeComponent>(size);
-
-    VelocityComponent velo;
-    manager.addComponent<VelocityComponent>(velo);
 
     HealthComponent health(20, 20);
     manager.addComponent<HealthComponent>(health);

@@ -242,25 +242,25 @@ class AIAgent {
 
         // define next Pos for all enemy
         void updateEnemyPos(EntitiesManager& manager, float df) {
-            auto enemyIDs = manager.with<VelocityComponent>().get();
+            auto enemyIDs = manager.with<VelocityComponent>().withClassName("*Dynamic*").get();
             if(enemyIDs.size() == 0) return;
 
-            auto mapIds = manager.with<MapComponent>().get();
-            if(mapIds.size() == 0) return;
-            auto map = manager.getComponent<MapComponent>(mapIds[0]).get();
+            auto map = manager.with<MapComponent>().getComponent<MapComponent>();
+            if(!map) return;
 
             for(int enemyID : enemyIDs) {
-                auto velocityComp = manager.getComponent<VelocityComponent>(enemyID).get();
+                auto velocityComp = manager.getComponent<VelocityComponent>(enemyID);
                 if(velocityComp->dir.x == 0 && velocityComp->dir.y == 0) continue;
-                auto posComp = manager.getComponent<PositionOnMapComponent>(enemyID).get();
-                auto collisionRectComp = manager.getComponent<CollisionComponent>(enemyID).get();
-                auto originComp = manager.getComponent<OriginComponent>(enemyID).get();
 
                 // stune handler
                 if(manager.hasComponent<StuneCompanent>(enemyID)) {
                     velocityComp->dir = Vect2D(0, 0);
                     continue;
                 }
+
+                auto posComp = manager.getComponent<PositionOnMapComponent>(enemyID);
+                auto collisionRectComp = manager.getComponent<CollisionComponent>(enemyID);
+                auto originComp = manager.getComponent<OriginComponent>(enemyID);
 
                 // permissions
                 auto [xCoef, yCoef] = isPermittedByMap(map, posComp, collisionRectComp, originComp, velocityComp, df);
@@ -306,7 +306,7 @@ class AIAgent {
             return Direction::none;
         }
 
-        std::tuple<int, int> isPermittedByMap(MapComponent* map, PositionOnMapComponent* enemyPos, CollisionComponent* rect, OriginComponent* origin, VelocityComponent* velo, float df) {
+        std::tuple<int, int> isPermittedByMap(std::shared_ptr<MapComponent> map, std::shared_ptr<PositionOnMapComponent> enemyPos, std::shared_ptr<CollisionComponent> rect, std::shared_ptr<OriginComponent> origin, std::shared_ptr<VelocityComponent> velo, float df) {
             auto collRectLeftUp = enemyPos->point + rect->shiftFromLeftUp + velo->dir * df;
             if(origin) collRectLeftUp -= origin->shift;
             sf::Vector2i Left = {(int)collRectLeftUp.x, (int)(collRectLeftUp.y + rect->size.y/2)};
@@ -362,13 +362,14 @@ class AIAgent {
 
         ArchiveOfEntitiesInChunk ChunkManager;
         std::tuple<int, int> isPermittedByEnemy(
-            EntitiesManager& manager, int moverID, PositionOnMapComponent* moverPos, CollisionComponent* moverCollRect,
-            OriginComponent* origin, VelocityComponent* velo, float df
+            EntitiesManager& manager, int moverID, std::shared_ptr<PositionOnMapComponent> moverPos, std::shared_ptr<CollisionComponent> moverCollRect,
+            std::shared_ptr<OriginComponent> origin, std::shared_ptr<VelocityComponent> velo, float df
         ) {
             auto moverCollRectLeftUp = moverPos->point + moverCollRect->shiftFromLeftUp;
             if(origin) moverCollRectLeftUp -= origin->shift;
             int xAllow = 1; int yAllow = 1;
 
+            //TODO: проверить работу с chunk manager коллизии если зайти лалеко не работают. 
             auto enemyIDsInChunk = ChunkManager.getEntitiesByChunk(manager);
             auto enemyIDs = manager.load<PositionOnMapComponent>(enemyIDsInChunk).with<CollisionComponent>().except(moverID).withClassName("*Enemy*").get();
             enemyIDs = sortByDeath(manager, enemyIDs);

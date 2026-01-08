@@ -28,6 +28,7 @@ class ArchiveOfEntitiesInChunk {
                 return cache;
 
             auto entityIDs = manager.with<PositionOnMapComponent>().get();
+            std::cout << "Кэширование entity\n";
 
             auto mapIDs = manager.with<MapComponent>().get();
             if(mapIDs.size() == 0) return {};

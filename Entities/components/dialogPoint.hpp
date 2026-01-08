@@ -5,7 +5,7 @@
 #include <Entities/utils/entitiesManager.hpp>
 
 void dialogPoint(EntitiesManager& manager, Vect2D posOnMap, std::string localPath) {
-    manager.addEntity("playMenu:Static:DialogPoint Deletable", true);
+    manager.addEntity("playMenu:DialogPoint Deletable Static", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);
