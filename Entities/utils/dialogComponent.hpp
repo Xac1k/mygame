@@ -8,6 +8,7 @@
 #include <regex>
 #include <Common/buildPath.hpp>
 #include <Common/Vect.hpp>
+#include <Common/const.hpp>
 
 struct DialogNode {
     std::string id;
@@ -23,7 +24,7 @@ struct DialogNode {
 };
 
 using var_env_type = std::unordered_map<std::string, std::shared_ptr<void>>;
-enum class ComandType {exit, redrig, setAvatar, setName};
+enum class ComandType {exit, redrig, setAvatar, setName, nextLevel};
 struct Comand {
     ComandType type;
     var_env_type var_env;
@@ -204,6 +205,11 @@ struct DialogTreeComponent {
                         std::cerr << "Ошибка в программе. Неправельное значение параметра name. name может начинаться и заканчиваться только любым не пробельным символом.\n";
                 return var_env;
             }
+            case ComandType::nextLevel: {
+                if(!paramTokenMap.empty()) 
+                    std::cerr << "Ошибка в программе. Команда nextLevel не должна иметь каких либо параметров\n";
+                return {};
+            }
             default:
                 return var_env;
             }
@@ -283,6 +289,8 @@ struct DialogTreeComponent {
                     node.type = ComandType::setAvatar;
                 else if(comandName == "setName")
                     node.type = ComandType::setName;
+                else if(comandName == "nextLevel")
+                    node.type = ComandType::nextLevel;
                 else {
                     std::cerr << "[parse] Ошибка внутри init_func. Неизвестный токен: " << comandName << std::endl;
                 }
@@ -295,4 +303,5 @@ struct DialogTreeComponent {
         };
 };
 
-
+struct DialogStartOnOver {};
+struct DialogDone {};

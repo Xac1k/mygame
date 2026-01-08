@@ -3,7 +3,7 @@
 #include <SFML/OpenGL.hpp>
 #include "./Interfaces/busEvent.h"
 #include "./Infrastructure/sfml.h"
-#include "./Entities/utils/entitiesManager.hpp"
+#include <Entities/utils/entitiesManager.hpp>
 #include "./Systems/ButtonUpdateSystem.hpp"
 #include "./Systems/AnimationUpdate.hpp"
 #include "./Systems/InventoryUpdateSystem.hpp"
@@ -35,14 +35,19 @@
 #include <Systems/Game/Effects/EffectsSystem.hpp>
 #include <Systems/UI/HealthIndicator/HealthIndicator.hpp>
 #include <Systems/UI/DialogWindow/DialogWindow.hpp>
+#include <Systems/Game/Spawn/SpawnController.hpp>
 
 #include <Depricated/MovementPlayerSystem.hpp>
+
+SpawnController LevelController;
     
 HealthIndicator EntityHealthIndicator;
 DialogWindow DialogManager;
 extern sf::Shader DrunkShader;
 extern sf::RenderTexture renderTexture;
 extern sf::Vector2f rescaleCoeff;
+
+AIAgent AIAgentUpdater;
 
 sf::Clock clockForDrunk;
 #define BIAS_IN_PIXEL 200.0f
@@ -81,15 +86,15 @@ void PlayPage(
     EntitiesManager& manager, AudioSystem& audioManager, Animator& animator,
     TextureLoader& textureLoader, SfmlRenderer& renderer
 ) {
+    LevelController.update(manager, textureLoader);
     float df = clock.restart().asSeconds();
     sf::Event event;
 
     //Systems
-    AIAgent AIAgentUpdater;
     StateUpdater StateUpdater;
     Cooldown CooldownSystem;
     EffectsSystem effectsSystem;
-
+    
     while(window.pollEvent(event)) {
         if(event.type == sf::Event::Closed) {
             window.close();
@@ -102,29 +107,33 @@ void PlayPage(
         }
         busEvent.update(event, rescaleCoeff);
         ButtonUpdate(manager, busEvent);
-        InventoryContextMenuUpdate(manager, busEvent);
-        InventoryDndUpdate(manager, busEvent);
-        InitAttackPlayerSystem(manager, busEvent, audioManager);
+        if(DialogManager.canPlay()) {
+            InventoryContextMenuUpdate(manager, busEvent);
+            InventoryDndUpdate(manager, busEvent);
+            InitAttackPlayerSystem(manager, busEvent, audioManager);
+        }
     }
-    HurtEntitySystem(manager);
-    effectsSystem.update(manager, df);
-    DeathEntitySystem(manager, audioManager, df);
-    CreateMovementPlayerSystem(manager);
-    DeathAnimationUpdateSystem(manager);
-    LootDropSystem(manager, textureLoader);
-    LootPickUpSystem(manager, audioManager);
 
-    AIAgentUpdater.updateAgressiveEnemy(manager, df);
-    AIAgentUpdater.defineEnemyVelocityByWandering(manager);
-    AIAgentUpdater.updateEnemyPos(manager, df);
+    if(DialogManager.canPlay()) {
+        HurtEntitySystem(manager);
+        effectsSystem.update(manager, df);
+        DeathEntitySystem(manager, audioManager, df);
+        CreateMovementPlayerSystem(manager);
+        DeathAnimationUpdateSystem(manager);
+        LootDropSystem(manager, textureLoader);
+        LootPickUpSystem(manager, audioManager);
 
-    CooldownSystem.update(manager, df);
-    UpdatePhysicsSystem(manager, textureLoader, df);
+        AIAgentUpdater.updateAgressiveEnemy(manager, df);
+        AIAgentUpdater.defineEnemyVelocityByWandering(manager);
+        AIAgentUpdater.updateEnemyPos(manager, df);
+
+        CooldownSystem.update(manager, df);
+        UpdatePhysicsSystem(manager, textureLoader, df);
+    }
 
     StateUpdater.updateEnemyStates(manager);
     animator.AnimationUpdate(manager, df);
 
     DialogManager.Controller(manager);
-
     drawPlayPage(window, manager, textureLoader, renderer, df);
 }

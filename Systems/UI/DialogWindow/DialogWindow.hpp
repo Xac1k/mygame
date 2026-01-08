@@ -151,8 +151,11 @@ public:
     }
 
     void UI(sf::RenderWindow &window, EntitiesManager& manager, TextureLoader& textureLoader) {
-        std::vector<int> entityIDs = manager.with<PositionOnMapComponent>().with<DialogTreeComponent>().with<SizeComponent>().get();
+        std::vector<int> entityIDs = manager.with<PositionOnMapComponent>().with<DialogTreeComponent>().without<DialogStartOnOver>().with<SizeComponent>().get();
+        std::vector<int> dialogPointIDs = manager.with<PositionOnMapComponent>().with<DialogStartOnOver>().with<DialogTreeComponent>().without<DialogDone>().get();
+        int playerID = manager.withClassName("*player*")[0];
 
+        checkDialogPoint(manager, dialogPointIDs, playerID);
         runInitProg();
         drawDialogMenu(window, manager, textureLoader);
         drawDialogText(window, manager, textureLoader);
@@ -280,6 +283,11 @@ private:
         oponentName = *namePtr.get();
     }
 
+    void nextLevel(EntitiesManager& manager) {
+        auto gameState = manager.with<GameStateComponent>().getComponent<GameStateComponent>(); 
+        gameState->level++;
+    };
+
     void runInitProg() {
         if(initProgDone) return;
         if(!currDialog) return;
@@ -300,11 +308,32 @@ private:
             case ComandType::setName:
                 setName(comand.var_env);
                 break;
+            case ComandType::nextLevel:
+                nextLevel();
+                break;
             default:
                 break;
             }
         }
         initProgDone = true;
+    }
+
+//
+private:
+    void checkDialogPoint(EntitiesManager& manager, std::vector<int> dialogPointIDs, int playerID) {
+        if(isActivate) return;
+        Vect2D playerPos = manager.getComponent<PositionOnMapComponent>(playerID)->point;
+        for(int dialogPointID : dialogPointIDs) {
+            Vect2D dialogPos = manager.getComponent<PositionOnMapComponent>(dialogPointID)->point;
+            float len = dist(dialogPos, playerPos);
+            if(len < distForDialog) {
+                interlocutorID = dialogPointID;
+                isActivate = true;
+                currDialog = manager.getComponent<DialogTreeComponent>(dialogPointID);
+                DialogDone flag; manager.addComponent<DialogDone>(flag, dialogPointID);
+                return;
+            }
+        }
     }
 
 //==================================UI==================================

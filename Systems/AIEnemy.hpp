@@ -13,6 +13,7 @@
 #include <Common/randFloat.hpp>
 #include <cmath>
 #include <Common/normAngle.hpp>
+#include <Common/getEntitiesByChunk.hpp>
 
 class AIAgent {
     public:
@@ -250,6 +251,7 @@ class AIAgent {
 
             for(int enemyID : enemyIDs) {
                 auto velocityComp = manager.getComponent<VelocityComponent>(enemyID).get();
+                if(velocityComp->dir.x == 0 && velocityComp->dir.y == 0) continue;
                 auto posComp = manager.getComponent<PositionOnMapComponent>(enemyID).get();
                 auto collisionRectComp = manager.getComponent<CollisionComponent>(enemyID).get();
                 auto originComp = manager.getComponent<OriginComponent>(enemyID).get();
@@ -358,6 +360,7 @@ class AIAgent {
             return result;
         }
 
+        ArchiveOfEntitiesInChunk ChunkManager;
         std::tuple<int, int> isPermittedByEnemy(
             EntitiesManager& manager, int moverID, PositionOnMapComponent* moverPos, CollisionComponent* moverCollRect,
             OriginComponent* origin, VelocityComponent* velo, float df
@@ -366,7 +369,8 @@ class AIAgent {
             if(origin) moverCollRectLeftUp -= origin->shift;
             int xAllow = 1; int yAllow = 1;
 
-            auto enemyIDs = manager.with<CollisionComponent>().except(moverID).withClassName("*Enemy*");
+            auto enemyIDsInChunk = ChunkManager.getEntitiesByChunk(manager);
+            auto enemyIDs = manager.load<PositionOnMapComponent>(enemyIDsInChunk).with<CollisionComponent>().except(moverID).withClassName("*Enemy*");
             enemyIDs = sortByDeath(manager, enemyIDs);
             
             for (int enemyID : enemyIDs) {

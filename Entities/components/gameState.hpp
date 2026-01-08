@@ -8,8 +8,10 @@ void gameState(EntitiesManager& manager) {
     GameStateComponent gameState;
     manager.addComponent<GameStateComponent>(gameState);
 
-    ChunkLoaderComponent chunkForProcessing(4);
+    ChunkLoaderComponent chunkForProcessing(2);
     manager.addComponent<ChunkLoaderComponent>(chunkForProcessing);
+
+    
 }
 
 

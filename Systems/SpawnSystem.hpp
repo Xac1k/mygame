@@ -49,9 +49,6 @@ void SpawnSystemUpdate(EntitiesManager& manager, TextureLoader textureLoader) {
     auto player = manager.getComponent<PositionOnMapComponent>(playerIds[0]).get();
     if(!map || !player) return;
 
-    Vect2D roomPos(map->map.roomsMap[0].x * TILE_SIZE, map->map.roomsMap[0].y * TILE_SIZE);
-    player->point = getSpawnPosition(map) * TILE_SIZE;
-    std::cout << "Спавн" << roomPos.x << " " << roomPos.y << std::endl;
     // skeleton(manager, textureLoader, player->point + Vect2D(100, 100));
     // skeleton(manager, textureLoader, player->point + Vect2D(200, 100));
     // skeleton(manager, textureLoader, player->point + Vect2D(300, 100));

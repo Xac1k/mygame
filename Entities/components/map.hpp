@@ -1,12 +1,11 @@
 #pragma once
 #include "../utils/entitiesManager.hpp"
-#include "../utils/component.hpp"
-#include "../../Infrastructure/entityManager.h"
+#include <Entities/utils/component.hpp>
+#include <Infrastructure/entityManager.h>
 #include "../utils/animationLoader.hpp"
 #include "../../main.h"
 #include <Common/randFloat.hpp>
 
-constexpr int TILE_SIZE = 32;
 int map(EntitiesManager& manager, TextureLoader& textureLoader) {
     auto floorTex = textureLoader.getTexture("Store/view/Tiles/Floor.png");
     auto emptyTex = textureLoader.getTexture("Store/view/Tiles/Empty.png");
@@ -15,13 +14,6 @@ int map(EntitiesManager& manager, TextureLoader& textureLoader) {
     manager.addEntity();
     
     MapComponent mapComponent;
-    srand(time(nullptr));
-    mapType type = mapType::Rect;
-    if(randFloat() > 0.5) {
-        type = mapType::Circle;
-    }
-    mapComponent.map.generateMap(type);
-    mapComponent.cameraPos = Vect2D(mapComponent.map.roomsMap[0].x * TILE_SIZE, mapComponent.map.roomsMap[0].y * TILE_SIZE);
     mapComponent.visiableArea = Vect2D(2000/TILE_SIZE, 1000/TILE_SIZE);
     mapComponent.TileSize = TILE_SIZE;
     mapComponent.tileRender = TileRenderer (floorTex, emptyTex, wallTex);

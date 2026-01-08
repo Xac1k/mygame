@@ -18,11 +18,8 @@
 #include <Systems/InventoryUpdateSystem.hpp>
 #include <Systems/InventoryDrawSystem.hpp>
 #include <Systems/ButtonUpdateSystem.hpp>
-#include <Systems/SpawnBarrelSystem.hpp>
 #include <Systems/AnimationUpdate.hpp>
 #include <Systems/MapDrawSystem.hpp>
-#include <Systems/SpawnSystem.hpp>
-#include <Systems/Game/Spawn/SpawnSystem.hpp>
 
 #include <Pages/SettingPage.hpp>
 #include <Pages/StartPage.hpp>
@@ -86,9 +83,6 @@ int main() {
     auto gameStateIds = manager.with<GameStateComponent>().get();
     auto prevGameState = GameScreen::none;
     auto gameState = manager.getComponent<GameStateComponent>(gameStateIds[0]).get();
-
-    SpawnBarrelSystem SpawnBarrel;
-    SpawnSystem SpawnOre;
     
     while(window.isOpen())
     {
@@ -124,9 +118,6 @@ int main() {
                 player(manager, textureLoader);
                 inventory(manager, textureLoader);
                 map(manager, textureLoader);
-                SpawnSystemUpdate(manager, textureLoader);
-                SpawnOre.update(manager, textureLoader);
-                SpawnBarrel.update(manager, textureLoader);
             }
             PlayPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
         }

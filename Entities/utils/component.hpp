@@ -4,7 +4,7 @@
 #include <map>
 #include <variant>
 #include <set>
-#include "../../Map/Preprocessing/map.hpp"
+#include <Map/Preprocessing/map.hpp>
 #include <Common/Vect.hpp>
 #include <Common/randFloat.hpp>
 
@@ -141,6 +141,7 @@ enum class GameScreen {start, play, exchange, inventory, setting, none};
 struct GameStateComponent {
     GameScreen screen;
     int volume = 5;
+    int level = 1;
 
     GameStateComponent(): screen(GameScreen::start) {};
 };

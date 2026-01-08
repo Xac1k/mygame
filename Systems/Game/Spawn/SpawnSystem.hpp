@@ -82,7 +82,7 @@ public:
 class SpawnSystem{
     public:
         int MAX_ATTEMPTS = 5000;
-        int MAX_ENTITY_COUNT = 80;
+        int MAX_ENTITY_COUNT = 100;
         int MIN_ENTITY_COUNT = 20;
 
         int MAX_ENTITY_COUNT_INTO_BUNDLE = 5;

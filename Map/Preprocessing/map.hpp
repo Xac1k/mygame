@@ -3,12 +3,14 @@
 #include <math.h>
 #include <SFML/Graphics.hpp>
 #include <map>
-#include "../Creating/Config/configDirect.hpp"
-#include "../Creating/Config/configCircle.hpp"
-#include "../Creating/Circle/circleMapGenerator.hpp"
-#include "../Creating/Direct/directMapGenerator.hpp"
-#include "../../Common/Vect.hpp"
+#include <Map/Creating/Config/configDirect.hpp>
+#include <Map/Creating/Config/configCircle.hpp>
+#include <Map/Creating/Circle/circleMapGenerator.hpp>
+#include <Map/Creating/Direct/directMapGenerator.hpp>
+#include <Common/Vect.hpp>
+#include <Common/buildPath.hpp>
 #include <main.h>
+#include <Common/const.hpp>
 
 enum class TileType {
     Empty,
@@ -16,7 +18,7 @@ enum class TileType {
     Floor,
 };
 
-enum class mapType { Rect, Circle };
+enum class mapType { Rect, Circle, Preloaded };
 
 struct Tile {
     TileType type = TileType::Empty;
@@ -32,8 +34,18 @@ public:
     corridorsType corridorsMap;
     spiralType spiralCorridors;
     Tile nullTile;
+    Vect2D spawnPos = {0, 0};
 
     GameMap() : tiles(WIDTH * HEIGHT) {}
+
+    void resetMap() {
+        for(int y = 0; y < HEIGHT; y++) {
+            for(int x = 0; x < WIDTH; x++) {
+                auto& tile = get(x, y);
+                tile.type = TileType::Empty;
+            }
+        }
+    }
 
     Tile& get(int x, int y) {
         if(x>=0 && y>=0 && (y * WIDTH + x) < tiles.size()) 
@@ -44,7 +56,7 @@ public:
     const Tile& get(int x, int y) const {
         return tiles[y * WIDTH + x];
     }
-
+private:
     void resterizeCircle(sf::Vector3f circle) {
         sf::Vector2f upLeftP;
         upLeftP.x = std::max(0, (int)(circle.x - circle.z - 2));
@@ -111,11 +123,11 @@ public:
         resterizeRooms(rooms);
         resterizeSpiralCorridors(rooms, spiral, 4);
     }
-
+public:
     void generateMap(mapType typeI) {
         srand(time(nullptr));
-
         type = typeI;
+        resetMap();
 
         if(type == mapType::Rect) {
             auto [rooms, corridors] = generateDirectMap();
@@ -132,6 +144,46 @@ public:
         }
     }
 
+    void loadFromFile(std::string localFilename) {
+        auto globalPath = buildFullPath(localFilename, 1);
+
+        std::ifstream fileMap(globalPath);
+        if (!fileMap.is_open()) {
+            std::cerr << "Не удалось открыть файл для чтения! Путь: " << globalPath << std::endl;
+            return;
+        }
+        resetMap();
+        type = mapType::Preloaded;
+
+        std::string line;
+        std::getline(fileMap, line);
+        auto width = std::stoi(line);
+        std::getline(fileMap, line);
+        auto height = std::stoi(line);
+
+        auto init_height = HEIGHT/2 - height/2;
+        auto init_width = WIDTH/2 - width/2;
+
+        int heightID = 0;
+        while(std::getline(fileMap, line)) {
+            for(int id = 0; id < line.size(); id++) {
+                char type = line[id];
+                Vect2D point((float)(init_width + id), (float)(init_height + heightID));
+                auto& tile = get((int)point.x, (int)point.y);
+                if(type == '#') tile.type = TileType::Wall;
+                if(type == '.') tile.type = TileType::Floor;
+                if(type == 'x') {
+                    spawnPos = point * TILE_SIZE;
+                    tile.type = TileType::Floor;
+                }
+            }
+            heightID++;
+        }
+    }
+
+    Vect2D getSpawnPoint() {
+        return spawnPos;
+    }
     private:
         std::vector<Tile> tiles;
 };

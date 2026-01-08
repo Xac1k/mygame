@@ -75,13 +75,13 @@
 			},
 			"sourceIndexes" : 
 			[
-				36,
-				38,
-				40,
-				50,
-				55,
-				83,
-				84
+				37,
+				39,
+				41,
+				51,
+				56,
+				85,
+				86
 			]
 		}
 	],
@@ -135,9 +135,9 @@
 				33,
 				34,
 				35,
-				37,
-				39,
-				41,
+				36,
+				38,
+				40,
 				42,
 				43,
 				44,
@@ -146,11 +146,11 @@
 				47,
 				48,
 				49,
-				51,
+				50,
 				52,
 				53,
 				54,
-				56,
+				55,
 				57,
 				58,
 				59,
@@ -176,20 +176,22 @@
 				79,
 				80,
 				81,
-				82
+				82,
+				83,
+				84
 			]
 		},
 		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				36,
-				38,
-				40,
-				50,
-				55,
-				83,
-				84
+				37,
+				39,
+				41,
+				51,
+				56,
+				85,
+				86
 			]
 		}
 	],
@@ -223,6 +225,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Common/getCollisionRectOnMap.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Common/getEntitiesByChunk.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -533,6 +540,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Systems/Game/Effects/EffectsSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/Game/Spawn/SpawnController.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

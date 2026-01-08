@@ -52,8 +52,9 @@ public:
     }
 
     template<typename T>
-    std::shared_ptr<T> getComponent(int entityID) {
-        auto entity = entities.find(entityID);
+    std::shared_ptr<T> getComponent() {
+        if(entityIDs.size() == 0) return nullptr;
+        auto entity = entities.find(entityIDs[0]);
         if (entity == entities.end()) return nullptr;
         
         auto component = entity->second.find(typeid(T));
@@ -252,5 +253,10 @@ public:
             }
         }
         return result;
+    }
+
+    template <typename T>
+    EntityQuery<T> load(std::vector<int> entityIDs) {
+        return EntityQuery<T>(entityIDs, entities, existedEntities);
     }
 };
