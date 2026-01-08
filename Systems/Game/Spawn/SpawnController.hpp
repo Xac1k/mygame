@@ -37,7 +37,6 @@ public:
             player->point = mapComponent->map.getSpawnPoint();
 
             dialogPoint(manager, player->point, "ExampleOfDialog.json");
-
             villager(manager, textureLoader, player->point + Vect2D(42*TILE_SIZE, 0));
             QuestionVillagerID = manager.getID();
             addDialogToVillager(manager, "ExampleOfDialog.json");
@@ -47,6 +46,7 @@ public:
             if(randFloat() > 0.5)
                 type = mapType::Circle;
             mapComponent->map.generateMap(type);
+            player->point = mapComponent->map.getSpawnPoint();
             
             SpawnOre.update(manager, textureLoader);
             SpawnBarrel.update(manager, textureLoader);

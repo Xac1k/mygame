@@ -90,15 +90,15 @@ public:
         return entityIDs;
     }
 
-
-    std::vector<int> withClassName(std::string pattern) {
+    EntityQuery<ComponentTypes...> withClassName(std::string pattern) {
         std::vector<int> result;
         for (auto className : existedEntities) {
             if(regexmatch(pattern, className.first) && isValid(className.second)) {
                 result.push_back(className.second);
             }
         }
-        return result;
+        entityIDs = result;
+        return EntityQuery<ComponentTypes...>(result, entities, existedEntities);;
     }
 };
 

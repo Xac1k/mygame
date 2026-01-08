@@ -83,7 +83,7 @@ std::tuple<int, int> isPermittedByEnemy(
     auto playerCollRectLeftUp = playerPos->point - origin->shift + playerCollRect->shiftFromLeftUp;
     int xAllow = 1; int yAllow = 1;
 
-    auto enemyIDs = manager.with<CollisionComponent>().withClassName("*Enemy*");
+    auto enemyIDs = manager.with<CollisionComponent>().withClassName("*Enemy*").get();
     auto enemySkeletonIDs = manager.withClassName("*skeleton*");
     for (int enemyID : enemyIDs) {
         auto enemyDeath = manager.getComponent<DeathComponent>(enemyID).get();

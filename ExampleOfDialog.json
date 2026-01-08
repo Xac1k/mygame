@@ -59,7 +59,7 @@
     "Где мы?": "node_1_return",
     "Кто ты?": "node_2",
     "Это сон?": "node_3_return",
-    "Пойти дальше": "exit_node"
+    "Пойти дальше": "exit_nextLevel_node"
   }
 },
 
@@ -100,10 +100,18 @@
 },
 
 
-
 "exit_node": {
   "text": "",
   "init_func": "exit();",
+  "answers": {
+  }
+}
+
+"exit_nextLevel_node": {
+  "text": "",
+  "init_func": "
+  nextLevel();
+  exit();",
   "answers": {
   }
 }

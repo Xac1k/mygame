@@ -47,7 +47,7 @@ class AIAgent {
         //common methods of handling AI
         void updateAgresiveEnemyByClassName(EntitiesManager& manager, AIAgentCompanent *AIComp, int enemyID, float df) {
             auto posAgressor = manager.getComponent<PositionOnMapComponent>(enemyID).get()->point;
-            auto targetEnemyIDs = manager.with<PositionOnMapComponent>().except(enemyID).withClassName(AIComp->classNameOfTarget);
+            auto targetEnemyIDs = manager.with<PositionOnMapComponent>().except(enemyID).withClassName(AIComp->classNameOfTarget).get();
             targetEnemyIDs = sortByDeath(manager, targetEnemyIDs);
             
             if(!ChasingLoop(manager, AIComp, enemyID, targetEnemyIDs, posAgressor))
@@ -370,7 +370,7 @@ class AIAgent {
             int xAllow = 1; int yAllow = 1;
 
             auto enemyIDsInChunk = ChunkManager.getEntitiesByChunk(manager);
-            auto enemyIDs = manager.load<PositionOnMapComponent>(enemyIDsInChunk).with<CollisionComponent>().except(moverID).withClassName("*Enemy*");
+            auto enemyIDs = manager.load<PositionOnMapComponent>(enemyIDsInChunk).with<CollisionComponent>().except(moverID).withClassName("*Enemy*").get();
             enemyIDs = sortByDeath(manager, enemyIDs);
             
             for (int enemyID : enemyIDs) {

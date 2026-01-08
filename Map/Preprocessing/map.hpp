@@ -123,6 +123,37 @@ private:
         resterizeRooms(rooms);
         resterizeSpiralCorridors(rooms, spiral, 4);
     }
+
+    Vect2D getSpawnPosition() {
+        std::map<int, int> countRooms;
+        switch (type)
+        {
+        case mapType::Rect:
+            for(auto pair : corridorsMap) {
+                if(countRooms.find(pair.first) == countRooms.end()) 
+                    countRooms[pair.first] = 0;
+
+                if(countRooms.find(pair.second) == countRooms.end()) 
+                    countRooms[pair.second] = 0;
+
+                countRooms[pair.first]++;
+                countRooms[pair.second]++;  
+            }
+            for(auto candidate : countRooms) {
+                if(candidate.second == 1) {
+                    auto room = roomsMap.at(candidate.first);
+                    return Vect2D(room.x, room.y);
+                }
+            }
+            break;
+        case mapType::Circle:
+            auto Vect = roomsMap.at(roomsMap.size() - 1);
+            return Vect2D(Vect.x, Vect.y);  
+        }
+
+        auto room = roomsMap[0];
+        return Vect2D(room.x, room.y);
+    }
 public:
     void generateMap(mapType typeI) {
         srand(time(nullptr));
@@ -182,7 +213,10 @@ public:
     }
 
     Vect2D getSpawnPoint() {
-        return spawnPos;
+        if(type == mapType::Preloaded)
+            return spawnPos;
+        else
+            return getSpawnPosition() * TILE_SIZE;
     }
     private:
         std::vector<Tile> tiles;
