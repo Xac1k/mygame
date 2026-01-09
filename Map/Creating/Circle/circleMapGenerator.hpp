@@ -66,7 +66,6 @@ inline void cropSpiralByLength(spiralType& spiral, float targetLength) {
 }
 
 inline std::tuple<spiralType, roomsType> generateSpiralMap() {
-    srand(time(nullptr));
     spiralType spiral = createArchimedeanSpiral(
         25.0f,      // a
         10.0f,      // b — расстояние между витками 

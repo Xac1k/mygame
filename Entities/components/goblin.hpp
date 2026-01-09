@@ -21,7 +21,7 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     int scale = 2;
     constexpr float veloWalk = TILE_SIZE * 1;
     constexpr float veloChasing = TILE_SIZE * 3;
-    manager.addEntity("playMenu:Enemy:skeleton AIEnemy:agressive Dynamic", true);
+    manager.addEntity("playMenu:Enemy:skeleton AIEnemy:agressive Dynamic Deletable", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);

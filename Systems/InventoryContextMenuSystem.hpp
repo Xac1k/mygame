@@ -41,6 +41,7 @@ void InventoryContextMenuUpdate(EntitiesManager& manager, BusEvent& event) {
             //TODO: Сделать обработку нажатия на определённую кнопку
             event.currEvent = BusEvent::Event::None;
             inventory->isSetContextMenu = false;
+            std::cout << "Нажатие на кнопку\n";
         }
         break;
     }

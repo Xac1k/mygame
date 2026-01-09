@@ -36,10 +36,12 @@
 #include <Systems/UI/HealthIndicator/HealthIndicator.hpp>
 #include <Systems/UI/DialogWindow/DialogWindow.hpp>
 #include <Systems/Game/Spawn/SpawnController.hpp>
+#include <Systems/InventoryUseItems.hpp>
 
 #include <Depricated/MovementPlayerSystem.hpp>
 
 SpawnController LevelController;
+InventoryUseItems inventoryUseSystem;
     
 HealthIndicator EntityHealthIndicator;
 DialogWindow DialogManager;
@@ -50,8 +52,21 @@ extern sf::Vector2f rescaleCoeff;
 AIAgent AIAgentUpdater;
 
 sf::Clock clockForDrunk;
+float drunkLevel = 0.0f;
 #define BIAS_IN_PIXEL 200.0f
-#define PIXEL_COEF 999.0f
+#define PIXEL_COEF 2.0f
+
+bool isPrevPageUpPressed = false;
+
+void controlCollision() {
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::PageUp) && !isPrevPageUpPressed) {
+        AIAgentUpdater.needToCheckColision = !AIAgentUpdater.needToCheckColision;
+        isPrevPageUpPressed = true;
+    }
+
+    if(isPrevPageUpPressed && !sf::Keyboard::isKeyPressed(sf::Keyboard::PageUp))
+        isPrevPageUpPressed = false;
+}
 
 void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader, SfmlRenderer& renderer, float df) {
     //Systems
@@ -63,13 +78,12 @@ void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoa
     EntityHealthIndicator.draw(renderTexture, textureLoader, manager, df);
     HealthPlayerIndicator.draw(renderTexture, textureLoader, manager);
     
-
     renderTexture.display();
     sf::Sprite sprite(renderTexture.getTexture());
 
     float time = clockForDrunk.getElapsedTime().asMilliseconds();
     DrunkShader.setUniform("time", time);
-    DrunkShader.setUniform("bias", BIAS_IN_PIXEL);
+    DrunkShader.setUniform("bias", drunkLevel * BIAS_IN_PIXEL);
     DrunkShader.setUniform("resolution", sf::Vector2f((WINDOW_WIDTH + 80) * rescaleCoeff.x, (WINDOW_HEIGHT) * rescaleCoeff.y));
     DrunkShader.setUniform("pixelizeCoeff", PIXEL_COEF);
 
@@ -115,6 +129,9 @@ void PlayPage(
     }
 
     if(DialogManager.canPlay()) {
+        controlCollision();
+        inventoryUseSystem.update(manager, audioManager);
+
         HurtEntitySystem(manager);
         effectsSystem.update(manager, df);
         DeathEntitySystem(manager, audioManager, df);

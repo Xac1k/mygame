@@ -6,7 +6,7 @@
 #include "../../main.h"
 
 int item(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap) {
-    manager.addEntity("playMenu:Enemy:Item Dynamic", true);
+    manager.addEntity("playMenu:Enemy:Item Dynamic Deletable", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);
@@ -51,6 +51,10 @@ int item(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap
             {(int)Items::rubin, {
                     {"Store/view/Items/item19.png", {0, 0}, 1.f, true},
             }},
+
+            {(int)Items::beer, {
+                    {"Store/view/Items/item20.png", {0, 0}, 1.f, true},
+            }}
         }
     );
     manager.addComponent<AnimationGridComponent>(animationComponent);

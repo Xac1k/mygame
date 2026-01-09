@@ -1,0 +1,28 @@
+"root": {
+  "text": "Хммм.... Похоже на развалина каких-то старых устройств. Возможно если встать внутрь этого круга что-то произойдёт.",
+  "init_func": "
+    setName(Портал);
+    setAvatar(left, Store/view/Interactive_icons/Player_Avatar.png, tileSize: {250, 250}, tileID: {1, 1});
+  ",
+  "answers": {
+    "Встать в круг": "nextAndExitLevel",
+    "Пройти мимо": "exit",
+  }
+},
+
+"nextAndExitLevel": {
+  "text": "",
+  "init_func": "    
+    nextLevel();
+    exit();
+  ",
+  "answers": {}
+},
+
+"exit": {
+  "text": "",
+  "init_func": "
+    exit();
+  ",
+  "answers": {}
+},

@@ -9,7 +9,7 @@ uniform float pixelizeCoeff;// Коофициент пикселезиции к�
 // uniform float coeffOfDrunk; // Насколько сильно ты напился
 
 vec2 drunkEffect() {
-    vec2 uv = (gl_FragCoord.xy + vec2(40, 0)) / resolution;
+    vec2 uv = (gl_FragCoord.xy + vec2(bias / 5., 0)) / resolution;
     float wave = sin(time * 0.001 + uv.y * 5.0) * (bias / 5. / resolution.x);
      
     vec2 newUV = uv + vec2(wave, 0);;
@@ -29,10 +29,10 @@ vec4 pixelEffect(vec4 color) {
 }
 
 void main() {
-    vec2 uv = (gl_FragCoord.xy ) / resolution;
+    vec2 uv = (gl_FragCoord.xy) / resolution;
     vec2 newUV = uv;
 
-    bool isDrunk = false;
+    bool isDrunk = true;
     if(isDrunk) {
         newUV = drunkEffect();
     }

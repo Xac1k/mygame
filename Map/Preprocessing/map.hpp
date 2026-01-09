@@ -16,6 +16,8 @@ enum class TileType {
     Empty,
     Wall,
     Floor,
+    Path,
+    Box,
 };
 
 enum class mapType { Rect, Circle, Preloaded };
@@ -154,9 +156,9 @@ private:
         auto room = roomsMap[0];
         return Vect2D(room.x, room.y);
     }
+
 public:
     void generateMap(mapType typeI) {
-        srand(time(nullptr));
         type = typeI;
         resetMap();
 
@@ -202,11 +204,15 @@ public:
                 Vect2D point((float)(init_width + id), (float)(init_height + heightID));
                 auto& tile = get((int)point.x, (int)point.y);
                 if(type == '#') tile.type = TileType::Wall;
-                if(type == '.') tile.type = TileType::Floor;
-                if(type == 'x') {
+                else if(type == '.') tile.type = TileType::Floor;
+                else if(type == 'x') {
                     spawnPos = point * TILE_SIZE;
                     tile.type = TileType::Floor;
                 }
+                else if(type == 'p') {
+                    tile.type = TileType::Path;
+                }
+                else tile.type = TileType::Empty;
             }
             heightID++;
         }
@@ -218,6 +224,40 @@ public:
         else
             return getSpawnPosition() * TILE_SIZE;
     }
+
+private: 
+
+    Vect2D getFinalPointRectMap(Vect2D playerPos) {
+        float MaxDist = 0.f;
+        float len;
+        sf::Vector3f centerMaxDist;
+        for(auto room : roomsMap) {
+            len = dist(room, sf::Vector3f(playerPos.x/TILE_SIZE, playerPos.y/TILE_SIZE, 0));
+            if(MaxDist < len) {
+                centerMaxDist = room;
+                MaxDist = len;
+            }
+        }
+        return Vect2D(centerMaxDist.x, centerMaxDist.y) * TILE_SIZE;
+    }
+
+    Vect2D getFinalPointCircleMap(Vect2D playerPos) {
+        auto vect = roomsMap.at(0);
+        return Vect2D(vect.x, vect.y) * TILE_SIZE;
+    }
+
+public:
+    Vect2D getFinalPoint(Vect2D playerPos) {
+        switch (type)
+        {
+        case mapType::Rect:
+            return getFinalPointRectMap(playerPos);
+        case mapType::Circle:
+            return getFinalPointCircleMap(playerPos);
+        }
+        return Vect2D(0, 0);  
+    }
+    
     private:
         std::vector<Tile> tiles;
 };
@@ -226,10 +266,11 @@ class TileRenderer {
 public:
     static constexpr int TILE_SIZE = 32;
 
-    TileRenderer( sf::Texture& floorTex, sf::Texture& emptyTex, sf::Texture& wallTex) {
+    TileRenderer( sf::Texture& floorTex, sf::Texture& emptyTex, sf::Texture& wallTex, sf::Texture& pathTex) {
         textures[TileType::Floor] = floorTex;
         textures[TileType::Empty] = emptyTex;
         textures[TileType::Wall] = wallTex;
+        textures[TileType::Path] = pathTex;
     }
 
     TileRenderer() {}

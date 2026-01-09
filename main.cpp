@@ -44,6 +44,7 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     audioManager.loadMusic("item15", "Sounds/asset/items/item15.mp3");
     audioManager.loadMusic("PlayerDeath", "Sounds/asset/PlayerKilled.wav");
     audioManager.loadMusic("SkeletonDeath", "Sounds/asset/SkeletonDeath.wav");
+    audioManager.loadMusic("drink", "Sounds/asset/drink.wav");
     // audioManager.playMusic("Стартовое меню", true);
     audioManager.setMasterVolume(50);
 
@@ -63,6 +64,7 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
 }
 
 int main() {
+    srand(time(nullptr));
     sf::ContextSettings settings;
     settings.antialiasingLevel = 0;
     sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Cave", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize, settings);
@@ -120,6 +122,20 @@ int main() {
                 map(manager, textureLoader);
             }
             PlayPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
+        }
+
+        if(gameState->screen == GameScreen::end) { 
+            if(prevGameState != gameState->screen) {
+                prevGameState = gameState->screen;
+                manager.removeEntityByClass("playMenu:*");
+            }
+        }
+
+        if(gameState->screen == GameScreen::gameover) {
+            if(prevGameState != gameState->screen) {
+                prevGameState = gameState->screen;
+                manager.removeEntityByClass("playMenu:*");
+            }
         }
     }
     return 0;

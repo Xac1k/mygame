@@ -21,6 +21,7 @@ class AIAgent {
         int MIN_COOLDOWN_BETWEEN_WANDERING = 5;
         int TRESHHOLD_POINT_DONE = TILE_SIZE;
 
+        bool needToCheckColision = true;
         
         void updateAgressiveEnemy(EntitiesManager& manager, float df) {
             auto enemyIDsWithAgressiveAI = manager.withClassName("*AIEnemy:agressive*");
@@ -263,9 +264,11 @@ class AIAgent {
                 auto originComp = manager.getComponent<OriginComponent>(enemyID);
 
                 // permissions
-                auto [xCoef, yCoef] = isPermittedByMap(map, posComp, collisionRectComp, originComp, velocityComp, df);
-                auto [xCoefEnemy, yCoefEnemy] = isPermittedByEnemy(manager, enemyID, posComp, collisionRectComp, originComp, velocityComp, df);
-                velocityComp->dir = velocityComp->dir * Vect2D(xCoef * xCoefEnemy, yCoef * yCoefEnemy);
+                if(needToCheckColision) {
+                    auto [xCoef, yCoef] = isPermittedByMap(map, posComp, collisionRectComp, originComp, velocityComp, df);
+                    auto [xCoefEnemy, yCoefEnemy] = isPermittedByEnemy(manager, enemyID, posComp, collisionRectComp, originComp, velocityComp, df);
+                    velocityComp->dir = velocityComp->dir * Vect2D(xCoef * xCoefEnemy, yCoef * yCoefEnemy);
+                }
 
                 // step
                 posComp->point += velocityComp->dir * df;
@@ -320,14 +323,22 @@ class AIAgent {
 
             auto dir = getDirection(velo->dir);
 
-            bool leftColl = map->map.get(Left.x/TILE_SIZE, Left.y/TILE_SIZE).type != TileType::Floor;
-            bool leftUpColl = map->map.get(LeftUp.x/TILE_SIZE, LeftUp.y/TILE_SIZE).type != TileType::Floor;
-            bool UpColl = map->map.get(Up.x/TILE_SIZE, Up.y/TILE_SIZE).type != TileType::Floor;
-            bool RigthUpColl = map->map.get(RigthUp.x/TILE_SIZE, RigthUp.y/TILE_SIZE).type != TileType::Floor;
-            bool RigthColl = map->map.get(Rigth.x/TILE_SIZE, Rigth.y/TILE_SIZE).type != TileType::Floor;
-            bool RigthDownColl = map->map.get(RigthDown.x/TILE_SIZE, RigthDown.y/TILE_SIZE).type != TileType::Floor;
-            bool DownColl = map->map.get(Down.x/TILE_SIZE, Down.y/TILE_SIZE).type != TileType::Floor;
-            bool LeftDownColl = map->map.get(LeftDown.x/TILE_SIZE, LeftDown.y/TILE_SIZE).type != TileType::Floor;
+            bool leftColl = map->map.get(Left.x/TILE_SIZE, Left.y/TILE_SIZE).type != TileType::Floor &&
+            map->map.get(Left.x/TILE_SIZE, Left.y/TILE_SIZE).type != TileType::Path;
+            bool leftUpColl = map->map.get(LeftUp.x/TILE_SIZE, LeftUp.y/TILE_SIZE).type != TileType::Floor && 
+            map->map.get(LeftUp.x/TILE_SIZE, LeftUp.y/TILE_SIZE).type != TileType::Path;
+            bool UpColl = map->map.get(Up.x/TILE_SIZE, Up.y/TILE_SIZE).type != TileType::Floor && 
+            map->map.get(Up.x/TILE_SIZE, Up.y/TILE_SIZE).type != TileType::Path;
+            bool RigthUpColl = map->map.get(RigthUp.x/TILE_SIZE, RigthUp.y/TILE_SIZE).type != TileType::Floor &&
+            map->map.get(RigthUp.x/TILE_SIZE, RigthUp.y/TILE_SIZE).type != TileType::Path;
+            bool RigthColl = map->map.get(Rigth.x/TILE_SIZE, Rigth.y/TILE_SIZE).type != TileType::Floor &&
+            map->map.get(Rigth.x/TILE_SIZE, Rigth.y/TILE_SIZE).type != TileType::Path;
+            bool RigthDownColl = map->map.get(RigthDown.x/TILE_SIZE, RigthDown.y/TILE_SIZE).type != TileType::Floor &&
+            map->map.get(RigthDown.x/TILE_SIZE, RigthDown.y/TILE_SIZE).type != TileType::Path;
+            bool DownColl = map->map.get(Down.x/TILE_SIZE, Down.y/TILE_SIZE).type != TileType::Floor && 
+            map->map.get(Down.x/TILE_SIZE, Down.y/TILE_SIZE).type != TileType::Path;
+            bool LeftDownColl = map->map.get(LeftDown.x/TILE_SIZE, LeftDown.y/TILE_SIZE).type != TileType::Floor &&
+            map->map.get(LeftDown.x/TILE_SIZE, LeftDown.y/TILE_SIZE).type != TileType::Path;
             
             if(leftColl || leftUpColl || UpColl || RigthUpColl || RigthColl || RigthDownColl || DownColl || LeftDownColl)
             {
@@ -369,7 +380,6 @@ class AIAgent {
             if(origin) moverCollRectLeftUp -= origin->shift;
             int xAllow = 1; int yAllow = 1;
 
-            //TODO: проверить работу с chunk manager коллизии если зайти лалеко не работают. 
             auto enemyIDsInChunk = ChunkManager.getEntitiesByChunk(manager);
             auto enemyIDs = manager.load<PositionOnMapComponent>(enemyIDsInChunk).with<CollisionComponent>().except(moverID).withClassName("*Enemy*").get();
             enemyIDs = sortByDeath(manager, enemyIDs);

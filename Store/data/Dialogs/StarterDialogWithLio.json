@@ -49,8 +49,8 @@
 
 Камень холодный. Что-то мягко шевелится рядом.
 Лио: Тихо.... Эй. Ты живой?
-
-Пауза. Где-то далеко раздаётся пустой глухой стук, будто шаг… но без веса.",
+*Пауза*
+Где-то далеко раздаётся пустой глухой стук, будто шаг… но без веса.",
   "init_func": "
     setAvatar(left, Store/view/Interactive_icons/Player_Avatar.png, tileSize: {250, 250}, tileID: {1, 0});
     setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {0, 2});

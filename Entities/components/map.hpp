@@ -10,13 +10,14 @@ int map(EntitiesManager& manager, TextureLoader& textureLoader) {
     auto floorTex = textureLoader.getTexture("Store/view/Tiles/Floor.png");
     auto emptyTex = textureLoader.getTexture("Store/view/Tiles/Empty.png");
     auto wallTex = textureLoader.getTexture("Store/view/Tiles/Wall.png");
+    auto pathTex = textureLoader.getTexture("Store/view/Tiles/path.png");
 
     manager.addEntity();
     
     MapComponent mapComponent;
     mapComponent.visiableArea = Vect2D(2000/TILE_SIZE, 1000/TILE_SIZE);
     mapComponent.TileSize = TILE_SIZE;
-    mapComponent.tileRender = TileRenderer (floorTex, emptyTex, wallTex);
+    mapComponent.tileRender = TileRenderer (floorTex, emptyTex, wallTex, pathTex);
     manager.addComponent<MapComponent>(mapComponent);
 
     MiniMapComponent miniMapComponent;

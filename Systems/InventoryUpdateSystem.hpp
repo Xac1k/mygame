@@ -28,8 +28,7 @@ void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
             pos->point = unwrapedPos;
             size->size = unwrapedSize;
         }
-    }
-    
+    }    
 
     if(inventoryState->state != (int)InventoryState::wrapped) {
         switch (event.currEvent)

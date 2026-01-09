@@ -50,6 +50,9 @@ void BusEvent::update(sf::Event event, sf::Vector2f rescaleCoeff) {
         case sf::Keyboard::Key::I:
             currEvent = Event::I;
             break;
+        case sf::Keyboard::Key::E:
+            currEvent = Event::E;
+            break;
         case sf::Keyboard::Key::Num0:
             currEvent = Event::Num0;
             break;

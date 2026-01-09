@@ -179,7 +179,6 @@ class SpawnBarrelSystem{
             auto map = manager.getComponent<MapComponent>(mapIds[0]).get();
             if(!map) return;
 
-            srand(time(nullptr));
             SortByChunkLoaderAndDist sorter;
             candidates = sorter.sort(manager);
             countBarrels = randRange(MIN_BARREL_COUNT, MAX_BARREL_COUNT);

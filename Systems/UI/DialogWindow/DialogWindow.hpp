@@ -92,6 +92,21 @@ private:
     Vect2D tileIDRight;
     bool useShiftRight = false;
     Vect2D shiftRight;
+private:
+    void reset() {
+        oponentName = "";
+        pathAvatarLeft = "";
+        pathAvatarRight = "";
+        useGridRight = false; 
+        useGridLeft = false;
+        useShiftLeft = false;
+        useShiftRight = false;
+        useRedrigLeft = false;
+        useRedrigRight = false;
+        canSlideAnswerID = true;
+        canEnterAnswer = true;
+    }
+
 public:
     DialogWindow() {
         if (!NameOfPersonFont.loadFromFile(buildFullPath("Store/view/Fonts/dialog/name/alagard-12px-unicode.ttf", 1))) {
@@ -111,6 +126,7 @@ public:
             initProgDone = false;
             currDialog = manager.getComponent<DialogTreeComponent>(interlocutorID);
             currDialog->current_node = currDialog->nodes["root"];
+            reset();
         }
 
         if(isDialogerNear && sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -288,6 +304,68 @@ private:
         gameState->level++;
     };
 
+    void buy(EntitiesManager& manager, var_env_type var_env) {
+        auto itmeIDIt = var_env.find("itemID");
+        auto countIt = var_env.find("count");
+        auto costForOneIt = var_env.find("cost");
+
+        if(itmeIDIt == var_env.end()) return;
+        if(countIt == var_env.end()) return;
+        if(costForOneIt == var_env.end()) return;
+
+        auto itmeIDVoidPtr = itmeIDIt->second;
+        auto itemIDPtr = std::static_pointer_cast<int>(itmeIDVoidPtr);
+        auto itemID = *itemIDPtr;
+
+        auto countVoidPtr = countIt->second;
+        auto countPtr = std::static_pointer_cast<int>(countVoidPtr);
+        auto count = *countPtr;
+
+        auto costForOneVoidPtr = costForOneIt->second;
+        auto costForOnePtr = std::static_pointer_cast<int>(costForOneVoidPtr);
+        auto costForOne = *costForOnePtr;
+
+        auto inventory = manager.with<InventoryComponent>().getComponent<InventoryComponent>();
+        if(!inventory) return;
+
+        auto countGold = inventory->countItem(Items::gold);
+        if(countGold < costForOne * count) return;
+
+        inventory->addItem((Items)itemID, count);
+        inventory->substractItem(Items::coin, costForOne * count);
+    }
+
+    void sell(EntitiesManager& manager, var_env_type var_env) {
+        auto itmeIDIt = var_env.find("itemID");
+        auto countIt = var_env.find("count");
+        auto costForOneIt = var_env.find("cost");
+
+        if(itmeIDIt == var_env.end()) return;
+        if(countIt == var_env.end()) return;
+        if(costForOneIt == var_env.end()) return;
+
+        auto itmeIDVoidPtr = itmeIDIt->second;
+        auto itemIDPtr = std::static_pointer_cast<int>(itmeIDVoidPtr);
+        auto itemID = *itemIDPtr;
+
+        auto countVoidPtr = countIt->second;
+        auto countPtr = std::static_pointer_cast<int>(countVoidPtr);
+        auto count = *countPtr;
+
+        auto costForOneVoidPtr = costForOneIt->second;
+        auto costForOnePtr = std::static_pointer_cast<int>(costForOneVoidPtr);
+        auto costForOne = *costForOnePtr;
+
+        auto inventory = manager.with<InventoryComponent>().getComponent<InventoryComponent>();
+        if(!inventory) return;
+
+        auto countItem = inventory->countItem((Items)itemID);
+        if(count > countItem) return;
+
+        inventory->substractItem((Items)itemID, count);
+        inventory->addItem(Items::coin, count * costForOne);
+    }
+
     void runInitProg(EntitiesManager& manager) {
         if(initProgDone) return;
         if(!currDialog) return;
@@ -310,6 +388,12 @@ private:
                 break;
             case ComandType::nextLevel:
                 nextLevel(manager);
+                break;
+            case ComandType::buy:
+                buy(manager, comand.var_env);
+                break;
+            case ComandType::sell:
+                sell(manager, comand.var_env);
                 break;
             default:
                 break;

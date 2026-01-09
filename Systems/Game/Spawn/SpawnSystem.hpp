@@ -189,7 +189,6 @@ class SpawnSystem{
             auto map = manager.getComponent<MapComponent>(mapIds[0]).get();
             if(!map) return;
 
-            srand(time(nullptr));
             MapSort sorter;
             candidates = sorter.sort(manager);
             targetCountEntities = randRange(MIN_ENTITY_COUNT, MAX_ENTITY_COUNT);

@@ -14,7 +14,7 @@ enum class ControlFlowBarrel {
     All
 };
 int barrel(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap) {
-    manager.addEntity("playMenu:Enemy:barrel Static", true);
+    manager.addEntity("playMenu:Enemy:barrel Static Deletable", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);

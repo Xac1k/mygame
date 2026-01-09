@@ -20,7 +20,7 @@ void villager(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     int scale = 1;
     constexpr float veloWalk = TILE_SIZE * 1;
     constexpr float veloChasing = TILE_SIZE * 3;
-    manager.addEntity("playMenu:Enemy:villager AIEnemy:friendly Static", true);
+    manager.addEntity("playMenu:Enemy:villager AIEnemy:friendly Static Deletable", true);
 
     PositionOnMapComponent posMap(posOnMap);
     manager.addComponent<PositionOnMapComponent>(posMap);

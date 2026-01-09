@@ -1,8 +1,8 @@
 #pragma once
 #include <map>
-#include <Entities/utils/component.hpp>
+#include <Entities/utils/itemsConfig/ItemsID.hpp>
 
-std::map<Items, int> limitationStack = {
+inline std::map<Items, int> limitationStack = {
     {Items::coin, 64},
     {Items::firePickaxe, 1},
     {Items::fireSpear, 1},
@@ -18,8 +18,9 @@ std::map<Items, int> limitationStack = {
     {Items::startSword, 1},
     {Items::skull, 10},
     {Items::bone, 64},
-    {Items::coal, 10},
-    {Items::iron, 10},
-    {Items::gold, 10},
-    {Items::rubin, 10}
+    {Items::coal, 20},
+    {Items::iron, 15},
+    {Items::gold, 15},
+    {Items::rubin, 10},
+    {Items::beer, 10}
 };

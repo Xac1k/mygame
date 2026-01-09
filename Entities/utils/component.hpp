@@ -7,6 +7,7 @@
 #include <Map/Preprocessing/map.hpp>
 #include <Common/Vect.hpp>
 #include <Common/randFloat.hpp>
+#include <Entities/utils/itemsConfig/ItemsStack.hpp>
 
 struct PositionOnMapComponent {
     Vect2D point;
@@ -137,7 +138,7 @@ struct StateComponent {
     StateComponent(): state(0) {};
 };
 
-enum class GameScreen {start, play, exchange, inventory, setting, none};
+enum class GameScreen {start, play, exchange, inventory, setting, none, end, gameover };
 struct GameStateComponent {
     GameScreen screen;
     int volume = 5;
@@ -168,15 +169,7 @@ struct CollisionComponent {
     CollisionComponent(Vect2D sizeI, Vect2D shiftFromLeftUpI): size(sizeI), shiftFromLeftUp(shiftFromLeftUpI) {};
 };
 
-enum class Items {
-    none,
-    startSword, startSpear, startPickaxe, 
-    ironSword, ironSpear, ironPickaxe,
-    goldenSword, goldenSpear, goldenPickaxe,
-    fireSword, fireSpear, firePickaxe,
-    coin, skull, bone, 
-    coal, iron, gold, rubin
-};
+
 struct InventoryComponent {
     std::vector<std::vector<Items>> inventory;
     std::vector<std::vector<int>> countItems;
@@ -195,6 +188,76 @@ struct InventoryComponent {
             }
         }  
         
+    }
+
+    void addItem(Items item, int count) {
+        int remaining = count;
+        for(int y = 0; y < inventory.size() && remaining > 0; y++) {
+            for(int x = 0; x < inventory[y].size() && remaining > 0; x++) {
+                if(inventory[y][x] == item) {
+                    int cellCount = countItems[y][x];
+                    int possibleToPut = limitationStack[item] - cellCount;
+
+                    if(remaining <= possibleToPut) {
+                        countItems[y][x] += remaining;
+                        remaining = 0;
+                    }
+                    else {
+                        countItems[y][x] += possibleToPut;
+                        remaining -= possibleToPut;
+                    }
+                }
+                else if(inventory[y][x] == Items::none) {
+                    inventory[y][x] = item;
+                    if(remaining <= limitationStack[item]){
+                        countItems[y][x] = remaining;
+                        remaining = 0;
+                    }
+                    else {
+                        countItems[y][x] = limitationStack[item];
+                        remaining -= limitationStack[item];
+                    }
+                }
+            }
+        }
+    }
+
+    int countItem(Items item) {
+        int resCount = 0;
+        for(int y = 0; y < inventory.size(); y++) {
+            for(int x = 0; x < inventory[y].size(); x++) {
+                if(inventory[y][x] == item) {
+                    resCount += countItems[y][x];
+                }
+            }
+        }
+
+        return resCount;
+    }
+
+    void substractItem(Items item, int count) {
+        int total = countItem(item);
+        if (total < count) return;
+
+        int remaining = count;
+
+        for (int y = 0; y < inventory.size() && remaining > 0; y++) {
+            for (int x = 0; x < inventory[y].size() && remaining > 0; x++) {
+                if (inventory[y][x] == item) {
+                    int cellCount = countItems[y][x];
+
+                    if (cellCount <= remaining) {
+                        remaining -= cellCount;
+                        countItems[y][x] = 0;
+                        inventory[y][x] = Items::none;
+                    }
+                    else {
+                        countItems[y][x] -= remaining;
+                        remaining = 0;
+                    }
+                }
+            }
+        }
     }
 };
 

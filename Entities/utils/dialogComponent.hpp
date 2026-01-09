@@ -24,7 +24,7 @@ struct DialogNode {
 };
 
 using var_env_type = std::unordered_map<std::string, std::shared_ptr<void>>;
-enum class ComandType {exit, redrig, setAvatar, setName, nextLevel};
+enum class ComandType {exit, redrig, setAvatar, setName, nextLevel, buy, sell};
 struct Comand {
     ComandType type;
     var_env_type var_env;
@@ -210,6 +210,29 @@ struct DialogTreeComponent {
                     std::cerr << "Ошибка в программе. Команда nextLevel не должна иметь каких либо параметров\n";
                 return {};
             }
+            case ComandType::sell:
+            case ComandType::buy: {
+                if(paramTokenMap.size() != 3) 
+                    std::cerr << "Ошибка в программе. Команда redrig имеет ровно три параметра [itemID, count, cost]\n";
+                else {
+                    if(isInt(paramTokenMap["0"])) 
+                        var_env.insert(std::make_pair("itemID", std::make_shared<int>(std::stoi(paramTokenMap["0"]))));
+                    else 
+                        std::cerr << "Ошибка в программе. Неправельное тип параметра itemID. Тип itemID не INT\n";
+                    
+                    if(isInt(paramTokenMap["1"])) 
+                        var_env.insert(std::make_pair("count", std::make_shared<int>(std::stoi(paramTokenMap["1"]))));
+                    else 
+                        std::cerr << "Ошибка в программе. Неправельное тип параметра count. Тип count не INT\n";
+
+                    if(isInt(paramTokenMap["2"]))
+                        var_env.insert(std::make_pair("cost", std::make_shared<int>(std::stoi(paramTokenMap["2"]))));
+                    else
+                        std::cerr << "Ошибка в программе. Неправельное тип параметра cost. Тип cost не INT\n";
+
+                }
+                return var_env;
+            }
             default:
                 return var_env;
             }
@@ -239,7 +262,7 @@ struct DialogTreeComponent {
             std::sregex_iterator end;
 
             if(begin->size() == 0) {
-                std::cerr << "В файле диалога не найдено не одной ноды\n"; 
+                std::cerr << "В файле диалога не найдено не одной ноды\n" << "Путь до файла: " << buildFullPath(filename, 1) << '\n'; 
                 return 0;
             }
 
@@ -291,6 +314,10 @@ struct DialogTreeComponent {
                     node.type = ComandType::setName;
                 else if(comandName == "nextLevel")
                     node.type = ComandType::nextLevel;
+                else if(comandName == "buy") 
+                    node.type = ComandType::buy;
+                else if(comandName == "sell")
+                    node.type = ComandType::sell;
                 else {
                     std::cerr << "[parse] Ошибка внутри init_func. Неизвестный токен: " << comandName << std::endl;
                 }

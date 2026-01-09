@@ -44,7 +44,9 @@ int main() {
     emptyTex.loadFromFile("/home/xac1k/Desktop/Project Practicum/mygame/Store/view/Tiles/Empty.png");
     sf::Texture wallTex;
     wallTex.loadFromFile("/home/xac1k/Desktop/Project Practicum/mygame/Store/view/Tiles/Wall.png");
-    TileRenderer render(floorTex, emptyTex, wallTex);
+    sf::Texture pathTex;
+    pathTex.loadFromFile("/home/xac1k/Desktop/Project Practicum/mygame/Store/view/Tiles/Wall.png");
+    TileRenderer render(floorTex, emptyTex, wallTex, pathTex);
 
     miniMapRenderer miniMap;
     miniMap.pos = sf::Vector2f(0, 0);
