@@ -16,29 +16,23 @@ class ArchiveOfEntitiesInChunk {
             // std::cout << "Сдвиг игрока в tile: " << (PlayerTilePos).x << ' ' << (PlayerTilePos).y << "\n"
             // << (init_pos).x << ' ' << (init_pos).y << "\n"
             // << abs((init_pos - PlayerTilePos).x) << ' ' << abs((init_pos - PlayerTilePos).y) << "\n";
-            return init && ((abs((init_pos - PlayerTilePos).x) < CHUNK_SIZE.x) || (abs((init_pos - PlayerTilePos).y) < CHUNK_SIZE.y)); 
+            return init && abs((init_pos - PlayerTilePos).x) < CHUNK_SIZE.x && abs((init_pos - PlayerTilePos).y) < CHUNK_SIZE.y; 
         };
     public:
         std::vector<int> getEntitiesByChunk(EntitiesManager& manager) {
-            auto playerIDs = manager.withClassName("*player*");
-            if(playerIDs.size() == 0) return {};
-            auto playerPosComp = manager.getComponent<PositionOnMapComponent>(playerIDs[0]).get();
-            auto playerTilePos = playerPosComp->point / TILE_SIZE;
+            auto playerPos = manager.with<PositionOnMapComponent>().withClassName("*player*").getComponent<PositionOnMapComponent>();
+            if(!playerPos) return {};
+            auto playerTilePos = playerPos->point / TILE_SIZE;
             if(returnFromCache(playerTilePos)) 
                 return cache;
 
             auto entityIDs = manager.with<PositionOnMapComponent>().get();
             std::cout << "Кэширование entity\n";
 
-            auto mapIDs = manager.with<MapComponent>().get();
-            if(mapIDs.size() == 0) return {};
-
-            auto map = manager.getComponent<MapComponent>(mapIDs[0]).get();
+            auto map = manager.with<MapComponent>().getComponent<MapComponent>();
             if(!map) return {};
-
-            auto settingsIDs = manager.with<ChunkLoaderComponent>().get();
-            if(settingsIDs.size() == 0) return {};
-            auto settingComp = manager.getComponent<ChunkLoaderComponent>(settingsIDs[0]).get();
+            auto settingComp = manager.with<ChunkLoaderComponent>().getComponent<ChunkLoaderComponent>();
+            if(!settingComp) return {};
 
             auto LeftUpTilePos = playerTilePos - Vect2D(settingComp->countChunk/2, settingComp->countChunk/2) * CHUNK_SIZE;
             if(LeftUpTilePos.x < 0) LeftUpTilePos.x = 0;

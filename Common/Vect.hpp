@@ -55,6 +55,10 @@ public:
         return Vect2D(x / other, y / other);
     };
 
+    Vect2D operator/(const Vect2D& other) const {
+        return Vect2D(x / other.x, y / other.y);
+    };
+
     Vect2D& operator=(const Vect2D& other) {
         x = other.x; 
         y = other.y;
