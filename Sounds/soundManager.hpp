@@ -15,6 +15,15 @@ private:
     float soundVolume = 90.0f;
 
 public:
+    bool setVolumeMusic(const std::string& name, float volume) {
+        if (musicMap.find(name) == musicMap.end()) {
+            return false; 
+        }
+
+        musicMap[name].setVolume(musicVolume * (masterVolume / 100.0f) * volume);
+        return true;
+    }
+
     bool loadMusic(const std::string& name, const std::string& filename) {
         if (musicMap.find(name) != musicMap.end()) {
             return true; 

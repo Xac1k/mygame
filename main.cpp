@@ -24,6 +24,7 @@
 #include <Pages/SettingPage.hpp>
 #include <Pages/StartPage.hpp>
 #include <Pages/PlayPage.hpp>
+#include <Pages/GameOverPage.hpp>
 
 #define PATH_TO_FRAG_SHADER "Shaders/shader.frag"
 #define PATH_TO_VERTEX_SHADER "Shaders/basic.vert"
@@ -35,7 +36,9 @@ sf::Vector2f rescaleCoeff({1., 1.});
 void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
     gameState(manager);
 
-    audioManager.loadMusic("Стартовое меню", "Sounds/asset/Thunder-Unison-Action-Dramatic-Epic-Music-chosic.com_.mp3");
+    audioManager.loadMusic("playMusic", "Sounds/asset/Thunder-Unison-Action-Dramatic-Epic-Music-chosic.com_.mp3");
+    audioManager.setVolumeMusic("playMusic", 0.5f);
+    audioManager.loadMusic("TavernAmbitient", "Sounds/asset/TavernAmbienc.mp3");
     audioManager.loadMusic("BarrelDeath", "Sounds/asset/BarrelDeath.mp3");
     audioManager.loadMusic("PlayerDamage", "Sounds/asset/PlayerDamage.mp3");
     audioManager.loadMusic("PlayerAttack", "Sounds/asset/PlayerAttack.wav");
@@ -45,7 +48,14 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     audioManager.loadMusic("PlayerDeath", "Sounds/asset/PlayerKilled.wav");
     audioManager.loadMusic("SkeletonDeath", "Sounds/asset/SkeletonDeath.wav");
     audioManager.loadMusic("drink", "Sounds/asset/drink.wav");
-    // audioManager.playMusic("Стартовое меню", true);
+    audioManager.loadMusic("teleport", "Sounds/asset/Teleport.wav");
+    audioManager.loadMusic("eat", "Sounds/asset/eat.wav");
+    audioManager.loadMusic("StoneCrush", "Sounds/asset/StoneCrush.wav");
+    audioManager.loadMusic("dropWater", "Sounds/asset/dropWater.mp3");
+    audioManager.loadMusic("SteamEffect", "Sounds/asset/mixedEffect.mp3");
+    audioManager.loadMusic("BuySellSpecial", "Sounds/asset/apple-pay-succes.mp3");
+    audioManager.loadMusic("BuySellCommon", "/home/xac1k/Downloads/391ac85e5636ced.mp3");
+    audioManager.loadMusic("firework", "Sounds/asset/minecraft-achievements-sound-effects-made-with-Voicemod.mp3");
     audioManager.setMasterVolume(50);
 
     if (sf::Shader::isAvailable()) {
@@ -92,6 +102,8 @@ int main() {
             if(prevGameState != gameState->screen) {
                 prevGameState = gameState->screen;
                 manager.removeEntityByClass("settingMenu*");
+                manager.removeEntityByClass("GameOverMenu*");
+                manager.removeEntityByClass("YouWinMenu*");
                 background(manager, textureLoader, "startMenu:background");
                 startButton(manager, textureLoader, "startMenu:button:start");
                 continueButton(manager, textureLoader, "startMenu:button:continue");
@@ -128,18 +140,21 @@ int main() {
             if(prevGameState != gameState->screen) {
                 prevGameState = gameState->screen;
                 manager.removeEntityByClass("playMenu:*");
+                background(manager, textureLoader, "GameOverMenu:background");
+                YouWinLable(manager, textureLoader, "GameOverMenu");
             }
+            GameOverPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
         }
 
         if(gameState->screen == GameScreen::gameover) {
             if(prevGameState != gameState->screen) {
                 prevGameState = gameState->screen;
                 manager.removeEntityByClass("playMenu:*");
+                background(manager, textureLoader, "GameOverMenu:background");
+                GameOverLable(manager, textureLoader, "GameOverMenu");
             }
+            GameOverPage(clock, window, busEvent, manager, audioManager, animator, textureLoader, renderer);
         }
     }
     return 0;
 }
-
-//TODO:  Добавить сути (не понятно, что нужно сделать)
-// Сделать больше экран.

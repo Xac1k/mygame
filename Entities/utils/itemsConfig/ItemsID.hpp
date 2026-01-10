@@ -8,5 +8,5 @@ enum class Items {
     fireSword, fireSpear, firePickaxe,
     coin, skull, bone, 
     coal, iron, gold, rubin,
-    beer
+    beer, berry, bucketOfWater
 };

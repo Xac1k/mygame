@@ -24,7 +24,7 @@ struct DialogNode {
 };
 
 using var_env_type = std::unordered_map<std::string, std::shared_ptr<void>>;
-enum class ComandType {exit, redrig, setAvatar, setName, nextLevel, buy, sell};
+enum class ComandType {exit, redrig, setAvatar, setName, nextLevel, buy, sell, playMusic};
 struct Comand {
     ComandType type;
     var_env_type var_env;
@@ -33,6 +33,8 @@ struct Comand {
 struct DialogTreeComponent {
     std::unordered_map<std::string, std::shared_ptr<DialogNode>> nodes;
     std::shared_ptr<DialogNode> current_node;
+
+    bool init = false;
 
     private:
         bool isSide(std::string parameter) {
@@ -233,6 +235,17 @@ struct DialogTreeComponent {
                 }
                 return var_env;
             }
+            case ComandType::playMusic: {
+                if(paramTokenMap.size() != 1) 
+                    std::cerr << "Ошибка в программе. Команда playMusic может иметь только 1 параметр. NameOfSound\n";
+                else {
+                    if(isPath(paramTokenMap["0"])) 
+                        var_env.insert(std::make_pair("NameOfSound", std::make_shared<std::string>(paramTokenMap["0"])));
+                    else 
+                        std::cerr << "Ошибка в программе. Неправельное значение параметра NameOfSound. NameOfSound может начинаться и заканчиваться только любым не пробельным символом.\n";
+                }
+                return var_env;
+            }
             default:
                 return var_env;
             }
@@ -284,6 +297,7 @@ struct DialogTreeComponent {
                 std::cerr << "Неправильный формат json файла диалога. Путь до файла: " << buildFullPath(filename, 1) << " Отсутствует root нода.\n";
                 return 0;
             }
+            init = true;
             current_node = nodes["root"];
             return 1;
         };
@@ -318,6 +332,8 @@ struct DialogTreeComponent {
                     node.type = ComandType::buy;
                 else if(comandName == "sell")
                     node.type = ComandType::sell;
+                else if(comandName == "playMusic")
+                    node.type = ComandType::playMusic;
                 else {
                     std::cerr << "[parse] Ошибка внутри init_func. Неизвестный токен: " << comandName << std::endl;
                 }

@@ -1,19 +1,156 @@
 "root": {
-  "text": "Магазин",
+  "text": "Магазин. Здесь ты можешь приобрести полезные предметы. Выбери категорию",
   "init_func": "
     setName(Торговец);
     setAvatar(left, Store/view/Interactive_icons/Player_Avatar.png, tileSize: {250, 250}, tileID: {1, 0});
-    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {0, 2});
+    setAvatar(right, Store/view/Interactive_icons/CaveVillager_Avatar.png, tileSize: {250, 250}, tileID: {3, 0});
   ",
   "answers": {
-    "Продать 10 угля за 10 монет": "sell10CoalFor5Gold"
+    "Руды": "ore_node",
+    "Еда": "food_node",
+    "Другое": "other_node",
+    "Выйти": "exit",
   }
 },
 
-"sell10CoalFor5Gold": {
+
+
+"ore_node": {
+  "text": "",
+  "init_func": "",
+  "answers": {
+    "Продать 10 угля за 10 золота": "sell10CoalFor10Gold",
+    "Продать 10 железа за 20 золота": "sell10IronFor20Gold",
+    "Продать 10 золота за 30 золота": "sell10GoldFor30Gold",
+    "Далее": "ore_node_2"
+  }
+},
+
+"ore_node_2": {
+  "text": "",
+  "init_func": "",
+  "answers": {
+    "Продать 10 рубинов за 40 золота": "sell10RubinFor40Gold",
+    "Назад": "ore_node",
+    "В меню торговца": "root",
+  }
+},
+
+"sell10CoalFor10Gold": {
     "text": "",
   "init_func": "    
     sell(16, 10, 1);
+    playMusic(BuySellCommon);
+    exit();
+  ",
+  "answers": {
+    "Выйти": "exit",
+    "Обратно": "root",
+  }
+},
+
+"sell10IronFor20Gold": {
+    "text": "",
+  "init_func": "    
+    sell(17, 10, 2);
+    playMusic(BuySellCommon);
+    exit();
+  ",
+  "answers": {
+    "Выйти": "exit",
+    "Обратно": "root",
+  }
+},
+
+"sell10GoldFor30Gold": {
+    "text": "",
+  "init_func": "    
+    sell(18, 10, 3);
+    playMusic(BuySellCommon);
+    exit();
+  ",
+  "answers": {
+    "Выйти": "exit",
+    "Обратно": "root",
+  }
+},
+
+"sell10RubinFor40Gold": {
+  "text": "",
+  "init_func": "    
+    sell(19, 10, 4);
+    playMusic(BuySellCommon);
+    exit();
+  ",
+  "answers": {
+    "Выйти": "exit",
+    "Обратно": "root",
+  }
+},
+
+"food_node": {
+  "text": "",
+  "init_func": "",
+  "answers": {
+    "Купить пиво за 2 золотых": "buy_beer",
+    "Купить ягоды за 3 золотых": "buy_berry",
+  }
+},
+
+"buy_beer": {
+  "text": "",
+  "init_func": "
+    buy(20, 1, 2);
+    playMusic(BuySellSpecial);
+    exit();
+  ",
+  "answers": {
+    "Выйти": "exit",
+    "Обратно": "root",
+  }
+},
+
+"buy_berry": {
+  "text": "",
+  "init_func": "
+    buy(21, 1, 3);
+    playMusic(BuySellCommon);
+    exit();
+  ",
+  "answers": {
+    "Выйти": "exit",
+    "Обратно": "root",
+  }
+},
+
+
+
+"other_node": {
+  "text": "",
+  "init_func": "",
+  "answers": {
+    "Купить ведро воды за 4 золотых": "buyBucketOfWater",
+  }
+},
+
+"buyBucketOfWater": {
+  "text": "",
+  "init_func": "
+    buy(22, 1, 4);
+    playMusic(BuySellCommon);
+    exit();
+  ",
+  "answers": {
+    "Выйти": "exit",
+    "Обратно": "root",
+  }
+},
+
+
+
+"exit": {
+    "text": "",
+  "init_func": "
     exit();
   ",
   "answers": {}

@@ -9,6 +9,7 @@
 #include <Common/getAngle.hpp>
 #include <Map/Creating/Common/dist.hpp>
 #include <Entities/utils/animationLoader.hpp>
+#include <Sounds/soundManager.hpp>
 
 class EffectsSystem
 {
@@ -179,7 +180,7 @@ private:
         anims->overlayes.push_back(overlay);
     }
 
-    void updateCollisionEffects(EntitiesManager& manager, std::vector<int> enemyIDs) {
+    void updateCollisionEffects(EntitiesManager& manager, AudioSystem& audioManager,  std::vector<int> enemyIDs) {
         for(auto enemyID : enemyIDs) {
             auto effects = manager.getComponent<EffectsComponent>(enemyID).get();
             if(effects->effects.empty()) continue;
@@ -193,6 +194,7 @@ private:
                 effects->removeEffect(Effects::fire);
                 effects->removeEffect(Effects::wet);
                 addMixEffectOverlayAnimation(manager, enemyID, haveFrozen, haveFire, haveWet);
+                audioManager.playMusic("SteamEffect", false);
             }
 
             if(haveFire && haveFrozen) {
@@ -259,7 +261,11 @@ private:
         auto effectsTarget = manager.getComponent<EffectsComponent>(targetID).get();
         auto it = effectsEnemy->find(effect);
         if(it == effectsEnemy->effects.end()) return;
-        effectsTarget->cloneEffect(it.base());
+        EffectComponent effectComp;
+        effectComp.effect = effect;
+        effectComp.duration = 10.f;
+        effectComp.period = 1.55f;
+        effectsTarget->cloneEffect(&effectComp);
         std::cout << "Эффект с " << enemyID <<  " был распространён и на " << targetID << '\n';
     }
     
@@ -322,9 +328,9 @@ private:
     }
 
 public:
-    void update(EntitiesManager& manager, float df) {
+    void update(EntitiesManager& manager, AudioSystem& audioManager, float df) {
         auto enemyIDs = manager.with<EffectsComponent>().get();
-        updateCollisionEffects(manager, enemyIDs);
+        updateCollisionEffects(manager, audioManager, enemyIDs);
         updateForOtherEntitiesByTargetDist(manager);
         updateEffectsByTime(manager, enemyIDs, df);
     }

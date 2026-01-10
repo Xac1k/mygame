@@ -22,5 +22,7 @@ inline std::map<Items, int> limitationStack = {
     {Items::iron, 15},
     {Items::gold, 15},
     {Items::rubin, 10},
-    {Items::beer, 10}
+    {Items::beer, 10},
+    {Items::berry, 5},
+    {Items::bucketOfWater, 1},
 };

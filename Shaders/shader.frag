@@ -5,12 +5,13 @@ uniform vec2 resolution;    // Разрешение экрана (для нор�
 //uniform float angle;        // Угол поворота украта. Насколько сильно завален горизонт.
 
 uniform float pixelizeCoeff;// Коофициент пикселезиции картинки чем больше тем картинка менее пикселизуеца.
+uniform vec2 rescaleCoef;
 // uniform bool isDrunk;       
 // uniform float coeffOfDrunk; // Насколько сильно ты напился
 
 vec2 drunkEffect() {
-    vec2 uv = (gl_FragCoord.xy + vec2(bias / 5., 0)) / resolution;
-    float wave = sin(time * 0.001 + uv.y * 5.0) * (bias / 5. / resolution.x);
+    vec2 uv = (gl_FragCoord.xy + vec2(bias / 5. * rescaleCoef.x, 0)) / resolution;
+    float wave = sin(time * 0.001 + uv.y * 5.0) * (bias / 5. * rescaleCoef.x / resolution.x);
      
     vec2 newUV = uv + vec2(wave, 0);;
     return newUV;

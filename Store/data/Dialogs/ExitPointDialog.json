@@ -12,7 +12,8 @@
 
 "nextAndExitLevel": {
   "text": "",
-  "init_func": "    
+  "init_func": "
+    playMusic(teleport);    
     nextLevel();
     exit();
   ",

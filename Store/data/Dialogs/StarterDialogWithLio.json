@@ -12,34 +12,18 @@
     setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {0, 2});
   ",
   "answers": {
-    "Где мы?": "node_1",
     "Кто ты?": "node_2",
-    "Это сон?": "node_3"
   }
 },
 
-"node_1": {
-  "text": "*нервный смешок*
-Если я скажу «под землёй», это прозвучит слишком спокойно, да?
-Тут… стены дышат. Я чувствую это кожей.",
-  "init_func": "    
-    redrig(right, 10);
-    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {2, 1});
-  ",
-  "answers": {
-    "Обратно": "root"
-  }
-},
-
-"node_3": {
-  "text": "*щипает себя* ... Ай!!!
-Нет. К сожалению, это не из тех снов, где можно проснуться.",
+"node_2": {
+  "text": "Лиора. Но если полностью — мы застрянем здесь навсегда, пока я договорю. Так что просто Лио.",
   "init_func": "
-  redrig(right, 10);
-  setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {3, 0});
+    setName(Лио);
+    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {2, 2});
   ",
   "answers": {
-    "Обратно": "root"
+    "Далее": "return"
   }
 },
 
@@ -57,20 +41,8 @@
   ",
   "answers": {
     "Где мы?": "node_1_return",
-    "Кто ты?": "node_2",
     "Это сон?": "node_3_return",
-    "Пойти дальше": "exit_nextLevel_node"
-  }
-},
-
-"node_2": {
-  "text": "Лиора. Но если полностью — мы застрянем здесь навсегда, пока я договорю. Так что просто Лио.",
-  "init_func": "
-    setName(Лио);
-    setAvatar(right, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {2, 2});
-  ",
-  "answers": {
-    "Обратно": "return"
+    "Пойти в сторону шагов": "exit_node"
   }
 },
 
@@ -103,15 +75,6 @@
 "exit_node": {
   "text": "",
   "init_func": "exit();",
-  "answers": {
-  }
-}
-
-"exit_nextLevel_node": {
-  "text": "",
-  "init_func": "
-  nextLevel();
-  exit();",
   "answers": {
   }
 }

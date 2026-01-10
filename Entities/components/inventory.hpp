@@ -30,6 +30,20 @@ void inventory(EntitiesManager& manager, TextureLoader& textureLoader) {
 
     inventory.inventory[0][2] = Items::beer;
     inventory.countItems[0][2] = 10;
+
+    inventory.inventory[0][3] = Items::bucketOfWater;
+    inventory.countItems[0][3] = 1;
+
+
+    inventory.inventory[0][4] = Items::berry;
+    inventory.countItems[0][4] = 1;
+
+    inventory.inventory[1][0] = Items::coin;
+    inventory.countItems[1][0] = 64;
+
+    inventory.inventory[1][1] = Items::coal;
+    inventory.countItems[1][1] = 10;
+
     manager.addComponent<InventoryComponent>(inventory);
 
     DragAndDropComponent dragAndDrop;

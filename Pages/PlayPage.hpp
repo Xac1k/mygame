@@ -37,11 +37,15 @@
 #include <Systems/UI/DialogWindow/DialogWindow.hpp>
 #include <Systems/Game/Spawn/SpawnController.hpp>
 #include <Systems/InventoryUseItems.hpp>
+#include <Systems/UI/DrunkEffectSystem/DrunkEffectSystem.hpp>
+#include <Systems/Game/GameOver/GameOverSystem.hpp>
 
 #include <Depricated/MovementPlayerSystem.hpp>
 
 SpawnController LevelController;
 InventoryUseItems inventoryUseSystem;
+DrunkEffectSystem drunkSystem;
+GameOverSystem gameOverSystem;
     
 HealthIndicator EntityHealthIndicator;
 DialogWindow DialogManager;
@@ -52,7 +56,6 @@ extern sf::Vector2f rescaleCoeff;
 AIAgent AIAgentUpdater;
 
 sf::Clock clockForDrunk;
-float drunkLevel = 0.0f;
 #define BIAS_IN_PIXEL 200.0f
 #define PIXEL_COEF 2.0f
 
@@ -68,7 +71,7 @@ void controlCollision() {
         isPrevPageUpPressed = false;
 }
 
-void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader, SfmlRenderer& renderer, float df) {
+void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoader& textureLoader, SfmlRenderer& renderer, AudioSystem& audioManager, float df) {
     //Systems
     HealthPlayerLevel HealthPlayerIndicator;
     renderTexture.clear(sf::Color::White);
@@ -83,15 +86,16 @@ void drawPlayPage(sf::RenderWindow& window, EntitiesManager& manager, TextureLoa
 
     float time = clockForDrunk.getElapsedTime().asMilliseconds();
     DrunkShader.setUniform("time", time);
-    DrunkShader.setUniform("bias", drunkLevel * BIAS_IN_PIXEL);
+    DrunkShader.setUniform("bias", drunkSystem.getDrunkLevel() * BIAS_IN_PIXEL);
     DrunkShader.setUniform("resolution", sf::Vector2f((WINDOW_WIDTH + 80) * rescaleCoeff.x, (WINDOW_HEIGHT) * rescaleCoeff.y));
     DrunkShader.setUniform("pixelizeCoeff", PIXEL_COEF);
+    DrunkShader.setUniform("rescaleCoef", sf::Vector2f(rescaleCoeff.x, rescaleCoeff.y));
 
     window.clear();
     window.draw(sprite, &DrunkShader);
     renderer.render(window, manager, textureLoader);
     InventoryDrawSystem(window, textureLoader, manager);
-    DialogManager.UI(window, manager, textureLoader);
+    DialogManager.UI(window, manager, audioManager, textureLoader);
     window.display();
 }
 
@@ -100,7 +104,7 @@ void PlayPage(
     EntitiesManager& manager, AudioSystem& audioManager, Animator& animator,
     TextureLoader& textureLoader, SfmlRenderer& renderer
 ) {
-    LevelController.update(manager, textureLoader);
+    LevelController.update(manager, textureLoader, audioManager);
     float df = clock.restart().asSeconds();
     sf::Event event;
 
@@ -128,12 +132,14 @@ void PlayPage(
         }
     }
 
+    
     if(DialogManager.canPlay()) {
+        gameOverSystem.update(manager);
         controlCollision();
         inventoryUseSystem.update(manager, audioManager);
 
         HurtEntitySystem(manager);
-        effectsSystem.update(manager, df);
+        effectsSystem.update(manager, audioManager, df);
         DeathEntitySystem(manager, audioManager, df);
         CreateMovementPlayerSystem(manager);
         DeathAnimationUpdateSystem(manager);
@@ -147,10 +153,11 @@ void PlayPage(
         CooldownSystem.update(manager, df);
         UpdatePhysicsSystem(manager, textureLoader, df);
     }
+    drunkSystem.update();
 
     StateUpdater.updateEnemyStates(manager);
     animator.AnimationUpdate(manager, df);
 
     DialogManager.Controller(manager);
-    drawPlayPage(window, manager, textureLoader, renderer, df);
+    drawPlayPage(window, manager, textureLoader, renderer, audioManager, df);
 }

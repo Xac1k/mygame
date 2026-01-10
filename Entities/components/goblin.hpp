@@ -8,7 +8,7 @@
 #include <Entities/utils/toolTableLoader.hpp>
 
 
-
+enum class SkeletonType {none, Fire, Wet, Poisoned};
 enum class SkeletonState { 
     IdleLeft, IdleRight,
     WalkLeft, WalkRight,
@@ -17,7 +17,7 @@ enum class SkeletonState {
     
     DeathLeft = 451, DeathRight = 452, DeathDirect = 453, DeathBackward = 454
 };
-void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap) {
+void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap, SkeletonType type) {
     int scale = 2;
     constexpr float veloWalk = TILE_SIZE * 1;
     constexpr float veloChasing = TILE_SIZE * 3;
@@ -49,7 +49,21 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     manager.addComponent<CollisionComponent>(rect);
 
     WeaponComponent weaponComp(20, TILE_SIZE*2, 30, 2, 0.125f * 7);
-    weaponComp.setEffect(Effects::fire, 10, 1, 1);
+    switch (type)
+    {
+    case SkeletonType::Fire:
+        weaponComp.setEffect(Effects::fire, 10, 1, 1);
+        break;
+    case SkeletonType::Wet:
+        weaponComp.setEffect(Effects::wet, 10, 1.55f, 0);
+        break;
+    case SkeletonType::Poisoned:
+        weaponComp.setEffect(Effects::poisoned, 10, 2.f, 4);
+        break;
+    default:
+        break;
+    }
+    
     manager.addComponent<WeaponComponent>(weaponComp);
 
 //============================= DEATH =============================
@@ -69,23 +83,34 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
 
 //============================= EFFECTS =============================
     EffectsComponent arrayOfEffects;
-    // EffectComponent effect;
-    // effect.effect = Effects::fire;
-    // effect.duration = 3600.f;
-    // effect.period = 2;
-    // effect.damage = 1;
-    // arrayOfEffects.effects.push_back(effect);
+    EffectComponent effect;
+    switch (type)
+    {
+    case SkeletonType::Fire:
+        effect.effect = Effects::fire;
+        effect.duration = 3600.f;
+        effect.period = 2;
+        arrayOfEffects.effects.push_back(effect);
+        break;
+    case SkeletonType::Wet:
+        effect.effect = Effects::wet;
+        effect.duration = 3600.f;
+        effect.period = 1.55f;
+        arrayOfEffects.effects.push_back(effect);
+        break;
+    case SkeletonType::Poisoned:
+        effect.effect = Effects::poisoned;
+        effect.duration = 3600.f;
+        effect.period = 2;
+        arrayOfEffects.effects.push_back(effect);
+        break;
+    default:
+        break;
+    }
     manager.addComponent(arrayOfEffects);
 
     EffectsInfo effectsInfo(TILE_SIZE * 2, TILE_SIZE * 2);
     manager.addComponent(effectsInfo);
-
-    CanFrozen canFrozen;
-    manager.addComponent(canFrozen);
-    CanWet canWet;
-    manager.addComponent(canWet);
-    CanPoisoned canPoisoned;
-    manager.addComponent(canPoisoned);
 
 //============================= LOOT =============================
     LootTableComponent lootTable;

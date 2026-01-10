@@ -66,11 +66,6 @@ void player(EntitiesManager& manager, TextureLoader& textureLoader) {
 
     //============================= EFFECTS =============================
     EffectsComponent arrayOfEffects;
-    EffectComponent effect;
-    effect.effect = Effects::wet;
-    effect.duration = 3600.f;
-    effect.period = 1.55f;
-    arrayOfEffects.effects.push_back(effect);
     manager.addComponent(arrayOfEffects);
 
     EffectsInfo effectsInfo(TILE_SIZE * 2, TILE_SIZE * 2);

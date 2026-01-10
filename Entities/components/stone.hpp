@@ -51,7 +51,7 @@ int ore(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap,
     manager.addComponent<LootTableComponent>(lootTable);
 
 //============================= DEATH =============================
-    DeathComponent deathComp(0.125f* 7, "StoneCrush" + std::to_string((int)type) , 0);
+    DeathComponent deathComp(0.125f* 7, "StoneCrush" , 0);
     manager.addComponent<DeathComponent>(deathComp);
 
 //============================= ANIMATION =============================

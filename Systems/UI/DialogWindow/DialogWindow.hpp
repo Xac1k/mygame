@@ -7,6 +7,7 @@
 #include <Entities/components/map.hpp>
 #include <Common/buildPath.hpp>
 #include <Common/wrapText.hpp>
+#include <Sounds/soundManager.hpp>
 
 class DialogWindow
 {
@@ -122,9 +123,11 @@ public:
 
     void Controller(EntitiesManager& manager) {
         if(!isActivate && isDialogerNear && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+            auto nextNodePtr = manager.getComponent<DialogTreeComponent>(interlocutorID);
+            if(!nextNodePtr->init) return;
             isActivate = true;
             initProgDone = false;
-            currDialog = manager.getComponent<DialogTreeComponent>(interlocutorID);
+            currDialog = nextNodePtr;
             currDialog->current_node = currDialog->nodes["root"];
             reset();
         }
@@ -166,13 +169,13 @@ public:
         }
     }
 
-    void UI(sf::RenderWindow &window, EntitiesManager& manager, TextureLoader& textureLoader) {
+    void UI(sf::RenderWindow &window, EntitiesManager& manager, AudioSystem& audioManager, TextureLoader& textureLoader) {
         std::vector<int> entityIDs = manager.with<PositionOnMapComponent>().with<DialogTreeComponent>().without<DialogStartOnOver>().with<SizeComponent>().get();
         std::vector<int> dialogPointIDs = manager.with<PositionOnMapComponent>().with<DialogStartOnOver>().with<DialogTreeComponent>().without<DialogDone>().get();
         int playerID = manager.withClassName("*player*")[0];
 
         checkDialogPoint(manager, dialogPointIDs, playerID);
-        runInitProg(manager);
+        runInitProg(manager, audioManager);
         drawDialogMenu(window, manager, textureLoader);
         drawDialogText(window, manager, textureLoader);
         drawDialogName(window, manager, textureLoader);
@@ -328,7 +331,7 @@ private:
         auto inventory = manager.with<InventoryComponent>().getComponent<InventoryComponent>();
         if(!inventory) return;
 
-        auto countGold = inventory->countItem(Items::gold);
+        auto countGold = inventory->countItem(Items::coin);
         if(countGold < costForOne * count) return;
 
         inventory->addItem((Items)itemID, count);
@@ -366,7 +369,18 @@ private:
         inventory->addItem(Items::coin, count * costForOne);
     }
 
-    void runInitProg(EntitiesManager& manager) {
+    void playMusic(AudioSystem& audioManager, var_env_type var_env) {
+        auto nameIt = var_env.find("NameOfSound");
+        if(nameIt == var_env.end()) return;
+
+        auto nameVoidPtr = nameIt->second;
+        auto namePtr = std::static_pointer_cast<std::string>(nameVoidPtr);
+        auto name = *namePtr; 
+
+        audioManager.playMusic(name, false);
+    }
+
+    void runInitProg(EntitiesManager& manager, AudioSystem& audioManager) {
         if(initProgDone) return;
         if(!currDialog) return;
         auto prog = currDialog->getProgramm();
@@ -394,6 +408,9 @@ private:
                 break;
             case ComandType::sell:
                 sell(manager, comand.var_env);
+                break;
+            case ComandType::playMusic:
+                playMusic(audioManager, comand.var_env);
                 break;
             default:
                 break;

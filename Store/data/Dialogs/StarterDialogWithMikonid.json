@@ -1,0 +1,67 @@
+"root": {
+  "text": "Сар-Мицелл: 
+  Контакт установлен.
+
+Лио:
+  резко
+  О.
+  А вот и причина.",
+  "init_func": "
+    setName(Сар-Мицелл);
+    setAvatar(left, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {0, 1});
+    setAvatar(right, Store/view/Interactive_icons/CaveVillager_Avatar.png, tileSize: {250, 250}, tileID: {2, 2});
+  ",
+  "answers": {
+    "Ты кто?": "node_1",
+  }
+},
+
+"node_1": {
+  "text": "Сар-Мицелл:
+Я… виноват.",
+  "init_func": "
+    setAvatar(left, Store/view/Interactive_icons/Player_Avatar.png, tileSize: {250, 250}, tileID: {1, 0});
+  ",
+  "answers": {
+    "Ты нас сюда затащил?": "node_2"
+  }
+},
+
+"node_2": {
+  "text": "Сар-Мицелл:
+  Да.
+  В спешке.
+  Извинения будут позже.
+
+Лио:
+  Подожди.
+  Ты хочешь сказать, что это не случайно?",
+  "init_func": "
+  setAvatar(left, Store/view/Interactive_icons/LioAvatar.png, tileSize: {250, 250}, tileID: {3, 0});
+  redrig(left, 10);
+  ",
+  "answers": {
+    "Далее": "node_3"
+  }
+},
+
+"node_3": {
+  "text": "Сар-Мицелл:
+  К сожалению — нет.
+",
+  "init_func": "
+    setAvatar(left, Store/view/Interactive_icons/Player_Avatar.png, tileSize: {250, 250}, tileID: {1, 0});
+  ",
+  "answers": {
+    "Я требую объяснений": "nextLevel_exit"
+  }
+},
+
+"nextLevel_exit": {
+  "text": "",
+  "init_func": "
+  nextLevel();
+  exit();",
+  "answers": {
+  }
+}

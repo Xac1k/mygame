@@ -38,8 +38,8 @@ void MapDrawSystem(
 
     auto miniMapComponent = manager.getComponent<MiniMapComponent>(mapIDs[0]).get();
     sf::Vector2i cameraPos = {(int)playerComponent->point.x / mapComponent->TileSize, (int)playerComponent->point.y / mapComponent->TileSize};
-    if(mapComponent->map.spiralCorridors.size() == 0)
+    if(mapComponent->map.type == mapType::Rect)
         miniMapComponent->miniMap.draw(window, mapComponent->map.roomsMap, mapComponent->map.corridorsMap, cameraPos); 
-    else 
+    else if (mapComponent->map.type == mapType::Circle)
         miniMapComponent->miniMap.draw(window, mapComponent->map.roomsMap, mapComponent->map.spiralCorridors, cameraPos); 
 }

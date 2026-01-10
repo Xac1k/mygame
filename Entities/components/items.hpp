@@ -54,6 +54,10 @@ int item(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D posOnMap
 
             {(int)Items::beer, {
                     {"Store/view/Items/item20.png", {0, 0}, 1.f, true},
+            }},
+        
+            {(int)Items::berry, {
+                    {"Store/view/Items/item21.png", {0, 0}, 1.f, true},
             }}
         }
     );

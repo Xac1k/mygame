@@ -5,14 +5,33 @@
 #include <Entities/components/inventory.hpp>
 #include <Common/CollisionRect.hpp>
 #include <Sounds/soundManager.hpp>
-extern float drunkLevel;
+#include <Systems/UI/DrunkEffectSystem/DrunkEffectSystem.hpp>
+
+extern DrunkEffectSystem drunkSystem;;
 
 class InventoryUseItems
 {
 private:
     bool prevStateButtonF = false;
+
+    void useBucketOfWater(EntitiesManager& manager) {
+        auto effects = manager.with<EffectsComponent>().withClassName("*player*").getComponent<EffectsComponent>();
+        if(!effects) return;
+        EffectComponent effect;
+        effect.effect = Effects::wet;
+        effect.duration = 30.f;
+        effect.period = 1.55f;
+        effects->cloneEffect(&effect);
+    }
+
+    void useBerry(EntitiesManager& manager) {
+        auto health = manager.with<PositionOnMapComponent>().withClassName("*player*").getComponent<HealthComponent>();
+        if(!health) return;
+        health->health += 10;
+        if(health->health > health->maxHealth) health->health = health->maxHealth;
+    }
 public:
-    void useItem(Items item, Vect2D cellID, std::shared_ptr<InventoryComponent> inventory, AudioSystem& audioManager) {
+    void useItem(Items item, Vect2D cellID, std::shared_ptr<InventoryComponent> inventory, AudioSystem& audioManager, EntitiesManager& manager) {
         switch (item)
         {
         case Items::beer:
@@ -20,8 +39,21 @@ public:
             inventory->countItems[cellID.y][cellID.x]-=1;
             if(inventory->countItems[cellID.y][cellID.x] == 0)
                 inventory->inventory[cellID.y][cellID.x] = Items::none;
-            drunkLevel += 0.1f;
-            if(drunkLevel > 1) drunkLevel = 1;
+            drunkSystem.addDrunkLevel(0.1f);
+            break;
+        case Items::bucketOfWater:
+            audioManager.playMusic("dropWater", false);
+            useBucketOfWater(manager);
+            inventory->countItems[cellID.y][cellID.x]-=1;
+            if(inventory->countItems[cellID.y][cellID.x] == 0)
+                inventory->inventory[cellID.y][cellID.x] = Items::none;
+            break;
+        case Items::berry:
+            audioManager.playMusic("eat", false);
+            useBerry(manager);
+            inventory->countItems[cellID.y][cellID.x]-=1;
+            if(inventory->countItems[cellID.y][cellID.x] == 0)
+                inventory->inventory[cellID.y][cellID.x] = Items::none;
             break;
         default:
             break;
@@ -45,7 +77,7 @@ public:
         ) {
             Vect2D selectedCellID = inventory->selection;
             auto item = inventory->inventory[selectedCellID.y][selectedCellID.x];
-            useItem(item, selectedCellID, inventory, audioManager);
+            useItem(item, selectedCellID, inventory, audioManager, manager);
             prevStateButtonF = true;
         };
 

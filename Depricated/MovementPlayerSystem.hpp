@@ -127,7 +127,6 @@ void CreateMovementPlayerSystem(EntitiesManager& manager) {
         playerVelocity->dir.y = -lenVeloVect;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-
         playerVelocity->dir.y = lenVeloVect;
     }
 }
