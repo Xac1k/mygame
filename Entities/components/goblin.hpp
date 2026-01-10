@@ -52,7 +52,7 @@ void skeleton(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D pos
     switch (type)
     {
     case SkeletonType::Fire:
-        weaponComp.setEffect(Effects::fire, 10, 1, 1);
+        weaponComp.setEffect(Effects::fire, 10, 1, 2);
         break;
     case SkeletonType::Wet:
         weaponComp.setEffect(Effects::wet, 10, 1.55f, 0);

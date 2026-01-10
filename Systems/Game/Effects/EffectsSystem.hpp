@@ -261,10 +261,13 @@ private:
         auto effectsTarget = manager.getComponent<EffectsComponent>(targetID).get();
         auto it = effectsEnemy->find(effect);
         if(it == effectsEnemy->effects.end()) return;
+        auto weapon = manager.getComponent<WeaponComponent>(enemyID);
+        if(!weapon) return;
         EffectComponent effectComp;
+        effectComp.damage = weapon->effectDamage;
+        effectComp.duration = weapon->duration;
         effectComp.effect = effect;
-        effectComp.duration = 10.f;
-        effectComp.period = 1.55f;
+        effectComp.period = weapon->period;
         effectsTarget->cloneEffect(&effectComp);
         std::cout << "Эффект с " << enemyID <<  " был распространён и на " << targetID << '\n';
     }

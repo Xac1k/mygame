@@ -6,6 +6,7 @@
 #include <Common/CollisionRect.hpp>
 #include <Sounds/soundManager.hpp>
 #include <Systems/UI/DrunkEffectSystem/DrunkEffectSystem.hpp>
+#include <Entities/utils/itemsConfig/ItemsWeapon.hpp>
 
 extern DrunkEffectSystem drunkSystem;;
 
@@ -13,6 +14,20 @@ class InventoryUseItems
 {
 private:
     bool prevStateButtonF = false;
+
+    void useWeapon(EntitiesManager& manager, Items item) {
+        auto weapon = manager.with<WeaponComponent>().withClassName("*player*").getComponent<WeaponComponent>();
+        if(!weapon) return;
+
+        if(item == Items::startSword) {
+            weapon = std::make_shared<WeaponComponent>(startSwordWeaponComp);
+        }
+        if(item == Items::startPickaxe) {
+            weapon = std::make_shared<WeaponComponent>(startSpearWeaponComp);
+        }
+
+        std::cout << "Установка оружия\n";
+    }
 
     void useBucketOfWater(EntitiesManager& manager) {
         auto effects = manager.with<EffectsComponent>().withClassName("*player*").getComponent<EffectsComponent>();
@@ -55,6 +70,11 @@ public:
             if(inventory->countItems[cellID.y][cellID.x] == 0)
                 inventory->inventory[cellID.y][cellID.x] = Items::none;
             break;
+
+        case Items::startPickaxe:
+        case Items::startSword:
+            audioManager.playMusic("weapon"+ std::to_string((int)Items::startSword), false);
+            useWeapon(manager, item);
         default:
             break;
         }

@@ -37,7 +37,7 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     gameState(manager);
 
     audioManager.loadMusic("playMusic", "Sounds/asset/Thunder-Unison-Action-Dramatic-Epic-Music-chosic.com_.mp3");
-    audioManager.setVolumeMusic("playMusic", 0.5f);
+    audioManager.setVolumeMusic("playMusic", 0.1f);
     audioManager.loadMusic("TavernAmbitient", "Sounds/asset/TavernAmbienc.mp3");
     audioManager.loadMusic("BarrelDeath", "Sounds/asset/BarrelDeath.mp3");
     audioManager.loadMusic("PlayerDamage", "Sounds/asset/PlayerDamage.mp3");
@@ -56,6 +56,8 @@ void init(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& a
     audioManager.loadMusic("BuySellSpecial", "Sounds/asset/apple-pay-succes.mp3");
     audioManager.loadMusic("BuySellCommon", "/home/xac1k/Downloads/391ac85e5636ced.mp3");
     audioManager.loadMusic("firework", "Sounds/asset/minecraft-achievements-sound-effects-made-with-Voicemod.mp3");
+    audioManager.loadMusic("weapon1", "Sounds/asset/Equip_diamond3.mp3");
+    audioManager.loadMusic("weapon2", "Sounds/asset/Equip_diamond3 copy.mp3");
     audioManager.setMasterVolume(50);
 
     if (sf::Shader::isAvailable()) {
