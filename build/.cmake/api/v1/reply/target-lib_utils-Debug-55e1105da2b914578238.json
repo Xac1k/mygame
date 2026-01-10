@@ -75,13 +75,13 @@
 			},
 			"sourceIndexes" : 
 			[
-				39,
-				41,
-				43,
-				53,
-				59,
-				92,
-				93
+				42,
+				44,
+				46,
+				56,
+				62,
+				96,
+				97
 			]
 		}
 	],
@@ -138,25 +138,25 @@
 				36,
 				37,
 				38,
+				39,
 				40,
-				42,
-				44,
+				41,
+				43,
 				45,
-				46,
 				47,
 				48,
 				49,
 				50,
 				51,
 				52,
+				53,
 				54,
 				55,
-				56,
 				57,
 				58,
+				59,
 				60,
 				61,
-				62,
 				63,
 				64,
 				65,
@@ -185,20 +185,24 @@
 				88,
 				89,
 				90,
-				91
+				91,
+				92,
+				93,
+				94,
+				95
 			]
 		},
 		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				39,
-				41,
-				43,
-				53,
-				59,
-				92,
-				93
+				42,
+				44,
+				46,
+				56,
+				62,
+				96,
+				97
 			]
 		}
 	],
@@ -251,6 +255,11 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Common/isPermitedByEnemies.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Common/isPermitedByMap.hpp",
 			"sourceGroupIndex" : 0
 		},
@@ -267,6 +276,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Common/regex.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Common/sortByDeath.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -392,6 +406,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Entities/utils/itemsConfig/ItemsStack.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Entities/utils/itemsConfig/ItemsWeapon.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -562,6 +581,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Systems/Game/Effects/EffectsSystem.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Systems/Game/EntityControll/EntityConrtoll.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

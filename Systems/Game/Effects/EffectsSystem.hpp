@@ -10,6 +10,9 @@
 #include <Map/Creating/Common/dist.hpp>
 #include <Entities/utils/animationLoader.hpp>
 #include <Sounds/soundManager.hpp>
+#include <Systems/Game/EntityControll/EntityConrtoll.hpp>
+
+extern EntityConrtoll entityControll;
 
 class EffectsSystem
 {
@@ -213,7 +216,7 @@ private:
 
     void updateEffectsByTime(EntitiesManager& manager, std::vector<int> enemyIDs, float df) {
         for(auto enemyID : enemyIDs) {
-            auto effects = manager.getComponent<EffectsComponent>(enemyID).get();
+            auto effects = manager.getComponent<EffectsComponent>(enemyID);
             for(auto& effect : effects->effects) {
                 effect.currentTime += df;
 
@@ -229,7 +232,7 @@ private:
                         continue;
                     }
 
-                    auto healthComp =  manager.getComponent<HealthComponent>(enemyID).get();
+                    auto healthComp =  manager.getComponent<HealthComponent>(enemyID);
                     healthComp->health -= effect.damage;
                     addEffectOverlayAnimation(manager, enemyID, effect.effect);
                 }
@@ -237,28 +240,89 @@ private:
         }
     }
 
-    void updateForOtherEntitiesByTargetDist(EntitiesManager& manager) {
-        auto enemyIDs = manager.with<EffectsInfo>().with<EffectsComponent>().get();
-        for(auto enemyID : enemyIDs) {
-            auto effects = manager.getComponent<EffectsComponent>(enemyID).get();
-            auto effectsInfo = manager.getComponent<EffectsInfo>(enemyID).get();
+    void updateForOtherEntitiesByTargetDist(EntitiesManager& manager, const std::vector<int>& producingEnemyIDs) {
+    auto entities = manager
+        .load<PositionOnMapComponent>(producingEnemyIDs)
+        .with<EffectsComponent>()
+        .with<EffectsInfo>()
+        .get();
 
-            bool Fire = !effects->hasEffect(Effects::fire) && manager.hasComponent<CanFire>(enemyID);
-            bool Wet = !effects->hasEffect(Effects::wet) && manager.hasComponent<CanWet>(enemyID);
-            auto [isNearEntityWithFire, bornEntityID] = hasNearEntitiesWithEffect(manager, effectsInfo->distExpandFire, enemyID, Effects::fire);
-            auto [isNearEntityWithWet, wetEntityID] = hasNearEntitiesWithEffect(manager, effectsInfo->distExpandWet, enemyID, Effects::wet);
+    struct CachedEntity {
+        int id;
+        Vect2D pos;
+        EffectsComponent* effects;
+        EffectsInfo* info;
+        bool hasFire;
+        bool hasWet;
+    };
 
-            if(Fire && isNearEntityWithFire) updateForOtherFire(manager, bornEntityID, enemyID);
-            else if(!isNearEntityWithFire) expandCleaner(manager, enemyID, Effects::fire);
+    std::vector<CachedEntity> cached;
+    cached.reserve(entities.size());
 
-            if(Wet && isNearEntityWithWet) {}
-            else if(!isNearEntityWithWet) expandCleaner(manager, enemyID, Effects::wet);
-        }
+    for (int id : entities) {
+        auto pos = manager.getComponent<PositionOnMapComponent>(id);
+        auto effects = manager.getComponent<EffectsComponent>(id);
+        auto info = manager.getComponent<EffectsInfo>(id);
+
+        cached.push_back({
+            id,
+            pos->point,
+            effects.get(),
+            info.get(),
+            effects->hasEffect(Effects::fire),
+            effects->hasEffect(Effects::wet)
+        });
     }
 
+    for (auto& target : cached) {
+        bool canReceiveFire =
+            !target.hasFire && manager.hasComponent<CanFire>(target.id);
+
+        bool canReceiveWet =
+            !target.hasWet && manager.hasComponent<CanWet>(target.id);
+
+        int fireSource = -1;
+        int wetSource = -1;
+
+        if (canReceiveFire || canReceiveWet) {
+            for (auto& src : cached) {
+                if (src.id == target.id) continue;
+
+                float d = dist(src.pos, target.pos);
+
+                if (canReceiveFire && src.hasFire &&
+                    d < target.info->distExpandFire)
+                {
+                    fireSource = src.id;
+                    break;
+                }
+
+                if (canReceiveWet && src.hasWet &&
+                    d < target.info->distExpandWet)
+                {
+                    wetSource = src.id;
+                    break;
+                }
+            }
+        }
+
+        if (canReceiveFire && fireSource != -1)
+            updateForOtherFire(manager, fireSource, target.id);
+        else
+            expandCleaner(manager, target.id, Effects::fire);
+
+        if (canReceiveWet && wetSource != -1) {
+            // TODO: логика Wet
+        } else {
+            expandCleaner(manager, target.id, Effects::wet);
+        }
+    }
+}
+
+
     void addEffect(EntitiesManager& manager, Effects effect, int enemyID, int targetID) {
-        auto effectsEnemy = manager.getComponent<EffectsComponent>(enemyID).get();
-        auto effectsTarget = manager.getComponent<EffectsComponent>(targetID).get();
+        auto effectsEnemy = manager.getComponent<EffectsComponent>(enemyID);
+        auto effectsTarget = manager.getComponent<EffectsComponent>(targetID);
         auto it = effectsEnemy->find(effect);
         if(it == effectsEnemy->effects.end()) return;
         auto weapon = manager.getComponent<WeaponComponent>(enemyID);
@@ -272,14 +336,14 @@ private:
         std::cout << "Эффект с " << enemyID <<  " был распространён и на " << targetID << '\n';
     }
     
-    std::pair<bool, int> hasNearEntitiesWithEffect(EntitiesManager& manager, float distForExpand, int targetID, Effects effect) {
-        auto posTarget = manager.getComponent<PositionOnMapComponent>(targetID).get()->point;
-        auto enemyIDs = manager.with<EffectsComponent>().except(targetID).get();
+    std::pair<bool, int> hasNearEntitiesWithEffect(EntitiesManager& manager, float distForExpand, int targetID, std::vector<int> producingEnemyIDs, Effects effect) {
+        auto posTarget = manager.getComponent<PositionOnMapComponent>(targetID)->point;
+        auto enemyIDs = manager.load<PositionOnMapComponent>(producingEnemyIDs).with<EffectsComponent>().except(targetID).get();
         for(int enemyID : enemyIDs) {
-            auto effects = manager.getComponent<EffectsComponent>(enemyID).get();
+            auto effects = manager.getComponent<EffectsComponent>(enemyID);
             if(effects->effects.empty()) continue;
             if(!effects->hasEffect(effect)) continue;
-            auto posEnemy = manager.getComponent<PositionOnMapComponent>(enemyID).get()->point;
+            auto posEnemy = manager.getComponent<PositionOnMapComponent>(enemyID)->point;
             float distBetween = dist(posEnemy, posTarget);
 
             if(distBetween < distForExpand) 
@@ -290,7 +354,7 @@ private:
 
     void updateForOtherFire(EntitiesManager& manager, int EntityWithEffect, int EntityWithoutEffect) {
         if(!manager.hasComponent<CooldownEffectsInfo>(EntityWithoutEffect)) return;
-        auto cooldownEffectsInfo = manager.getComponent<CooldownEffectsInfo>(EntityWithoutEffect).get();
+        auto cooldownEffectsInfo = manager.getComponent<CooldownEffectsInfo>(EntityWithoutEffect);
 
         if(manager.hasComponent<ReadyToExpandEffect>(EntityWithoutEffect)) {
             addEffect(manager, Effects::fire, EntityWithEffect, EntityWithoutEffect);
@@ -305,22 +369,22 @@ private:
     void expandCleaner(EntitiesManager& manager, int EntityWithoutEffect, Effects effect) {
         if(!manager.hasComponent<ColldownBeforeEffectExpand>(EntityWithoutEffect)) return;
 
-        auto colldownEffects = manager.getComponent<ColldownBeforeEffectExpand>(EntityWithoutEffect).get();
+        auto colldownEffects = manager.getComponent<ColldownBeforeEffectExpand>(EntityWithoutEffect);
         if(colldownEffects->effect != effect) return;
 
         manager.removeComponent<ColldownBeforeEffectExpand>(EntityWithoutEffect);
         manager.removeComponent<ReadyToExpandEffect>(EntityWithoutEffect);
     }
 
-    void addColldownBeforeEffectExpand(EntitiesManager& manager, CooldownEffectsInfo *cooldownEffectsInfo, int targetID) {
+    void addColldownBeforeEffectExpand(EntitiesManager& manager, std::shared_ptr<CooldownEffectsInfo> cooldownEffectsInfo, int targetID) {
         ColldownBeforeEffectExpand cooldownBeforeExpand(Effects::fire, cooldownEffectsInfo->cooldownBeforeFire);
         manager.addComponent(cooldownBeforeExpand, targetID);
         std::cout << "Ставим задержку распространения эффекта на " << targetID << '\n';
     }
 
     void updateForOtherWet(EntitiesManager& manager, float distForExpand, int enemyID, int targetID) {
-        auto posEnemy = manager.getComponent<PositionOnMapComponent>(enemyID).get()->point;
-        auto posTarget = manager.getComponent<PositionOnMapComponent>(targetID).get()->point;
+        auto posEnemy = manager.getComponent<PositionOnMapComponent>(enemyID)->point;
+        auto posTarget = manager.getComponent<PositionOnMapComponent>(targetID)->point;
 
         if(distForExpand <  dist(posEnemy, posTarget)) {
             //TODO: добавить добавление эффекта по прохождению cooldown
@@ -332,9 +396,11 @@ private:
 
 public:
     void update(EntitiesManager& manager, AudioSystem& audioManager, float df) {
-        auto enemyIDs = manager.with<EffectsComponent>().get();
-        updateCollisionEffects(manager, audioManager, enemyIDs);
-        updateForOtherEntitiesByTargetDist(manager);
+        auto producingEntities = entityControll.getEntityFromProducingRoom();
+        auto producingEntitiesWithEffect = manager.load<PositionOnMapComponent>(producingEntities).with<EffectsComponent>().get();
+        auto enemyIDs = manager.load<PositionOnMapComponent>(producingEntities).with<EffectsComponent>().get();
+        updateCollisionEffects(manager, audioManager, producingEntitiesWithEffect);
+        updateForOtherEntitiesByTargetDist(manager, producingEntitiesWithEffect);
         updateEffectsByTime(manager, enemyIDs, df);
     }
 };

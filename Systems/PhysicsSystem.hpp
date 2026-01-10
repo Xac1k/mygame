@@ -12,8 +12,6 @@
 #include <Map/Creating/Common/randomRange.hpp>
 #include <Entities/components/items.hpp>
 
-constexpr float deacelerationCoef = 4;
-
 int sign(int x) {
     if(x > 0) return 1;
     if(x < 0) return -1;
@@ -30,8 +28,8 @@ void UpdatePhysicsSystem(EntitiesManager& manager, TextureLoader textureLoader, 
     auto entityIDs = manager.with<PhysicsComponent>().with<PositionOnMapComponent>().get();
 
     for (auto entityID : entityIDs) {
-        auto pos = manager.getComponent<PositionOnMapComponent>(entityID).get();
-        auto vel = manager.getComponent<PhysicsComponent>(entityID).get();
+        auto pos = manager.getComponent<PositionOnMapComponent>(entityID);
+        auto vel = manager.getComponent<PhysicsComponent>(entityID);
 
         if(!vel->velo.x && !vel->velo.y) continue;
 

@@ -9,57 +9,22 @@
 #include <Sounds/soundManager.hpp>
 #include <Systems/Game/Spawn/SpawnSystemBlank.hpp>
 #include <Entities/components/goblin.hpp>
-
-class SpawnSkeletonSystem : public SpawnSystemBlankIntoRoom {
-    void spawnEntityFunc(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D spawnPos) override {
-        SkeletonType type;
-        float chance = randFloat();
-        if(chance < 0.25) 
-            type = SkeletonType::Fire;
-        else if(chance < 0.5)
-            type = SkeletonType::Wet;
-        else if(chance < 0.75)
-            type = SkeletonType::Poisoned;
-        else 
-            type = SkeletonType::none;
-
-        skeleton(manager, textureLoader, spawnPos, type);
-    }
-};
-
-class SpawnBarrelSystem : public SpawnSystemBlankIntoRoom {
-    void spawnEntityFunc(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D spawnPos) override {
-        barrel(manager, textureLoader, spawnPos);
-    }
-};
+#include <Systems/Game/EntityControll/EntityConrtoll.hpp>
 
 class SpawnController
 {
 private:
     int prevLevel = 0;
-
-    SpawnBarrelSystem SpawnBarrel;
-    SpawnSystem SpawnOre;
-    SpawnSkeletonSystem SpawnSkeleton; 
 public:
-    SpawnController() {
-        SpawnBarrel.entityInRoom = {3, 20};
-    };
-
-    void update(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager) {
-        SpawnSkeleton.ENTER_TOLERANCE = 6 * TILE_SIZE;
-        SpawnSkeleton.update(manager, textureLoader);
-        SpawnBarrel.update(manager, textureLoader);
-
+    void update(EntitiesManager& manager, TextureLoader& textureLoader, AudioSystem& audioManager, EntityConrtoll& entityControll) {
         auto gameStateIDs = manager.with<GameStateComponent>().get();
         if(gameStateIDs.size() == 0) return;
         auto gameStateComp = manager.getComponent<GameStateComponent>(gameStateIDs[0]); 
         if(prevLevel == gameStateComp->level) return;
         prevLevel = gameStateComp->level;
 
-        SpawnSkeleton.reset();
-        SpawnBarrel.reset();
-
+        entityControll.resetSpawnSystems();
+        
         auto mapIDs = manager.with<MapComponent>().get();
         if(mapIDs.size() == 0) return;
         auto mapComponent = manager.getComponent<MapComponent>(mapIDs[0]);
@@ -67,6 +32,7 @@ public:
         auto playerIDs = manager.withClassName("*player*");
         if(playerIDs.size() == 0) return;
         auto player = manager.getComponent<PositionOnMapComponent>(playerIDs[0]);
+        entityControll.addEntityIntoExtraProducing(manager, playerIDs[0]);
 
         manager.removeEntityByClass("*Deletable*");
         if(gameStateComp->level == 1) {
@@ -104,9 +70,6 @@ public:
             player->point = mapComponent->map.getSpawnPoint();
 
             finalPoint(manager, mapComponent->map.getFinalPoint(player->point), "Store/data/Dialogs/ExitPointDialog.json");
-            
-            SpawnOre.update(manager, textureLoader);
-            SpawnBarrel.update(manager, textureLoader);
         }
     }
 };

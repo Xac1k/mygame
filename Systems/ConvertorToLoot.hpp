@@ -11,20 +11,12 @@
 #include <Map/Creating/Common/randomRange.hpp>
 #include <Entities/components/items.hpp>
 #include <Common/randFloat.hpp>
+#include <Systems/Game/EntityControll/EntityConrtoll.hpp>
+#include <Common/sortByDeath.hpp>
 
+extern EntityConrtoll entityControll;
 constexpr int pickUpRadius = 32;
 
-std::vector<int> sortByDeath(EntitiesManager& manager, std::vector<int> entityIDs) {
-    std::vector<int> result;
-    for(int id : entityIDs) {
-        auto deathComp = manager.getComponent<DeathComponent>(id);
-        if(
-            deathComp->isDead && 
-            deathComp->deathTime > deathComp->fadeOutTime
-        ) result.push_back(id);
-    }
-    return result;
-}
 
 Vect2D getVelocity(Vect2D angleArea) {
     float angle;
@@ -46,7 +38,8 @@ Vect2D getVelocity(Vect2D angleArea) {
 }
 
 void LootDropSystem(EntitiesManager& manager, TextureLoader textureLoader) {
-    auto entityIDs = manager.with<LootTableComponent>().with<DeathComponent>().get();
+    auto producingEntities = entityControll.getEntityFromProducingRoom();
+    auto entityIDs = manager.load<PositionOnMapComponent>(producingEntities).with<LootTableComponent>().with<DeathComponent>().get();
     auto entityToLoot = sortByDeath(manager, entityIDs);
 
     for (int entityId : entityToLoot) {

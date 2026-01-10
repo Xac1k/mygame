@@ -13,11 +13,11 @@
 void DeathAnimationUpdateSystem(EntitiesManager& manager) {
     auto entityIDs = manager.with<DeathComponent>().get();
     for (int entityID : entityIDs) {
-        auto deathComp = manager.getComponent<DeathComponent>(entityID).get();
-        auto stateComp = manager.getComponent<StateComponent>(entityID).get();
+        auto deathComp = manager.getComponent<DeathComponent>(entityID);
+        auto stateComp = manager.getComponent<StateComponent>(entityID);
         if(deathComp->isDead) {
             if(manager.hasComponent<DirectionalDeathComponent>(entityID)) {
-                auto directionalDeath = manager.getComponent<DirectionalDeathComponent>(entityID).get()->facing;
+                auto directionalDeath = manager.getComponent<DirectionalDeathComponent>(entityID)->facing;
                 switch (directionalDeath)
                 {
                 case Facing::Backward:

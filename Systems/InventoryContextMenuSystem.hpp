@@ -6,16 +6,14 @@
 #include <Common/CollisionRect.hpp>
 
 void InventoryContextMenuUpdate(EntitiesManager& manager, BusEvent& event) {
-    auto inventoryIDs = manager.with<InventoryComponent>().get(); 
-    if(inventoryIDs.size() < 1) return;
-    
-    auto pos = manager.getComponent<PositionComponent>(inventoryIDs[0]).get();
-    auto size = manager.getComponent<SizeComponent>(inventoryIDs[0]).get();
-    auto dragAndDrop = manager.getComponent<DragAndDropComponent>(inventoryIDs[0]);
-
-    auto inventory = manager.getComponent<InventoryComponent>(inventoryIDs[0]).get();
-    auto inventoryState = manager.getComponent<StateComponent>(inventoryIDs[0]).get();
+    auto pos = manager.with<InventoryComponent>().getComponent<PositionComponent>();
+    auto size = manager.with<InventoryComponent>().getComponent<SizeComponent>();
+    auto dragAndDrop = manager.with<InventoryComponent>().getComponent<DragAndDropComponent>();
+    auto inventory = manager.with<InventoryComponent>().getComponent<InventoryComponent>();
+    auto inventoryState = manager.with<InventoryComponent>().getComponent<StateComponent>();
+    if(!pos || !size || !dragAndDrop || !inventory || !inventoryState) return;
     if(inventoryState->state == (int)InventoryState::wrapped) return;
+    
     switch (event.currEvent)
     {
     case BusEvent::Event::MouseDownRight :

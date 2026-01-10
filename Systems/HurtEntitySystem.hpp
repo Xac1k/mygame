@@ -9,12 +9,15 @@
 #include <Common/getAngle.hpp>
 #include <Map/Creating/Common/dist.hpp>
 #include <Entities/utils/animationLoader.hpp>
+#include <Systems/Game/EntityControll/EntityConrtoll.hpp>
 
-std::vector<int> sortByAttackArea(EntitiesManager& manager, AttackComponent *attackComp, std::vector<int> entitiesIDs) {
+extern EntityConrtoll entityControll;
+
+std::vector<int> sortByAttackArea(EntitiesManager& manager, std::shared_ptr<AttackComponent> attackComp, std::vector<int> entitiesIDs) {
     std::vector<int> relevant;
     for(int id : entitiesIDs) {
-        auto pos = manager.getComponent<PositionOnMapComponent>(id).get()->point;
-        auto deathComp = manager.getComponent<DeathComponent>(id).get();
+        auto pos = manager.getComponent<PositionOnMapComponent>(id)->point;
+        auto deathComp = manager.getComponent<DeathComponent>(id);
         auto angle = getAngle(pos - attackComp->attackerPos); 
 
         if(
@@ -28,7 +31,6 @@ std::vector<int> sortByAttackArea(EntitiesManager& manager, AttackComponent *att
                 auto len = dist(pos, attackComp->attackerPos);
                 if(len < attackComp->attackLen) {
                     relevant.push_back(id);
-
                 }
             }
         }
@@ -58,7 +60,7 @@ void addHurtComponent(EntitiesManager& manager, int enemyID, Vect2D agressorPos)
 void addStuneComponent(EntitiesManager& manager, int enemyID) {
     // if enemy not stuneable
     if(!manager.hasComponent<CooldownInfo>(enemyID)) return;
-    auto stuneInfo = manager.getComponent<CooldownInfo>(enemyID).get();
+    auto stuneInfo = manager.getComponent<CooldownInfo>(enemyID);
 
     // create stune
     if(!manager.hasComponent<StuneCompanent>(enemyID)){
@@ -67,7 +69,7 @@ void addStuneComponent(EntitiesManager& manager, int enemyID) {
     }
     // edit stune
     else {
-        auto stuneComp = manager.getComponent<StuneCompanent>(enemyID).get();
+        auto stuneComp = manager.getComponent<StuneCompanent>(enemyID);
         stuneComp->currentTime = 0;
         stuneComp->duration = stuneInfo->cooldownMoving;
     }
@@ -78,24 +80,25 @@ void addStuneComponent(EntitiesManager& manager, int enemyID) {
     manager.removeComponent<ReadyToAttack>(enemyID);
 }
 
-void addEffectComponent(EntitiesManager& manager, int enemyID,  AttackComponent *attackComp) {
+void addEffectComponent(EntitiesManager& manager, int enemyID,  std::shared_ptr<AttackComponent> attackComp) {
     if(!manager.hasComponent<EffectsComponent>(enemyID)) return;
-    auto effects = manager.getComponent<EffectsComponent>(enemyID).get();
+    auto effects = manager.getComponent<EffectsComponent>(enemyID);
     effects->addEffect(attackComp);
     std::cout << "Ставим эффект на моба: " << enemyID << std::endl;
 };
 
 void HurtEntitySystem(EntitiesManager& manager) {
-    auto attackerIDs = manager.with<AttackComponent>().get();
+    auto existedEntity = entityControll.getEntityFromProducingRoom();
+    auto attackerIDs = manager.load<PositionOnMapComponent>(existedEntity).with<AttackComponent>().get();
     for(auto attackerID : attackerIDs) {
-        auto attackComp = manager.getComponent<AttackComponent>(attackerID).get();
-        auto entitiesIDs = manager.with<HealthComponent>().except(attackerID).get();
+        auto attackComp = manager.getComponent<AttackComponent>(attackerID);
+        auto entitiesIDs = manager.load<PositionOnMapComponent>(existedEntity).with<HealthComponent>().except(attackerID).get();
         auto relevantEntityIDs = sortByAttackArea(manager, attackComp, entitiesIDs);
 
         for(auto entityID: relevantEntityIDs) {
             std::cout << "Атака на: " << entityID << std::endl;
-            auto healthComp = manager.getComponent<HealthComponent>(entityID).get();
-            auto deathComp = manager.getComponent<DeathComponent>(entityID).get();
+            auto healthComp = manager.getComponent<HealthComponent>(entityID);
+            auto deathComp = manager.getComponent<DeathComponent>(entityID);
             
             healthComp->health -= attackComp->damage;
             deathComp->angleOfDeath = attackComp->attackArea;

@@ -14,20 +14,16 @@
 #include <Common/isPermitedByMap.hpp>
 #include <Entities/components/stone.hpp>
 #include <unordered_map>
+#include <Common/isPermitedByEnemies.hpp>
 
 class SpawnSystemBlankIntoRoom {
 public:
     Vect2D entityInRoom = {3, 8};
-    float ENTER_TOLERANCE = TILE_SIZE * 1.5f;
+    std::vector<int> spawnedEntity;
+    CollisionComponent coll;
 
-    virtual void spawnEntityFunc(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D spawnPos) = 0;
+    virtual int spawnEntityFunc(EntitiesManager& manager, TextureLoader& textureLoader, Vect2D spawnPos) = 0;
 private:
-    bool isPlayerInsideRoom(const Vect2D& playerPos, const sf::Vector3f& room) {
-        Vect2D roomCenter(room.x * TILE_SIZE, room.y * TILE_SIZE);
-        float distToCenter = dist(playerPos, roomCenter);
-        return distToCenter <= (room.z * TILE_SIZE + ENTER_TOLERANCE);
-    }
-
     void spawnItemsInRoom(EntitiesManager& manager, TextureLoader& textureLoader, const sf::Vector3f& room) {
         int count = randRange(entityInRoom.x, entityInRoom.y);
 
@@ -47,36 +43,34 @@ private:
 
             spawnPos += offset;
 
-            CollisionComponent coll(Vect2D(16, 16), Vect2D(0, 0));
-
             if (!isPermittedByMapStaticObj(manager, spawnPos, coll))
                 continue;
 
-            spawnEntityFunc(manager, textureLoader, spawnPos);
+            if(!isPermittedByEnemies(manager, spawnPos, coll)){
+                int i;
+                i++;
+                continue;
+            }
+
+            spawnedEntity.push_back(spawnEntityFunc(manager, textureLoader, spawnPos));
         }
     }
+    
     std::unordered_map<int, bool> roomSpawned;
-
 public:
-    void update(EntitiesManager& manager, TextureLoader& textureLoader) {
-        auto player = manager.with<PositionOnMapComponent>().withClassName("*player*").getComponent<PositionOnMapComponent>();
-        if (!player) return;
+    void update(EntitiesManager& manager, TextureLoader& textureLoader, int ProducingRoomID) {
+        auto map = manager.with<MapComponent>().getComponent<MapComponent>();
+        if(!map) return;
+        sf::Vector3f room = map->map.roomsMap[ProducingRoomID];
+        if (roomSpawned[ProducingRoomID]) return;
 
-        auto mapComp = manager.with<MapComponent>().getComponent<MapComponent>();
-        if (!mapComp || mapComp->map.type == mapType::Preloaded) return;
+        spawnedEntity.clear();
+        spawnItemsInRoom(manager, textureLoader, room);
+        roomSpawned[ProducingRoomID] = true;
+    }
 
-        Vect2D playerPos = player->point;
-
-        for (size_t i = 0; i < mapComp->map.roomsMap.size(); i++) {
-            auto& room = mapComp->map.roomsMap[i];
-
-            if (roomSpawned[i]) continue;
-
-            if (isPlayerInsideRoom(playerPos, room)) {
-                spawnItemsInRoom(manager, textureLoader, room);
-                roomSpawned[i] = true;
-            }
-        }
+    bool IsRoomNotSpawned(int ProducingRoomID) {
+        return !roomSpawned[ProducingRoomID];
     }
 
     void reset() {

@@ -21,7 +21,7 @@ private:
         auto enemyIDs = manager.with<StuneCompanent>().get();
 
         for (int enemyID : enemyIDs) {
-            auto stuneComp = manager.getComponent<StuneCompanent>(enemyID).get();
+            auto stuneComp = manager.getComponent<StuneCompanent>(enemyID);
             stuneComp->currentTime += df;
 
             if(stuneComp->currentTime > stuneComp->duration)
@@ -33,7 +33,7 @@ private:
         auto enemyIDs = manager.with<AttackCooldownCompanent>().get();
 
         for (int enemyID : enemyIDs) {
-            auto cooldownComp = manager.getComponent<AttackCooldownCompanent>(enemyID).get();
+            auto cooldownComp = manager.getComponent<AttackCooldownCompanent>(enemyID);
             cooldownComp->currentTime += df;
 
             if(cooldownComp->currentTime > cooldownComp->duration) {
@@ -48,7 +48,7 @@ private:
         auto enemyIDs = manager.with<ColldownBeforeAttackComp>().get();
 
         for (int enemyID : enemyIDs) {
-            auto cooldownComp = manager.getComponent<ColldownBeforeAttackComp>(enemyID).get();
+            auto cooldownComp = manager.getComponent<ColldownBeforeAttackComp>(enemyID);
             cooldownComp->currentTime += df;
 
             if(cooldownComp->currentTime > cooldownComp->duration){
@@ -63,7 +63,7 @@ private:
         auto enemyIDs = manager.with<ColldownBeforeEffectExpand>().get();
 
         for (int enemyID : enemyIDs) {
-            auto cooldownComp = manager.getComponent<ColldownBeforeEffectExpand>(enemyID).get();
+            auto cooldownComp = manager.getComponent<ColldownBeforeEffectExpand>(enemyID);
             cooldownComp->currentTime += df;
 
             if(cooldownComp->currentTime > cooldownComp->duration){

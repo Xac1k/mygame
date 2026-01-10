@@ -12,8 +12,8 @@
 void DeathEntitySystem(EntitiesManager& manager, AudioSystem& audioManager, float df) {
     auto entityIDs = manager.with<HealthComponent>().get();
     for (int entityID : entityIDs) {
-        auto healthComp = manager.getComponent<HealthComponent>(entityID).get();
-        auto deathComp = manager.getComponent<DeathComponent>(entityID).get();
+        auto healthComp = manager.getComponent<HealthComponent>(entityID);
+        auto deathComp = manager.getComponent<DeathComponent>(entityID);
         if(healthComp->health <= 0 && !deathComp->isDead) {
             std::cout << "Умер: " << entityID << std::endl;
             deathComp->isDead = true;

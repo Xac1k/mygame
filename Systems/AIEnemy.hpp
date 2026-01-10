@@ -14,6 +14,9 @@
 #include <cmath>
 #include <Common/normAngle.hpp>
 #include <Common/getEntitiesByChunk.hpp>
+#include <Systems/Game/EntityControll/EntityConrtoll.hpp>
+
+extern EntityConrtoll entityControll;
 
 class AIAgent {
     public:
@@ -248,6 +251,7 @@ class AIAgent {
 
             auto map = manager.with<MapComponent>().getComponent<MapComponent>();
             if(!map) return;
+            auto producingEntities = entityControll.getEntityFromProducingRoom();
 
             for(int enemyID : enemyIDs) {
                 auto velocityComp = manager.getComponent<VelocityComponent>(enemyID);
@@ -266,7 +270,7 @@ class AIAgent {
                 // permissions
                 if(needToCheckColision) {
                     auto [xCoef, yCoef] = isPermittedByMap(map, posComp, collisionRectComp, originComp, velocityComp, df);
-                    auto [xCoefEnemy, yCoefEnemy] = isPermittedByEnemy(manager, enemyID, posComp, collisionRectComp, originComp, velocityComp, df);
+                    auto [xCoefEnemy, yCoefEnemy] = isPermittedByEnemy(manager, enemyID, posComp, collisionRectComp, originComp, velocityComp, df, producingEntities);
                     velocityComp->dir = velocityComp->dir * Vect2D(xCoef * xCoefEnemy, yCoef * yCoefEnemy);
                 }
 
@@ -365,7 +369,7 @@ class AIAgent {
         std::vector<int> sortByDeath(EntitiesManager& manager, std::vector<int> entityIDs) {
             std::vector<int> result;
             for(int id : entityIDs) {
-                auto deathComp = manager.getComponent<DeathComponent>(id).get();
+                auto deathComp = manager.getComponent<DeathComponent>(id);
                 if(!deathComp->isDead) result.push_back(id);
             }
             return result;
@@ -374,23 +378,22 @@ class AIAgent {
         ArchiveOfEntitiesInChunk ChunkManager;
         std::tuple<int, int> isPermittedByEnemy(
             EntitiesManager& manager, int moverID, std::shared_ptr<PositionOnMapComponent> moverPos, std::shared_ptr<CollisionComponent> moverCollRect,
-            std::shared_ptr<OriginComponent> origin, std::shared_ptr<VelocityComponent> velo, float df
+            std::shared_ptr<OriginComponent> origin, std::shared_ptr<VelocityComponent> velo, float df, std::vector<int> producingEntities
         ) {
             auto moverCollRectLeftUp = moverPos->point + moverCollRect->shiftFromLeftUp;
             if(origin) moverCollRectLeftUp -= origin->shift;
             int xAllow = 1; int yAllow = 1;
 
-            auto enemyIDsInChunk = ChunkManager.getEntitiesByChunk(manager);
-            auto enemyIDs = manager.load<PositionOnMapComponent>(enemyIDsInChunk).with<CollisionComponent>().except(moverID).withClassName("*Enemy*").get();
+            auto enemyIDs = manager.load<PositionOnMapComponent>(producingEntities).with<CollisionComponent>().except(moverID).withClassName("*Enemy*").get();
             enemyIDs = sortByDeath(manager, enemyIDs);
             
             for (int enemyID : enemyIDs) {
-                auto enemyPos = manager.getComponent<PositionOnMapComponent>(enemyID).get();
-                auto enemySize = manager.getComponent<SizeComponent>(enemyID).get();
-                auto enemyCollRect = manager.getComponent<CollisionComponent>(enemyID).get();
+                auto enemyPos = manager.getComponent<PositionOnMapComponent>(enemyID);
+                auto enemySize = manager.getComponent<SizeComponent>(enemyID);
+                auto enemyCollRect = manager.getComponent<CollisionComponent>(enemyID);
                 Vect2D origin({0, 0});
                 if(manager.hasComponent<OriginComponent>(enemyID))
-                    origin = manager.getComponent<OriginComponent>(enemyID).get()->shift;
+                    origin = manager.getComponent<OriginComponent>(enemyID)->shift;
                 auto enemyCollRectLeftUp = enemyPos->point - origin + enemyCollRect->shiftFromLeftUp;
                 if(boxesOverlap(moverCollRectLeftUp + Vect2D(velo->dir.x * df, 0), moverCollRect->size, enemyCollRectLeftUp, enemyCollRect->size))
                     xAllow = 0;

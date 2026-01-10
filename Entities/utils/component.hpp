@@ -358,6 +358,13 @@ struct EffectComponent {
         damage = weapon->effectDamage;
     }
 
+    void moveEffect(std::shared_ptr<AttackComponent> weapon) {
+        effect = weapon->effect;
+        duration = weapon->duration;
+        period = weapon->period; 
+        damage = weapon->effectDamage;
+    }
+
     bool operator==(const EffectComponent& other) {
         return effect == other.effect;
     };
@@ -403,6 +410,22 @@ struct EffectsComponent {
     }
 
     void cloneEffect(EffectComponent* effect) {
+        EffectComponent effectNew;
+        effectNew = *effect;
+        auto it = find(effectNew);
+        if(it != effects.end()) return;
+        effects.push_back(effectNew);
+    }
+
+    void addEffect(std::shared_ptr<AttackComponent> weapon) {
+        EffectComponent effect;
+        effect.moveEffect(weapon);
+        auto it = find(effect);
+        if(it != effects.end()) return;
+        effects.push_back(effect);
+    }
+
+    void cloneEffect(std::shared_ptr<EffectComponent> effect) {
         EffectComponent effectNew;
         effectNew = *effect;
         auto it = find(effectNew);

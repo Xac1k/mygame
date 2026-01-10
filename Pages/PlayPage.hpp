@@ -39,13 +39,17 @@
 #include <Systems/InventoryUseItems.hpp>
 #include <Systems/UI/DrunkEffectSystem/DrunkEffectSystem.hpp>
 #include <Systems/Game/GameOver/GameOverSystem.hpp>
+#include <Systems/Game/EntityControll/EntityConrtoll.hpp>
 
 #include <Depricated/MovementPlayerSystem.hpp>
+#include <chrono>
 
 SpawnController LevelController;
 InventoryUseItems inventoryUseSystem;
 DrunkEffectSystem drunkSystem;
 GameOverSystem gameOverSystem;
+
+EntityConrtoll entityControll;
     
 HealthIndicator EntityHealthIndicator;
 DialogWindow DialogManager;
@@ -104,7 +108,10 @@ void PlayPage(
     EntitiesManager& manager, AudioSystem& audioManager, Animator& animator,
     TextureLoader& textureLoader, SfmlRenderer& renderer
 ) {
-    LevelController.update(manager, textureLoader, audioManager);
+    LevelController.update(manager, textureLoader, audioManager, entityControll);
+    entityControll.update(manager);
+    entityControll.updateSpawnSystems(manager, textureLoader);
+
     float df = clock.restart().asSeconds();
     sf::Event event;
 
@@ -132,7 +139,6 @@ void PlayPage(
         }
     }
 
-    
     if(DialogManager.canPlay()) {
         gameOverSystem.update(manager);
         controlCollision();
@@ -141,6 +147,7 @@ void PlayPage(
         HurtEntitySystem(manager);
         effectsSystem.update(manager, audioManager, df);
         DeathEntitySystem(manager, audioManager, df);
+        
         CreateMovementPlayerSystem(manager);
         DeathAnimationUpdateSystem(manager);
         LootDropSystem(manager, textureLoader);

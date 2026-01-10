@@ -7,15 +7,12 @@
 #include <Entities/components/inventory.hpp>
 
 void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
-    auto inventoryIDs = manager.with<InventoryComponent>().get(); 
-    if(inventoryIDs.size() < 1) return;
-    
-    auto pos = manager.getComponent<PositionComponent>(inventoryIDs[0]).get();
-    auto size = manager.getComponent<SizeComponent>(inventoryIDs[0]).get();
-    auto dragAndDrop = manager.getComponent<DragAndDropComponent>(inventoryIDs[0]);
-
-    auto inventory = manager.getComponent<InventoryComponent>(inventoryIDs[0]).get();
-    auto inventoryState = manager.getComponent<StateComponent>(inventoryIDs[0]).get();
+    auto pos = manager.with<InventoryComponent>().getComponent<PositionComponent>();
+    auto size = manager.with<InventoryComponent>().getComponent<SizeComponent>();
+    auto dragAndDrop = manager.with<InventoryComponent>().getComponent<DragAndDropComponent>();
+    auto inventory = manager.with<InventoryComponent>().getComponent<InventoryComponent>();
+    auto inventoryState = manager.with<InventoryComponent>().getComponent<StateComponent>();
+    if(!pos || !size || !dragAndDrop || !inventory || !inventoryState) return;
 
     if (event.currEvent == BusEvent::Event::I) {
         if(inventoryState->state != (int)InventoryState::wrapped) {
@@ -44,7 +41,7 @@ void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
                 int row = std::ceil(relativePoint.y / cellSizeY);
 
                 if(inventory->inventory[row-1][column-1] != Items::none) {
-                    dragAndDrop.get()->isStarted = true;
+                    dragAndDrop->isStarted = true;
                     inventory->selection = Vect2D(column-1, row-1);
                     inventoryState->state = (int) InventoryState::selected;
                     inventory->isSelected = true;
@@ -53,14 +50,14 @@ void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
             break;
 
         case BusEvent::Event::MouseMove :
-            if(dragAndDrop.get()->isStarted) {
-                dragAndDrop.get()->pos = event.mousePos;
-                dragAndDrop.get()->isMoving = true;
+            if(dragAndDrop->isStarted) {
+                dragAndDrop->pos = event.mousePos;
+                dragAndDrop->isMoving = true;
             }
             break;
 
         case BusEvent::Event::MouseUp :
-            if(dragAndDrop.get()->isStarted && dragAndDrop.get()->isMoving)
+            if(dragAndDrop->isStarted && dragAndDrop->isMoving)
             {
                 float cellSizeX = size->size.x / inventory->size.x;
                 float cellSizeY = size->size.y / inventory->size.y;
@@ -72,8 +69,8 @@ void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
 
                 if(row < 0 || column < 0 || row > inventory->size.y - 1 || column > inventory->size.x - 1) {
                     inventoryState->state = (int) InventoryState::idle;
-                    dragAndDrop.get()->isMoving = false;
-                    dragAndDrop.get()->isStarted = false;
+                    dragAndDrop->isMoving = false;
+                    dragAndDrop->isStarted = false;
                     break;
                 }
 
@@ -89,8 +86,8 @@ void InventoryDndUpdate(EntitiesManager& manager, BusEvent& event) {
                 inventory->selection = Vect2D(column, row);
             }
         
-            dragAndDrop.get()->isMoving = false;
-            dragAndDrop.get()->isStarted = false;
+            dragAndDrop->isMoving = false;
+            dragAndDrop->isStarted = false;
             break;
         
         default:

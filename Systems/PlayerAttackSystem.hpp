@@ -9,17 +9,17 @@
 #include <Common/getAngle.hpp>
 
 void addAttackComp(EntitiesManager& manager, int ID, float angle) {
-    auto playerPos = manager.getComponent<PositionOnMapComponent>(ID).get()->point;
-    auto playerWeapon = manager.getComponent<WeaponComponent>(ID).get();
+    auto playerPos = manager.getComponent<PositionOnMapComponent>(ID)->point;
+    auto playerWeapon = manager.getComponent<WeaponComponent>(ID);
     Vect2D attackArea(angle - playerWeapon->deviation, angle + playerWeapon->deviation);
     if(attackArea.x > 360) attackArea.x -= 360;
     if(attackArea.y > 360) attackArea.y -= 360;
     if(attackArea.x < 0) attackArea.x += 360;
     if(attackArea.y < 0) attackArea.y += 360;
-    AttackComponent attack(playerWeapon, playerPos, attackArea);
+    AttackComponent attack(playerWeapon.get(), playerPos, attackArea);
     StuneCompanent stune(playerWeapon->cooldownMoving);
     AttackCooldownCompanent AttackCooldown(playerWeapon->cooldown);
-    if(playerWeapon->haveEffect()) attack.moveEffect(playerWeapon);
+    if(playerWeapon->haveEffect()) attack.moveEffect(playerWeapon.get());
     std::cout << "Игрок: Ставим задержку до атаки на " << playerWeapon->cooldown << std::endl; 
     manager.addComponent<AttackComponent>(attack, ID);
     manager.addComponent<StuneCompanent>(stune, ID);
@@ -36,7 +36,7 @@ void InitAttackPlayerSystem(EntitiesManager& manager, BusEvent& event, AudioSyst
     float angle = getAngle(event.mousePos - Vect2D(WINDOW_WIDTH/2, WINDOW_HEIGHT/2));
     addAttackComp(manager, playerIds[0], angle);
     
-    auto playerState = manager.getComponent<StateComponent>(playerIds[0]).get();
+    auto playerState = manager.getComponent<StateComponent>(playerIds[0]);
     if(angle > 0 && angle < 45 || angle > 345 && angle < 360) playerState->state = (int)PlayerState::AttackIdleRight;
     if(angle > 45 && angle < 135) playerState->state = (int)PlayerState::AttackIdleDirect;
     if(angle > 135 && angle < 225) playerState->state = (int)PlayerState::AttackIdleLeft;
